@@ -121,68 +121,68 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f7f7] p-3 sm:p-5 lg:p-8">
-      <header className="mx-auto max-w-7xl rounded-[28px] border-4 border-black bg-white p-5 shadow-[8px_8px_0_#111]">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <main className="page">
+      <header className="header">
+        <div className="">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.2em] text-pink-600">Nível 1</p>
-            <h1 className="text-4xl font-black text-black md:text-6xl">CAA Neuro</h1>
-            <p className="mt-2 max-w-2xl text-base font-semibold text-gray-700 md:text-lg">
+            <p className="phraseTitle">Nível 1</p>
+            <h1 className="">CAA Neuro</h1>
+            <p className="">
               Toque em um card para falar. Edite o nome, troque a imagem e personalize a prancha.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <button onClick={() => setEditMode(!editMode)} className="rounded-2xl border-4 border-black bg-pink-400 px-5 py-3 font-black text-black shadow-[4px_4px_0_#111]">
+          <div className="topActions">
+            <button onClick={() => setEditMode(!editMode)} className="btn white">
               {editMode ? "Sair da edição" : "Editar cards"}
             </button>
-            <button onClick={resetCards} className="rounded-2xl border-4 border-black bg-white px-5 py-3 font-black text-black shadow-[4px_4px_0_#111]">
+            <button onClick={resetCards} className="btn white">
               Resetar
             </button>
           </div>
         </div>
       </header>
 
-      <section className="sticky top-3 z-20 mx-auto mt-5 max-w-7xl rounded-[28px] border-4 border-black bg-white p-4 shadow-[8px_8px_0_#111]">
-        <div className="mb-3 flex min-h-[48px] flex-wrap gap-2">
+      <section className="phraseBox">
+        <div className="phraseWords">
           {phrase.map((word, index) => (
-            <span key={`${word}-${index}`} className="rounded-full border-2 border-black bg-pink-100 px-4 py-2 text-lg font-black">
+            <span key={`${word}-${index}`} className="word">
               {word}
             </span>
           ))}
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => speak(phrase.join(" "))} className="rounded-2xl border-4 border-black bg-green-300 px-5 py-3 font-black shadow-[4px_4px_0_#111]">
+        <div className="actions">
+          <button onClick={() => speak(phrase.join(" "))} className="btn green">
             Falar frase
           </button>
-          <button onClick={() => setPhrase([])} className="rounded-2xl border-4 border-black bg-yellow-200 px-5 py-3 font-black shadow-[4px_4px_0_#111]">
+          <button onClick={() => setPhrase([])} className="btn yellow">
             Limpar
           </button>
-          <button onClick={undo} className="rounded-2xl border-4 border-black bg-blue-200 px-5 py-3 font-black shadow-[4px_4px_0_#111]">
+          <button onClick={undo} className="btn white">
             Desfazer
           </button>
         </div>
       </section>
 
-      <section className="mx-auto mt-6 grid max-w-7xl grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+      <section className="board grid">
         {cards.map((card) => (
-          <article key={card.id} className="rounded-[26px] border-4 border-black bg-white p-2 shadow-[6px_6px_0_#111] transition hover:-translate-y-1">
-            <button onClick={() => selectCard(card)} className="block w-full">
-              <div className="aspect-square overflow-hidden rounded-[20px] border-4 border-pink-400 bg-pink-50">
-                <img src={card.image} alt={card.label} className="h-full w-full object-cover" />
+          <article key={card.id} className="card">
+            <button onClick={() => selectCard(card)} className="">
+              <div className="imageFrame">
+                <img src={card.image} alt={card.label} className="" />
               </div>
-              <div className="px-2 py-3 text-center text-xl font-black text-black md:text-2xl">
+              <div className="label">
                 {card.label}
               </div>
             </button>
 
             {editMode && (
-              <div className="grid grid-cols-1 gap-2">
-                <button onClick={() => setEditing(card)} className="rounded-xl border-2 border-black bg-pink-100 py-2 text-sm font-black">
+              <div className="cardTools">
+                <button onClick={() => setEditing(card)} className="smallBtn">
                   Editar
                 </button>
-                <button onClick={() => downloadImage(card)} className="rounded-xl border-2 border-black bg-gray-100 py-2 text-sm font-black">
+                <button onClick={() => downloadImage(card)} className="smallBtn">
                   Baixar imagem
                 </button>
               </div>
@@ -192,37 +192,37 @@ export default function Home() {
       </section>
 
       {editing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-lg rounded-[28px] border-4 border-black bg-white p-5 shadow-[8px_8px_0_#111]">
-            <h2 className="mb-4 text-3xl font-black">Editar card</h2>
+        <div className="modal">
+          <div className="modalBox">
+            <h2 className="">Editar card</h2>
 
-            <div className="mb-4 aspect-square overflow-hidden rounded-[24px] border-4 border-pink-400 bg-pink-50">
-              <img src={editing.image} alt={editing.label} className="h-full w-full object-cover" />
+            <div className="modalPreview">
+              <img src={editing.image} alt={editing.label} className="" />
             </div>
 
-            <label className="mb-1 block font-black">Nome abaixo da imagem</label>
+            <label className="">Nome abaixo da imagem</label>
             <input
               value={editing.label}
               onChange={(e) => updateEditing({ label: e.target.value })}
-              className="mb-4 w-full rounded-2xl border-4 border-black p-3 text-xl font-black outline-none"
+              className="input"
             />
 
             <input
               ref={fileRef}
               type="file"
               accept="image/*"
-              className="hidden"
+              style={{display:"none"}}
               onChange={(e) => replaceImage(e.target.files?.[0])}
             />
 
             <div className="flex flex-wrap gap-2">
-              <button onClick={() => fileRef.current?.click()} className="rounded-2xl border-4 border-black bg-blue-200 px-4 py-3 font-black shadow-[4px_4px_0_#111]">
+              <button onClick={() => fileRef.current?.click()} className="btn white">
                 Trocar imagem
               </button>
-              <button onClick={saveEditing} className="rounded-2xl border-4 border-black bg-green-300 px-4 py-3 font-black shadow-[4px_4px_0_#111]">
+              <button onClick={saveEditing} className="btn green">
                 Salvar
               </button>
-              <button onClick={() => setEditing(null)} className="rounded-2xl border-4 border-black bg-gray-100 px-4 py-3 font-black shadow-[4px_4px_0_#111]">
+              <button onClick={() => setEditing(null)} className="btn white">
                 Voltar
               </button>
             </div>
