@@ -40,32 +40,20 @@ button{font-family:inherit;cursor:pointer}
   border-radius:18px;
   padding:4px;
   background:white;
+  border:2px solid #e4eaf0;
   box-shadow:0 5px 15px #0002;
   overflow:visible;
+  transition:border-color .18s ease, box-shadow .18s ease;
 }
 
-.caa-card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:18px;
-  padding:2px;
-  background:conic-gradient(from 0deg, transparent 0deg, transparent 255deg, rgba(255,255,255,.95) 285deg, #ff4fa3 310deg, transparent 340deg, transparent 360deg);
-  opacity:0;
-  z-index:3;
-  pointer-events:none;
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
-}
-
-.caa-card:hover::before,
-.caa-card.active::before{
-  opacity:1;
-  animation:caa-spin 1.8s linear infinite;
-  filter:drop-shadow(0 0 4px rgba(255,79,163,.55));
+.caa-card:hover,
+.caa-card.active{
+  border-color:var(--cat,#f04494);
+  box-shadow:
+    0 0 0 2px var(--cat,#f04494),
+    0 0 10px 3px var(--cat-glow,rgba(240,68,148,.38)),
+    0 0 22px 7px var(--cat-glow2,rgba(240,68,148,.14)),
+    0 5px 15px #0002;
 }
 
 .caa-card-inner{
@@ -155,12 +143,12 @@ button{font-family:inherit;cursor:pointer}
 .caa-info h3{margin:0 0 12px;color:#064923;text-transform:uppercase;font-size:15px}
 .caa-dot{display:inline-block;width:18px;height:18px;border-radius:50%;margin-right:8px;vertical-align:middle}
 
-.cat-basic{--cat:#f04494}
-.cat-need{--cat:#ff9f2d}
-.cat-action{--cat:#4fc667}
-.cat-emotion{--cat:#4b95ff}
-.cat-control{--cat:#a879d9}
-.cat-place{--cat:#20c4ff}
+.cat-basic{--cat:#f04494;--cat-glow:rgba(240,68,148,.38);--cat-glow2:rgba(240,68,148,.14)}
+.cat-need{--cat:#ff9f2d;--cat-glow:rgba(255,159,45,.38);--cat-glow2:rgba(255,159,45,.14)}
+.cat-action{--cat:#4fc667;--cat-glow:rgba(79,198,103,.38);--cat-glow2:rgba(79,198,103,.14)}
+.cat-emotion{--cat:#4b95ff;--cat-glow:rgba(75,149,255,.38);--cat-glow2:rgba(75,149,255,.14)}
+.cat-control{--cat:#a879d9;--cat-glow:rgba(168,121,217,.38);--cat-glow2:rgba(168,121,217,.14)}
+.cat-place{--cat:#20c4ff;--cat-glow:rgba(32,196,255,.38);--cat-glow2:rgba(32,196,255,.14)}
 
 @keyframes caa-spin{to{transform:rotate(360deg)}}
 
