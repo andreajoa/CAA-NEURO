@@ -40,20 +40,43 @@ button{font-family:inherit;cursor:pointer}
   border-radius:18px;
   padding:4px;
   background:white;
-  border:2px solid #e4eaf0;
+  border:3px solid #e4eaf0;
   box-shadow:0 5px 15px #0002;
   overflow:visible;
-  transition:border-color .18s ease, box-shadow .18s ease;
+  transition:border-color .18s ease;
+}
+
+.caa-card::before{
+  content:"";
+  position:absolute;
+  inset:-4px;
+  border-radius:23px;
+  background:conic-gradient(
+    from 0deg,
+    transparent 0%,
+    transparent 30%,
+    var(--cat,#f04494) 43%,
+    white 50%,
+    var(--cat,#f04494) 57%,
+    transparent 70%,
+    transparent 100%
+  );
+  z-index:-1;
+  opacity:0;
+  transition:opacity .2s ease;
+  pointer-events:none;
+}
+
+.caa-card:hover::before,
+.caa-card.active::before{
+  opacity:1;
+  animation:caa-spin 1.4s linear infinite;
+  filter:drop-shadow(0 0 7px var(--cat,#f04494));
 }
 
 .caa-card:hover,
 .caa-card.active{
-  border-color:var(--cat,#f04494);
-  box-shadow:
-    0 0 0 2px var(--cat,#f04494),
-    0 0 10px 3px var(--cat-glow,rgba(240,68,148,.38)),
-    0 0 22px 7px var(--cat-glow2,rgba(240,68,148,.14)),
-    0 5px 15px #0002;
+  border-color:transparent;
 }
 
 .caa-card-inner{
