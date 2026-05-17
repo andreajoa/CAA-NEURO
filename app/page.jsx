@@ -11,14 +11,32 @@ const initialCards = [
 ].map(([id,label,file,cat])=>({id,label,image:`/cards/level-1/${file}`,cat}));
 
 export default function Home(){
+  const emptyLevel2Cards = Array.from({ length: 24 }).map((_, index) => ({
+  id: `nivel-2-card-${index + 1}`,
+  label: `Card ${index + 1}`,
+  image: "",
+  cat: "basic",
+  empty: true
+}));
+
+  const [level,setLevel]=useState(1);
   const [cards,setCards]=useState(initialCards);
   const [phrase,setPhrase]=useState(["Eu","quero","água","por","favor"]);
   const [editMode,setEditMode]=useState(false);
   const [editing,setEditing]=useState(null);
   const fileRef=useRef(null);
 
-  useEffect(()=>{const s=localStorage.getItem("caa-level-1-cards");if(s)setCards(JSON.parse(s))},[]);
-  function persist(next){setCards(next);localStorage.setItem("caa-level-1-cards",JSON.stringify(next))}
+  useEffect(()=>{
+    const key = level === 1 ? "caa-level-1-cards" : "caa-level-2-cards";
+    const saved = localStorage.getItem(key);
+    if(saved) setCards(JSON.parse(saved));
+    else setCards(level === 1 ? initialCards : emptyLevel2Cards);
+  },[level]);
+  function persist(next){
+    setCards(next);
+    const key = level === 1 ? "caa-level-1-cards" : "caa-level-2-cards";
+    localStorage.setItem(key,JSON.stringify(next));
+  }
   function speak(text){const u=new SpeechSynthesisUtterance(text);u.lang="pt-BR";u.rate=.88;speechSynthesis.cancel();speechSynthesis.speak(u)}
   function selectCard(card){setPhrase(p=>[...p,card.label]);setEditing(card);speak(card.label)}
   function saveEditing(){persist(cards.map(c=>c.id===editing.id?editing:c));setEditing(null)}
@@ -29,21 +47,34 @@ export default function Home(){
     const ctx=canvas.getContext("2d");ctx.fillStyle="#ffe8f1";ctx.fillRect(0,0,1200,1200);
     const size=Math.min(img.width,img.height),sx=(img.width-size)/2,sy=(img.height-size)/2;
     ctx.drawImage(img,sx,sy,size,size,0,0,1200,1200);
-    setEditing({...editing,image:canvas.toDataURL("image/png")});
+    setEditing({...editing,image:canvas.toDataURL("image/png"),empty:false});
   }
   function downloadImage(card){const a=document.createElement("a");a.href=card.image;a.download=`${card.id}.png`;a.click()}
-  function reset(){localStorage.removeItem("caa-level-1-cards");setCards(initialCards);setPhrase(["Eu","quero","água","por","favor"])}
-  function addCard(){const c={id:crypto.randomUUID(),label:"Novo card",image:"/cards/level-1/mais.png",cat:"basic"};persist([...cards,c]);setEditing(c);setEditMode(true)}
+  function reset(){
+    const key = level === 1 ? "caa-level-1-cards" : "caa-level-2-cards";
+    localStorage.removeItem(key);
+    setCards(level === 1 ? initialCards : emptyLevel2Cards);
+    setPhrase(level === 1 ? ["Eu","quero","água","por","favor"] : []);
+  }
+  function addCard(){
+    const c={id:crypto.randomUUID(),label:"Novo card",image:"",cat:"basic",empty:true};
+    persist([...cards,c]);
+    setEditing(c);
+    setEditMode(true);
+  }
 
   return <main className={`caa-page ${editMode?"caa-editing":""}`}>
     <header className="caa-header">
       <div>
-        <div className="caa-level">Nível 1</div>
+        <div className="caa-level">Nível {level}</div>
         <h1 className="caa-title">CAA Neuro</h1>
         <div className="caa-subtitle">Prancha de Comunicação Aumentativa e Alternativa</div>
       </div>
       <div className="caa-actions">
         <button className="caa-pill caa-pill-green">👤 Modo: Usuário</button>
+        <button className="caa-pill" onClick={()=>setLevel(level === 1 ? 2 : 1)}>
+          Trocar para Nível {level === 1 ? "2" : "1"}
+        </button>
         <button className="caa-pill" onClick={()=>setEditMode(!editMode)}>✎ {editMode?"Sair da edição":"Editar cartões"}</button>
         <button className="caa-pill caa-pill-pink" onClick={reset}>↻ Resetar prancha</button>
       </div>
@@ -70,7 +101,9 @@ export default function Home(){
             {cards.map(card=><article key={card.id} className={`caa-card cat-${card.cat} ${editing?.id===card.id?"active":""}`}>
               <div className="caa-card-inner">
                 <button onClick={()=>selectCard(card)} className="caa-card-button">
-                  <div className="caa-img"><img src={card.image} alt={card.label}/></div>
+                  <div className="caa-img">
+                    {card.image ? <img src={card.image} alt={card.label}/> : <div className="caa-empty-img">+</div>}
+                  </div>
                   <div className="caa-label">{card.label}</div>
                 </button>
                 <div className="caa-card-tools">
@@ -88,7 +121,9 @@ export default function Home(){
         <button className="caa-close" onClick={()=>setEditing(null)}>×</button>
         <h2>Editar card</h2>
         {editing?<>
-          <div className="caa-preview"><div className="caa-preview-inner"><img src={editing.image} alt={editing.label}/></div></div>
+          <div className="caa-preview"><div className="caa-preview-inner">
+              {editing.image ? <img src={editing.image} alt={editing.label}/> : <div className="caa-empty-preview">+</div>}
+            </div></div>
           <div className="caa-field">Nome do card</div>
           <input className="caa-input" value={editing.label} onChange={e=>setEditing({...editing,label:e.target.value})}/>
           <div className="caa-field">Imagem do card</div>

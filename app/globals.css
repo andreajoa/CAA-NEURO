@@ -185,3 +185,29 @@ button{font-family:inherit;cursor:pointer}
   .caa-btn{width:100%;padding:13px}
   .caa-info-grid{grid-template-columns:1fr}
 }
+
+.caa-empty-img{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:58px;
+  font-weight:900;
+  color:#8b98a3;
+  background:linear-gradient(135deg,#fff,#f3f7fb);
+}
+
+.caa-empty-preview{
+  width:100%;
+  aspect-ratio:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:72px;
+  font-weight:900;
+  color:#8b98a3;
+  border:5px dashed #cfd8df;
+  border-radius:14px;
+  background:#f8fafc;
+}
