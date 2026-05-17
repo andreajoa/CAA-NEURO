@@ -69,7 +69,7 @@ export default function Home(){
           <div className="caa-grid">
             {cards.map(card=><article key={card.id} className={`caa-card cat-${card.cat} ${editing?.id===card.id?"active":""}`}>
               <div className="caa-card-inner">
-                <button onClick={()=>selectCard(card)} style={{background:"transparent",border:0,padding:0,width:"100%"}}>
+                <button onClick={()=>selectCard(card)} className="caa-card-button">
                   <div className="caa-img"><img src={card.image} alt={card.label}/></div>
                   <div className="caa-label">{card.label}</div>
                 </button>
