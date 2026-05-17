@@ -26,6 +26,41 @@ const emptyLevel2Cards = level2Labels.map((label, index) => ({
   empty: true
 }));
 
+const level3Labels = [
+  "Eu quero água",
+  "Eu quero comer",
+  "Eu quero ir ao banheiro",
+  "Eu quero brincar",
+  "Eu quero descansar",
+  "Eu quero ir embora",
+  "Eu não quero",
+  "Eu não gostei",
+  "Eu preciso de ajuda",
+  "Eu preciso esperar",
+  "Eu estou com dor",
+  "Eu estou cansado",
+  "Eu estou feliz",
+  "Eu estou triste",
+  "Eu estou com medo",
+  "Eu estou bravo",
+  "Pode me ajudar?",
+  "Pode repetir?",
+  "Onde está?",
+  "Quero ficar sozinho",
+  "Quero ficar com você",
+  "Quero mais",
+  "Acabou",
+  "Obrigado"
+];
+
+const emptyLevel3Cards = level3Labels.map((label, index) => ({
+  id: `nivel-3-card-${index + 1}`,
+  label,
+  image: "",
+  cat: index < 8 ? "basic" : index < 16 ? "emotion" : index < 20 ? "need" : "action",
+  empty: true
+}));
+
   const [level,setLevel]=useState(1);
   const [cards,setCards]=useState(initialCards);
   const [phrase,setPhrase]=useState(["Eu","quero","água","por","favor"]);
@@ -37,7 +72,7 @@ const emptyLevel2Cards = level2Labels.map((label, index) => ({
     const key = level === 1 ? "caa-level-1-cards" : "caa-level-2-cards";
     const saved = localStorage.getItem(key);
     if(saved) setCards(JSON.parse(saved));
-    else setCards(level === 1 ? initialCards : emptyLevel2Cards);
+    else setCards(level === 1 ? initialCards : level === 2 ? emptyLevel2Cards : emptyLevel3Cards);
   },[level]);
   function persist(next){
     setCards(next);
@@ -60,7 +95,7 @@ const emptyLevel2Cards = level2Labels.map((label, index) => ({
   function reset(){
     const key = level === 1 ? "caa-level-1-cards" : "caa-level-2-cards";
     localStorage.removeItem(key);
-    setCards(level === 1 ? initialCards : emptyLevel2Cards);
+    setCards(level === 1 ? initialCards : level === 2 ? emptyLevel2Cards : emptyLevel3Cards);
     setPhrase(level === 1 ? ["Eu","quero","água","por","favor"] : []);
   }
   function addCard(){
@@ -79,8 +114,8 @@ const emptyLevel2Cards = level2Labels.map((label, index) => ({
       </div>
       <div className="caa-actions">
         <button className="caa-pill caa-pill-green">👤 Modo: Usuário</button>
-        <button className="caa-pill" onClick={()=>setLevel(level === 1 ? 2 : 1)}>
-          Trocar para Nível {level === 1 ? "2" : "1"}
+        <button className="caa-pill" onClick={()=>setLevel(level === 1 ? 2 : level === 2 ? 3 : 1)}>
+          Trocar para Nível {level === 1 ? "2" : level === 2 ? "3" : "1"}
         </button>
         <button className="caa-pill" onClick={()=>setEditMode(!editMode)}>✎ {editMode?"Sair da edição":"Editar cartões"}</button>
         <button className="caa-pill caa-pill-pink" onClick={reset}>↻ Resetar prancha</button>
