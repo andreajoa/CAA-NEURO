@@ -1,68 +1,98 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const defaultCards = [
-  { id: "1", text: "Eu quero", category: "Básico", image: "" },
-  { id: "2", text: "Água", category: "Necessidades", image: "" },
-  { id: "3", text: "Comer", category: "Necessidades", image: "" },
-  { id: "4", text: "Banheiro", category: "Necessidades", image: "" },
-  { id: "5", text: "Estou feliz", category: "Emoções", image: "" },
-  { id: "6", text: "Estou triste", category: "Emoções", image: "" },
-  { id: "7", text: "Ajuda", category: "Básico", image: "" },
-  { id: "8", text: "Obrigado", category: "Básico", image: "" },
+const initialCards = [
+  { id: "sim", label: "Sim", image: "/cards/level-1/sim.png" },
+  { id: "nao", label: "Não", image: "/cards/level-1/nao.png" },
+  { id: "me-da", label: "Me dá", image: "/cards/level-1/me-da.png" },
+  { id: "nao-quero", label: "Não quero", image: "/cards/level-1/nao-quero.png" },
+  { id: "mais", label: "Mais", image: "/cards/level-1/mais.png" },
+  { id: "acabou", label: "Acabou", image: "/cards/level-1/acabou.png" },
+  { id: "ajuda", label: "Ajuda", image: "/cards/level-1/ajuda.png" },
+  { id: "esperar", label: "Esperar", image: "/cards/level-1/esperar.png" },
+  { id: "agua", label: "Água", image: "/cards/level-1/agua.png" },
+  { id: "comer", label: "Comer", image: "/cards/level-1/comer.png" },
+  { id: "banheiro", label: "Banheiro", image: "/cards/level-1/banheiro.png" },
+  { id: "dor", label: "Dor", image: "/cards/level-1/dor.png" },
+  { id: "dormir", label: "Dormir", image: "/cards/level-1/dormir.png" },
+  { id: "tomar-banho", label: "Tomar banho", image: "/cards/level-1/tomar-banho.png" },
+  { id: "remedio", label: "Remédio", image: "/cards/level-1/remedio.png" },
+  { id: "feliz", label: "Feliz", image: "/cards/level-1/feliz.png" },
+  { id: "triste", label: "Triste", image: "/cards/level-1/triste.png" },
+  { id: "bravo", label: "Bravo", image: "/cards/level-1/bravo.png" },
+  { id: "medo", label: "Medo", image: "/cards/level-1/medo.png" },
+  { id: "cansado", label: "Cansado", image: "/cards/level-1/cansado.png" },
+  { id: "brincar", label: "Brincar", image: "/cards/level-1/brincar.png" },
+  { id: "parar", label: "Parar", image: "/cards/level-1/parar.png" },
+  { id: "sair", label: "Sair", image: "/cards/level-1/sair.png" },
+  { id: "passear", label: "Passear", image: "/cards/level-1/passear.png" },
+  { id: "escola", label: "Escola", image: "/cards/level-1/escola.png" },
 ];
 
 export default function Home() {
-  const [cards, setCards] = useState(defaultCards);
+  const [cards, setCards] = useState(initialCards);
   const [phrase, setPhrase] = useState([]);
+  const [editMode, setEditMode] = useState(false);
   const [editing, setEditing] = useState(null);
   const [history, setHistory] = useState([]);
+  const fileRef = useRef(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("caa-neuro-cards");
+    const saved = localStorage.getItem("caa-level-1-cards");
     if (saved) setCards(JSON.parse(saved));
   }, []);
 
-  function saveCards(next) {
-    setHistory((h) => [cards, ...h].slice(0, 20));
+  function persist(next) {
+    setHistory((old) => [cards, ...old].slice(0, 20));
     setCards(next);
-    localStorage.setItem("caa-neuro-cards", JSON.stringify(next));
+    localStorage.setItem("caa-level-1-cards", JSON.stringify(next));
   }
 
   function speak(text) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "pt-BR";
-    utterance.rate = 0.9;
+    utterance.rate = 0.88;
     speechSynthesis.cancel();
     speechSynthesis.speak(utterance);
   }
 
-  function clickCard(card) {
-    setPhrase((p) => [...p, card.text]);
-    speak(card.text);
+  function selectCard(card) {
+    setPhrase((old) => [...old, card.label]);
+    speak(card.label);
   }
 
   function undo() {
     const previous = history[0];
     if (!previous) return;
     setCards(previous);
-    setHistory((h) => h.slice(1));
-    localStorage.setItem("caa-neuro-cards", JSON.stringify(previous));
+    localStorage.setItem("caa-level-1-cards", JSON.stringify(previous));
+    setHistory((old) => old.slice(1));
   }
 
-  async function imageToDataUrl(file) {
+  function updateEditing(patch) {
+    setEditing((old) => ({ ...old, ...patch }));
+  }
+
+  function saveEditing() {
+    persist(cards.map((card) => (card.id === editing.id ? editing : card)));
+    setEditing(null);
+  }
+
+  async function replaceImage(file) {
+    if (!file || !editing) return;
+
     const img = document.createElement("img");
     img.src = URL.createObjectURL(file);
     await img.decode();
 
     const canvas = document.createElement("canvas");
-    canvas.width = 900;
-    canvas.height = 900;
+    canvas.width = 1200;
+    canvas.height = 1200;
     const ctx = canvas.getContext("2d");
 
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, 900, 900);
+    ctx.fillStyle = "#ffe8f1";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const size = Math.min(img.width, img.height);
     const sx = (img.width - size) / 2;
@@ -70,131 +100,130 @@ export default function Home() {
 
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.filter = "contrast(1.08) saturate(1.08) brightness(1.03)";
-    ctx.drawImage(img, sx, sy, size, size, 0, 0, 900, 900);
+    ctx.filter = "contrast(1.05) saturate(1.05) brightness(1.02)";
+    ctx.drawImage(img, sx, sy, size, size, 0, 0, canvas.width, canvas.height);
 
-    return canvas.toDataURL("image/jpeg", 0.9);
+    const dataUrl = canvas.toDataURL("image/png");
+    updateEditing({ image: dataUrl });
   }
 
-  function addCard() {
-    saveCards([
-      ...cards,
-      {
-        id: crypto.randomUUID(),
-        text: "Novo card",
-        category: "Personalizado",
-        image: "",
-      },
-    ]);
+  function downloadImage(card) {
+    const link = document.createElement("a");
+    link.href = card.image;
+    link.download = `${card.id}.png`;
+    link.click();
   }
 
-  function updateCard(card) {
-    saveCards(cards.map((c) => (c.id === card.id ? card : c)));
-    setEditing(null);
-  }
-
-  function deleteCard(card) {
-    saveCards(cards.filter((c) => c.id !== card.id));
-    setEditing(null);
+  function resetCards() {
+    localStorage.removeItem("caa-level-1-cards");
+    setCards(initialCards);
+    setHistory([]);
   }
 
   return (
-    <main className="min-h-screen p-4 md:p-8 bg-[#f7faf8]">
-      <header className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-4xl md:text-6xl font-black text-green-950">CAA Neuro</h1>
-          <p className="text-gray-600 text-lg">
-            Prancha CAA personalizada com voz em português brasileiro.
-          </p>
-        </div>
-        <div className="px-4 py-2 rounded-full bg-green-100 text-green-900 font-bold">
-          Demo
+    <main className="min-h-screen bg-[#f7f7f7] p-3 sm:p-5 lg:p-8">
+      <header className="mx-auto max-w-7xl rounded-[28px] border-4 border-black bg-white p-5 shadow-[8px_8px_0_#111]">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.2em] text-pink-600">Nível 1</p>
+            <h1 className="text-4xl font-black text-black md:text-6xl">CAA Neuro</h1>
+            <p className="mt-2 max-w-2xl text-base font-semibold text-gray-700 md:text-lg">
+              Toque em um card para falar. Edite o nome, troque a imagem e personalize a prancha.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <button onClick={() => setEditMode(!editMode)} className="rounded-2xl border-4 border-black bg-pink-400 px-5 py-3 font-black text-black shadow-[4px_4px_0_#111]">
+              {editMode ? "Sair da edição" : "Editar cards"}
+            </button>
+            <button onClick={resetCards} className="rounded-2xl border-4 border-black bg-white px-5 py-3 font-black text-black shadow-[4px_4px_0_#111]">
+              Resetar
+            </button>
+          </div>
         </div>
       </header>
 
-      <section className="sticky top-0 z-10 bg-white border rounded-3xl p-4 mb-6 shadow">
-        <div className="flex gap-2 flex-wrap mb-3 min-h-12">
-          {phrase.map((word, i) => (
-            <span key={i} className="px-4 py-2 rounded-full bg-green-100 font-bold">
+      <section className="sticky top-3 z-20 mx-auto mt-5 max-w-7xl rounded-[28px] border-4 border-black bg-white p-4 shadow-[8px_8px_0_#111]">
+        <div className="mb-3 flex min-h-[48px] flex-wrap gap-2">
+          {phrase.map((word, index) => (
+            <span key={`${word}-${index}`} className="rounded-full border-2 border-black bg-pink-100 px-4 py-2 text-lg font-black">
               {word}
             </span>
           ))}
         </div>
 
-        <div className="flex gap-2 flex-wrap">
-          <button onClick={() => speak(phrase.join(" "))} className="bg-green-700 text-white px-5 py-3 rounded-2xl font-bold">
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => speak(phrase.join(" "))} className="rounded-2xl border-4 border-black bg-green-300 px-5 py-3 font-black shadow-[4px_4px_0_#111]">
             Falar frase
           </button>
-          <button onClick={() => setPhrase([])} className="bg-gray-200 px-5 py-3 rounded-2xl font-bold">
+          <button onClick={() => setPhrase([])} className="rounded-2xl border-4 border-black bg-yellow-200 px-5 py-3 font-black shadow-[4px_4px_0_#111]">
             Limpar
           </button>
-          <button onClick={undo} className="bg-yellow-100 px-5 py-3 rounded-2xl font-bold">
-            ↩ Desfazer
-          </button>
-          <button onClick={addCard} className="bg-black text-white px-5 py-3 rounded-2xl font-bold">
-            + Novo card
+          <button onClick={undo} className="rounded-2xl border-4 border-black bg-blue-200 px-5 py-3 font-black shadow-[4px_4px_0_#111]">
+            Desfazer
           </button>
         </div>
       </section>
 
-      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <section className="mx-auto mt-6 grid max-w-7xl grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {cards.map((card) => (
-          <article key={card.id} className="bg-white border-4 border-green-100 rounded-3xl overflow-hidden shadow">
-            <button onClick={() => clickCard(card)} className="w-full">
-              {card.image ? (
-                <img src={card.image} alt={card.text} className="card-img" />
-              ) : (
-                <div className="h-[150px] flex items-center justify-center bg-green-50 text-5xl">
-                  🗣️
-                </div>
-              )}
-
-              <div className="p-4">
-                <h2 className="text-xl font-black">{card.text}</h2>
-                <p className="text-sm text-gray-500">{card.category}</p>
+          <article key={card.id} className="rounded-[26px] border-4 border-black bg-white p-2 shadow-[6px_6px_0_#111] transition hover:-translate-y-1">
+            <button onClick={() => selectCard(card)} className="block w-full">
+              <div className="aspect-square overflow-hidden rounded-[20px] border-4 border-pink-400 bg-pink-50">
+                <img src={card.image} alt={card.label} className="h-full w-full object-cover" />
+              </div>
+              <div className="px-2 py-3 text-center text-xl font-black text-black md:text-2xl">
+                {card.label}
               </div>
             </button>
 
-            <button onClick={() => setEditing(card)} className="w-full border-t p-3 font-bold text-green-800">
-              Editar
-            </button>
+            {editMode && (
+              <div className="grid grid-cols-1 gap-2">
+                <button onClick={() => setEditing(card)} className="rounded-xl border-2 border-black bg-pink-100 py-2 text-sm font-black">
+                  Editar
+                </button>
+                <button onClick={() => downloadImage(card)} className="rounded-xl border-2 border-black bg-gray-100 py-2 text-sm font-black">
+                  Baixar imagem
+                </button>
+              </div>
+            )}
           </article>
         ))}
       </section>
 
       {editing && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-md w-full">
-            <h2 className="text-2xl font-black mb-4">Editar card</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-lg rounded-[28px] border-4 border-black bg-white p-5 shadow-[8px_8px_0_#111]">
+            <h2 className="mb-4 text-3xl font-black">Editar card</h2>
 
-            <label className="font-bold">Nome do card</label>
-            <input className="w-full border rounded-xl p-3 mb-4" value={editing.text} onChange={(e) => setEditing({ ...editing, text: e.target.value })} />
+            <div className="mb-4 aspect-square overflow-hidden rounded-[24px] border-4 border-pink-400 bg-pink-50">
+              <img src={editing.image} alt={editing.label} className="h-full w-full object-cover" />
+            </div>
 
-            <label className="font-bold">Categoria</label>
-            <input className="w-full border rounded-xl p-3 mb-4" value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} />
-
-            <label className="font-bold">Imagem do card</label>
+            <label className="mb-1 block font-black">Nome abaixo da imagem</label>
             <input
-              type="file"
-              accept="image/*"
-              className="w-full border rounded-xl p-3 mb-4"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                const image = await imageToDataUrl(file);
-                setEditing({ ...editing, image });
-              }}
+              value={editing.label}
+              onChange={(e) => updateEditing({ label: e.target.value })}
+              className="mb-4 w-full rounded-2xl border-4 border-black p-3 text-xl font-black outline-none"
             />
 
-            <div className="flex gap-2 flex-wrap">
-              <button onClick={() => updateCard(editing)} className="bg-green-700 text-white px-5 py-3 rounded-2xl font-bold">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => replaceImage(e.target.files?.[0])}
+            />
+
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => fileRef.current?.click()} className="rounded-2xl border-4 border-black bg-blue-200 px-4 py-3 font-black shadow-[4px_4px_0_#111]">
+                Trocar imagem
+              </button>
+              <button onClick={saveEditing} className="rounded-2xl border-4 border-black bg-green-300 px-4 py-3 font-black shadow-[4px_4px_0_#111]">
                 Salvar
               </button>
-              <button onClick={() => setEditing(null)} className="bg-gray-200 px-5 py-3 rounded-2xl font-bold">
+              <button onClick={() => setEditing(null)} className="rounded-2xl border-4 border-black bg-gray-100 px-4 py-3 font-black shadow-[4px_4px_0_#111]">
                 Voltar
-              </button>
-              <button onClick={() => deleteCard(editing)} className="bg-red-100 text-red-700 px-5 py-3 rounded-2xl font-bold">
-                Apagar
               </button>
             </div>
           </div>
