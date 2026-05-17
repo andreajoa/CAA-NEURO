@@ -1,33 +1,33 @@
 "use client";
 
-import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 
+const defaultCards = [
+  { id: "1", text: "Eu quero", category: "Básico", image: "" },
+  { id: "2", text: "Água", category: "Necessidades", image: "" },
+  { id: "3", text: "Comer", category: "Necessidades", image: "" },
+  { id: "4", text: "Banheiro", category: "Necessidades", image: "" },
+  { id: "5", text: "Estou feliz", category: "Emoções", image: "" },
+  { id: "6", text: "Estou triste", category: "Emoções", image: "" },
+  { id: "7", text: "Ajuda", category: "Básico", image: "" },
+  { id: "8", text: "Obrigado", category: "Básico", image: "" },
+];
+
 export default function Home() {
-  const { isSignedIn, user } = useUser();
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState(defaultCards);
   const [phrase, setPhrase] = useState([]);
   const [editing, setEditing] = useState(null);
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    if (isSignedIn) loadCards();
-  }, [isSignedIn]);
+    const saved = localStorage.getItem("caa-neuro-cards");
+    if (saved) setCards(JSON.parse(saved));
+  }, []);
 
-  async function loadCards() {
-    const res = await fetch("/api/cards");
-    const data = await res.json();
-    setCards(data.cards || []);
-  }
-
-  async function saveCards(next) {
+  function saveCards(next) {
     setHistory((h) => [cards, ...h].slice(0, 20));
     setCards(next);
-    await fetch("/api/cards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cards: next }),
-    });
+    localStorage.setItem("caa-neuro-cards", JSON.stringify(next));
   }
 
   function speak(text) {
@@ -48,23 +48,10 @@ export default function Home() {
     if (!previous) return;
     setCards(previous);
     setHistory((h) => h.slice(1));
-    fetch("/api/cards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cards: previous }),
-    });
+    localStorage.setItem("caa-neuro-cards", JSON.stringify(previous));
   }
 
-  async function uploadImage(file) {
-    const enhanced = await enhanceImage(file);
-    const form = new FormData();
-    form.append("file", enhanced);
-    const res = await fetch("/api/upload", { method: "POST", body: form });
-    const data = await res.json();
-    return data.url;
-  }
-
-  async function enhanceImage(file) {
+  async function imageToDataUrl(file) {
     const img = document.createElement("img");
     img.src = URL.createObjectURL(file);
     await img.decode();
@@ -86,15 +73,11 @@ export default function Home() {
     ctx.filter = "contrast(1.08) saturate(1.08) brightness(1.03)";
     ctx.drawImage(img, sx, sy, size, size, 0, 0, 900, 900);
 
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        resolve(new File([blob], "card-enhanced.jpg", { type: "image/jpeg" }));
-      }, "image/jpeg", 0.92);
-    });
+    return canvas.toDataURL("image/jpeg", 0.9);
   }
 
   function addCard() {
-    const next = [
+    saveCards([
       ...cards,
       {
         id: crypto.randomUUID(),
@@ -102,13 +85,12 @@ export default function Home() {
         category: "Personalizado",
         image: "",
       },
-    ];
-    saveCards(next);
+    ]);
   }
 
-  async function updateCard(card, patch) {
-    const next = cards.map((c) => (c.id === card.id ? { ...c, ...patch } : c));
-    await saveCards(next);
+  function updateCard(card) {
+    saveCards(cards.map((c) => (c.id === card.id ? card : c)));
+    setEditing(null);
   }
 
   function deleteCard(card) {
@@ -116,36 +98,22 @@ export default function Home() {
     setEditing(null);
   }
 
-  if (!isSignedIn) {
-    return (
-      <main className="min-h-screen flex items-center justify-center p-6 bg-green-950 text-white">
-        <section className="max-w-xl text-center">
-          <h1 className="text-5xl font-black mb-4">CAA Neuro</h1>
-          <p className="text-xl mb-8">
-            Prancha de comunicação personalizada com voz natural em português brasileiro.
-          </p>
-          <SignInButton mode="modal">
-            <button className="bg-white text-green-950 px-8 py-4 rounded-2xl font-bold">
-              Entrar com Google ou E-mail
-            </button>
-          </SignInButton>
-        </section>
-      </main>
-    );
-  }
-
   return (
-    <main className="min-h-screen p-4 md:p-8">
+    <main className="min-h-screen p-4 md:p-8 bg-[#f7faf8]">
       <header className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl md:text-5xl font-black">CAA Neuro</h1>
-          <p className="text-gray-600">Olá, {user?.firstName || "profissional"}</p>
+          <h1 className="text-4xl md:text-6xl font-black text-green-950">CAA Neuro</h1>
+          <p className="text-gray-600 text-lg">
+            Prancha CAA personalizada com voz em português brasileiro.
+          </p>
         </div>
-        <UserButton />
+        <div className="px-4 py-2 rounded-full bg-green-100 text-green-900 font-bold">
+          Demo
+        </div>
       </header>
 
       <section className="sticky top-0 z-10 bg-white border rounded-3xl p-4 mb-6 shadow">
-        <div className="flex gap-2 flex-wrap mb-3">
+        <div className="flex gap-2 flex-wrap mb-3 min-h-12">
           {phrase.map((word, i) => (
             <span key={i} className="px-4 py-2 rounded-full bg-green-100 font-bold">
               {word}
@@ -171,10 +139,7 @@ export default function Home() {
 
       <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {cards.map((card) => (
-          <article
-            key={card.id}
-            className="bg-white border-4 border-green-100 rounded-3xl overflow-hidden shadow hover:scale-[1.02] transition"
-          >
+          <article key={card.id} className="bg-white border-4 border-green-100 rounded-3xl overflow-hidden shadow">
             <button onClick={() => clickCard(card)} className="w-full">
               {card.image ? (
                 <img src={card.image} alt={card.text} className="card-img" />
@@ -183,16 +148,14 @@ export default function Home() {
                   🗣️
                 </div>
               )}
+
               <div className="p-4">
                 <h2 className="text-xl font-black">{card.text}</h2>
                 <p className="text-sm text-gray-500">{card.category}</p>
               </div>
             </button>
 
-            <button
-              onClick={() => setEditing(card)}
-              className="w-full border-t p-3 font-bold text-green-800"
-            >
+            <button onClick={() => setEditing(card)} className="w-full border-t p-3 font-bold text-green-800">
               Editar
             </button>
           </article>
@@ -205,18 +168,10 @@ export default function Home() {
             <h2 className="text-2xl font-black mb-4">Editar card</h2>
 
             <label className="font-bold">Nome do card</label>
-            <input
-              className="w-full border rounded-xl p-3 mb-4"
-              value={editing.text}
-              onChange={(e) => setEditing({ ...editing, text: e.target.value })}
-            />
+            <input className="w-full border rounded-xl p-3 mb-4" value={editing.text} onChange={(e) => setEditing({ ...editing, text: e.target.value })} />
 
             <label className="font-bold">Categoria</label>
-            <input
-              className="w-full border rounded-xl p-3 mb-4"
-              value={editing.category}
-              onChange={(e) => setEditing({ ...editing, category: e.target.value })}
-            />
+            <input className="w-full border rounded-xl p-3 mb-4" value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} />
 
             <label className="font-bold">Imagem do card</label>
             <input
@@ -226,19 +181,13 @@ export default function Home() {
               onChange={async (e) => {
                 const file = e.target.files?.[0];
                 if (!file) return;
-                const url = await uploadImage(file);
-                setEditing({ ...editing, image: url });
+                const image = await imageToDataUrl(file);
+                setEditing({ ...editing, image });
               }}
             />
 
             <div className="flex gap-2 flex-wrap">
-              <button
-                onClick={async () => {
-                  await updateCard(editing, editing);
-                  setEditing(null);
-                }}
-                className="bg-green-700 text-white px-5 py-3 rounded-2xl font-bold"
-              >
+              <button onClick={() => updateCard(editing)} className="bg-green-700 text-white px-5 py-3 rounded-2xl font-bold">
                 Salvar
               </button>
               <button onClick={() => setEditing(null)} className="bg-gray-200 px-5 py-3 rounded-2xl font-bold">
