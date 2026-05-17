@@ -55,7 +55,7 @@ function makeEmpty(profile, level) {
     id: `${profile}-${level}-${index + 1}`,
     label,
     image: "",
-    cat: index < 6 ? "core" : index < 12 ? "necessidades" : index < 18 ? "saude" : "social",
+    cat: index < 5 ? "core" : index < 9 ? "necessidades" : index < 12 ? "emocoes" : index < 15 ? "acoes" : index < 17 ? "lugares" : index < 19 ? "saude" : index < 22 ? "social" : "emergencia",
     empty: true,
   }));
 }
