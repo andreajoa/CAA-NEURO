@@ -228,3 +228,80 @@ button.active{background:#062f1b!important;color:#fff!important;border-color:#06
     padding:0;
   }
 }
+
+.caa-mobile-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+display:flex;
+align-items:flex-end;
+justify-content:center;
+z-index:9999;
+}
+
+.caa-mobile-editor{
+background:white;
+width:100%;
+max-width:700px;
+border-radius:24px 24px 0 0;
+padding:24px;
+max-height:85vh;
+overflow:auto;
+animation:slideUp .25s ease;
+}
+
+.caa-mobile-editor h2{
+margin:0 0 20px;
+color:#06391f;
+}
+
+.caa-mobile-preview{
+width:200px;
+margin:auto auto 20px;
+}
+
+.caa-mobile-preview img{
+width:100%;
+aspect-ratio:1;
+object-fit:cover;
+border-radius:14px;
+border:5px solid #e91e78;
+}
+
+.caa-mobile-editor label{
+display:block;
+margin:12px 0 8px;
+font-weight:900;
+}
+
+.caa-mobile-editor input{
+width:100%;
+padding:14px;
+border:1px solid #d4dde5;
+border-radius:12px;
+}
+
+.caa-mobile-editor button{
+width:100%;
+margin-top:12px;
+padding:14px;
+border-radius:12px;
+border:none;
+font-weight:900;
+}
+
+@keyframes slideUp{
+from{
+transform:translateY(100%);
+}
+to{
+transform:translateY(0);
+}
+}
+
+@media(min-width:769px){
+.caa-mobile-overlay{
+display:none;
+}
+}
+

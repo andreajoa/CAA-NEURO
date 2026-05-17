@@ -100,6 +100,7 @@ export default function Home() {
   const [cards, setCards] = useState(defaultBoard("infantil", "emergente"));
   const [phrase, setPhrase] = useState([]);
   const [editing, setEditing] = useState(null);
+const [mobileEditorOpen,setMobileEditorOpen]=useState(false);
   const [editMode, setEditMode] = useState(false);
   const fileRef = useRef(null);
 
@@ -426,6 +427,124 @@ export default function Home() {
           </article>
         ))}
       </section>
-    </main>
+    
+{editing && mobileEditorOpen && (
+<div className="caa-mobile-overlay"
+onClick={()=>setMobileEditorOpen(false)}>
+
+<div
+className="caa-mobile-editor"
+onClick={(e)=>e.stopPropagation()}>
+
+<h2>Editar card</h2>
+
+<div className="caa-mobile-preview">
+
+{cards.find(c=>c.id===editing)?.image
+? <img
+src={cards.find(c=>c.id===editing)?.image}
+/>
+:
+<div className="caa-empty large">+</div>
+}
+
+</div>
+
+<label>Nome</label>
+
+<input
+value={cards.find(c=>c.id===editing)?.label||""}
+onChange={(e)=>{
+
+const next=[...cards];
+
+const i=next.findIndex(
+x=>x.id===editing
+);
+
+if(i>-1){
+
+next[i]={
+...next[i],
+label:e.target.value
+};
+
+setCards(next);
+
+}
+
+}}
+/>
+
+<label>Trocar imagem</label>
+
+<input
+type="file"
+accept="image/*"
+onChange={(e)=>{
+
+const file=e.target.files?.[0];
+
+if(!file)return;
+
+const r=new FileReader();
+
+r.onload=()=>{
+
+const next=[...cards];
+
+const i=next.findIndex(
+x=>x.id===editing
+);
+
+if(i>-1){
+
+next[i]={
+...next[i],
+image:r.result
+};
+
+setCards(next);
+
+}
+
+};
+
+r.readAsDataURL(file);
+
+}}
+/>
+
+<button
+className="green"
+onClick={()=>{
+
+localStorage.setItem(
+storageKey,
+JSON.stringify(cards)
+);
+
+setMobileEditorOpen(false);
+
+}}
+>
+
+Salvar
+
+</button>
+
+<button
+onClick={()=>setMobileEditorOpen(false)}
+>
+
+Cancelar
+
+</button>
+
+</div>
+</div>
+)}
+
+</main>
   );
 }
