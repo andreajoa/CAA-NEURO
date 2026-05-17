@@ -50,12 +50,34 @@ const levelTemplates = {
 };
 
 function makeEmpty(profile, level) {
-  const labels = levelTemplates[level] || ["Sim","Não","Ajuda","Mais","Parar","Dor","Banheiro","Água","Comer","Descansar","Casa","Família","Médico","Telefone","Emergência","Obrigado"];
+  const fallbackLabels = [
+    "Sim","Não","Ajuda","Mais","Parar","Esperar",
+    "Água","Comer","Banheiro","Descansar",
+    "Feliz","Triste","Cansado",
+    "Ir","Voltar","Fazer",
+    "Casa","Escola",
+    "Dor","Remédio",
+    "Oi","Obrigado","Por favor",
+    "Emergência"
+  ];
+
+  const labels = levelTemplates[level] && levelTemplates[level].length
+    ? levelTemplates[level]
+    : fallbackLabels;
+
   return labels.map((label, index) => ({
     id: `${profile}-${level}-${index + 1}`,
     label,
     image: "",
-    cat: index < 5 ? "core" : index < 9 ? "necessidades" : index < 12 ? "emocoes" : index < 15 ? "acoes" : index < 17 ? "lugares" : index < 19 ? "saude" : index < 22 ? "social" : "emergencia",
+    cat:
+      index < 6 ? "core" :
+      index < 10 ? "necessidades" :
+      index < 13 ? "emocoes" :
+      index < 16 ? "acoes" :
+      index < 18 ? "lugares" :
+      index < 20 ? "saude" :
+      index < 23 ? "social" :
+      "emergencia",
     empty: true,
   }));
 }
@@ -161,7 +183,17 @@ export default function Home() {
     setPhrase([]);
   }
 
-  const shownCards = category === "all" ? cards : cards.filter((c) => c.cat === category);
+  let shownCards = category === "all" ? cards : cards.filter((c) => c.cat === category);
+
+  if (!shownCards.length && category !== "all") {
+    shownCards = Array.from({ length: 6 }).map((_, index) => ({
+      id: `${profile}-${level}-${category}-empty-${index + 1}`,
+      label: `${categories.find((c) => c.id === category)?.label || "Card"} ${index + 1}`,
+      image: "",
+      cat: category,
+      empty: true,
+    }));
+  }
 
   return (
     <main className={`caa-page ${editMode ? "caa-editing" : ""}`}>
