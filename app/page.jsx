@@ -3,39 +3,37 @@
 import { useEffect, useRef, useState } from "react";
 
 const initialCards = [
-  { id: "sim", label: "Sim", image: "/cards/level-1/sim.png" },
-  { id: "nao", label: "Não", image: "/cards/level-1/nao.png" },
-  { id: "me-da", label: "Me dá", image: "/cards/level-1/me-da.png" },
-  { id: "nao-quero", label: "Não quero", image: "/cards/level-1/nao-quero.png" },
-  { id: "mais", label: "Mais", image: "/cards/level-1/mais.png" },
-  { id: "acabou", label: "Acabou", image: "/cards/level-1/acabou.png" },
-  { id: "ajuda", label: "Ajuda", image: "/cards/level-1/ajuda.png" },
-  { id: "esperar", label: "Esperar", image: "/cards/level-1/esperar.png" },
-  { id: "agua", label: "Água", image: "/cards/level-1/agua.png" },
-  { id: "comer", label: "Comer", image: "/cards/level-1/comer.png" },
-  { id: "banheiro", label: "Banheiro", image: "/cards/level-1/banheiro.png" },
-  { id: "dor", label: "Dor", image: "/cards/level-1/dor.png" },
-  { id: "dormir", label: "Dormir", image: "/cards/level-1/dormir.png" },
-  { id: "tomar-banho", label: "Tomar banho", image: "/cards/level-1/tomar-banho.png" },
-  { id: "remedio", label: "Remédio", image: "/cards/level-1/remedio.png" },
-  { id: "feliz", label: "Feliz", image: "/cards/level-1/feliz.png" },
-  { id: "triste", label: "Triste", image: "/cards/level-1/triste.png" },
-  { id: "bravo", label: "Bravo", image: "/cards/level-1/bravo.png" },
-  { id: "medo", label: "Medo", image: "/cards/level-1/medo.png" },
-  { id: "cansado", label: "Cansado", image: "/cards/level-1/cansado.png" },
-  { id: "brincar", label: "Brincar", image: "/cards/level-1/brincar.png" },
-  { id: "parar", label: "Parar", image: "/cards/level-1/parar.png" },
-  { id: "sair", label: "Sair", image: "/cards/level-1/sair.png" },
-  { id: "passear", label: "Passear", image: "/cards/level-1/passear.png" },
-  { id: "escola", label: "Escola", image: "/cards/level-1/escola.png" },
+  { id:"sim",label:"Sim",image:"/cards/level-1/sim.png",cat:"basic" },
+  { id:"nao",label:"Não",image:"/cards/level-1/nao.png",cat:"basic" },
+  { id:"me-da",label:"Me dá",image:"/cards/level-1/me-da.png",cat:"basic" },
+  { id:"nao-quero",label:"Não quero",image:"/cards/level-1/nao-quero.png",cat:"basic" },
+  { id:"mais",label:"Mais",image:"/cards/level-1/mais.png",cat:"control" },
+  { id:"acabou",label:"Acabou",image:"/cards/level-1/acabou.png",cat:"control" },
+  { id:"ajuda",label:"Ajuda",image:"/cards/level-1/ajuda.png",cat:"basic" },
+  { id:"agua",label:"Água",image:"/cards/level-1/agua.png",cat:"need" },
+  { id:"comer",label:"Comer",image:"/cards/level-1/comer.png",cat:"need" },
+  { id:"banheiro",label:"Banheiro",image:"/cards/level-1/banheiro.png",cat:"need" },
+  { id:"dormir",label:"Dormir",image:"/cards/level-1/dormir.png",cat:"need" },
+  { id:"dor",label:"Dor",image:"/cards/level-1/dor.png",cat:"need" },
+  { id:"tomar-banho",label:"Tomar banho",image:"/cards/level-1/tomar-banho.png",cat:"action" },
+  { id:"remedio",label:"Remédio",image:"/cards/level-1/remedio.png",cat:"basic" },
+  { id:"feliz",label:"Feliz",image:"/cards/level-1/feliz.png",cat:"emotion" },
+  { id:"triste",label:"Triste",image:"/cards/level-1/triste.png",cat:"emotion" },
+  { id:"bravo",label:"Bravo",image:"/cards/level-1/bravo.png",cat:"emotion" },
+  { id:"medo",label:"Medo",image:"/cards/level-1/medo.png",cat:"emotion" },
+  { id:"cansado",label:"Cansado",image:"/cards/level-1/cansado.png",cat:"action" },
+  { id:"brincar",label:"Brincar",image:"/cards/level-1/brincar.png",cat:"action" },
+  { id:"parar",label:"Parar",image:"/cards/level-1/parar.png",cat:"basic" },
+  { id:"sair",label:"Sair",image:"/cards/level-1/sair.png",cat:"need" },
+  { id:"passear",label:"Passear",image:"/cards/level-1/passear.png",cat:"action" },
+  { id:"escola",label:"Escola",image:"/cards/level-1/escola.png",cat:"place" },
 ];
 
 export default function Home() {
-  const [cards, setCards] = useState(initialCards);
-  const [phrase, setPhrase] = useState([]);
-  const [editMode, setEditMode] = useState(false);
-  const [editing, setEditing] = useState(null);
-  const [history, setHistory] = useState([]);
+  const [cards,setCards] = useState(initialCards);
+  const [phrase,setPhrase] = useState(["Eu","quero","água","por","favor"]);
+  const [editMode,setEditMode] = useState(false);
+  const [editing,setEditing] = useState(null);
   const fileRef = useRef(null);
 
   useEffect(() => {
@@ -43,192 +41,149 @@ export default function Home() {
     if (saved) setCards(JSON.parse(saved));
   }, []);
 
-  function persist(next) {
-    setHistory((old) => [cards, ...old].slice(0, 20));
+  function persist(next){
     setCards(next);
     localStorage.setItem("caa-level-1-cards", JSON.stringify(next));
   }
 
-  function speak(text) {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "pt-BR";
-    utterance.rate = 0.88;
+  function speak(text){
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "pt-BR";
+    u.rate = .88;
     speechSynthesis.cancel();
-    speechSynthesis.speak(utterance);
+    speechSynthesis.speak(u);
   }
 
-  function selectCard(card) {
-    setPhrase((old) => [...old, card.label]);
+  function selectCard(card){
+    setPhrase(p => [...p, card.label]);
+    setEditing(card);
     speak(card.label);
   }
 
-  function undo() {
-    const previous = history[0];
-    if (!previous) return;
-    setCards(previous);
-    localStorage.setItem("caa-level-1-cards", JSON.stringify(previous));
-    setHistory((old) => old.slice(1));
-  }
-
-  function updateEditing(patch) {
-    setEditing((old) => ({ ...old, ...patch }));
-  }
-
-  function saveEditing() {
-    persist(cards.map((card) => (card.id === editing.id ? editing : card)));
+  function saveEditing(){
+    persist(cards.map(c => c.id === editing.id ? editing : c));
     setEditing(null);
   }
 
-  async function replaceImage(file) {
-    if (!file || !editing) return;
-
+  async function replaceImage(file){
+    if(!file || !editing) return;
     const img = document.createElement("img");
     img.src = URL.createObjectURL(file);
     await img.decode();
-
     const canvas = document.createElement("canvas");
     canvas.width = 1200;
     canvas.height = 1200;
     const ctx = canvas.getContext("2d");
-
     ctx.fillStyle = "#ffe8f1";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    const size = Math.min(img.width, img.height);
-    const sx = (img.width - size) / 2;
-    const sy = (img.height - size) / 2;
-
+    ctx.fillRect(0,0,1200,1200);
+    const size = Math.min(img.width,img.height);
+    const sx = (img.width-size)/2;
+    const sy = (img.height-size)/2;
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    ctx.filter = "contrast(1.05) saturate(1.05) brightness(1.02)";
-    ctx.drawImage(img, sx, sy, size, size, 0, 0, canvas.width, canvas.height);
-
-    const dataUrl = canvas.toDataURL("image/png");
-    updateEditing({ image: dataUrl });
+    ctx.drawImage(img,sx,sy,size,size,0,0,1200,1200);
+    setEditing({...editing,image:canvas.toDataURL("image/png")});
   }
 
-  function downloadImage(card) {
-    const link = document.createElement("a");
-    link.href = card.image;
-    link.download = `${card.id}.png`;
-    link.click();
+  function downloadImage(card){
+    const a = document.createElement("a");
+    a.href = card.image;
+    a.download = `${card.id}.png`;
+    a.click();
   }
 
-  function resetCards() {
+  function addCard(){
+    const card = {id:crypto.randomUUID(),label:"Novo card",image:"/cards/level-1/mais.png",cat:"basic"};
+    persist([...cards, card]);
+    setEditing(card);
+    setEditMode(true);
+  }
+
+  function reset(){
     localStorage.removeItem("caa-level-1-cards");
     setCards(initialCards);
-    setHistory([]);
+    setPhrase(["Eu","quero","água","por","favor"]);
   }
 
   return (
-    <main className="page">
-      <header className="header">
-        <div className="">
-          <div>
-            <p className="phraseTitle">Nível 1</p>
-            <h1 className="">CAA Neuro</h1>
-            <p className="">
-              Toque em um card para falar. Edite o nome, troque a imagem e personalize a prancha.
-            </p>
-          </div>
-
-          <div className="topActions">
-            <button onClick={() => setEditMode(!editMode)} className="btn white">
-              {editMode ? "Sair da edição" : "Editar cards"}
-            </button>
-            <button onClick={resetCards} className="btn white">
-              Resetar
-            </button>
-          </div>
+    <main className={`page ${editMode ? "editing" : ""}`}>
+      <section className="top">
+        <div className="brand">
+          <div className="level">Nível 1</div>
+          <h1>CAA Neuro</h1>
+          <div className="subtitle">Prancha de Comunicação Aumentativa e Alternativa</div>
         </div>
-      </header>
-
-      <section className="phraseBox">
-        <div className="phraseWords">
-          {phrase.map((word, index) => (
-            <span key={`${word}-${index}`} className="word">
-              {word}
-            </span>
-          ))}
-        </div>
-
-        <div className="actions">
-          <button onClick={() => speak(phrase.join(" "))} className="btn green">
-            Falar frase
-          </button>
-          <button onClick={() => setPhrase([])} className="btn yellow">
-            Limpar
-          </button>
-          <button onClick={undo} className="btn white">
-            Desfazer
-          </button>
+        <div className="topBtns">
+          <button className="pill green">👤 Modo: Usuário</button>
+          <button className="pill" onClick={() => setEditMode(!editMode)}>✎ {editMode ? "Sair da edição" : "Editar cartões"}</button>
+          <button className="pill pink" onClick={reset}>↻ Resetar prancha</button>
         </div>
       </section>
 
-      <section className="board grid">
-        {cards.map((card) => (
-          <article key={card.id} className="card">
-            <button onClick={() => selectCard(card)} className="">
-              <div className="imageFrame">
-                <img src={card.image} alt={card.label} className="" />
-              </div>
-              <div className="label">
-                {card.label}
-              </div>
-            </button>
+      <section className="mainLayout">
+        <div>
+          <section className="phrase">
+            <div className="phraseTitle">Frase atual</div>
+            <div className="words">
+              {phrase.map((w,i)=><span className="word" key={i}>{w}</span>)}
+              <button className="addWord" onClick={() => setPhrase([...phrase,""])}>+</button>
+            </div>
+            <div className="actions">
+              <button className="btn green" onClick={() => speak(phrase.join(" "))}>🔊 Falar frase</button>
+              <button className="btn white" onClick={() => setPhrase([])}>⌫ Limpar</button>
+              <button className="btn yellow" onClick={() => setPhrase(p => p.slice(0,-1))}>↶ Desfazer</button>
+              <button className="btn dark" onClick={addCard}>+ Novo card</button>
+            </div>
+          </section>
 
-            {editMode && (
-              <div className="cardTools">
-                <button onClick={() => setEditing(card)} className="smallBtn">
-                  Editar
-                </button>
-                <button onClick={() => downloadImage(card)} className="smallBtn">
-                  Baixar imagem
-                </button>
+          <section className="board">
+            <div className="grid">
+              {cards.map(card => (
+                <article className={`card cat-${card.cat} ${editing?.id === card.id ? "active" : ""}`} key={card.id}>
+                  <div className="cardInner">
+                    <button onClick={() => selectCard(card)} style={{background:"transparent",width:"100%",padding:0}}>
+                      <div className="imgBox"><img src={card.image} alt={card.label}/></div>
+                      <div className="label">{card.label}</div>
+                    </button>
+                    <div className="cardTools">
+                      <button className="smallBtn" onClick={() => setEditing(card)}>Editar</button>
+                      <button className="smallBtn" onClick={() => downloadImage(card)}>Baixar imagem</button>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+          <div className="hint">🔊 Toque em qualquer card para ouvir a palavra/frase</div>
+        </div>
+
+        <aside className="side">
+          <button className="close" onClick={() => setEditing(null)}>×</button>
+          <h2>Editar card</h2>
+          {editing ? (
+            <>
+              <div className="preview"><div className="previewInner"><img src={editing.image} alt={editing.label}/></div></div>
+              <div className="field">Nome do card</div>
+              <input className="input" value={editing.label} onChange={e => setEditing({...editing,label:e.target.value})}/>
+              <div className="field">Imagem do card</div>
+              <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={e => replaceImage(e.target.files?.[0])}/>
+              <div className="sideActions">
+                <button className="btn white" onClick={() => fileRef.current?.click()}>✎ Trocar imagem</button>
+                <button className="btn white" onClick={() => downloadImage(editing)}>⇩ Baixar imagem</button>
+                <button className="btn green" onClick={saveEditing}>▣ Salvar alterações</button>
+                <button className="btn white" onClick={() => setEditing(null)}>← Cancelar</button>
               </div>
-            )}
-          </article>
-        ))}
+            </>
+          ) : <p>Selecione um card para editar.</p>}
+        </aside>
       </section>
 
-      {editing && (
-        <div className="modal">
-          <div className="modalBox">
-            <h2 className="">Editar card</h2>
-
-            <div className="modalPreview">
-              <img src={editing.image} alt={editing.label} className="" />
-            </div>
-
-            <label className="">Nome abaixo da imagem</label>
-            <input
-              value={editing.label}
-              onChange={(e) => updateEditing({ label: e.target.value })}
-              className="input"
-            />
-
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              style={{display:"none"}}
-              onChange={(e) => replaceImage(e.target.files?.[0])}
-            />
-
-            <div className="flex flex-wrap gap-2">
-              <button onClick={() => fileRef.current?.click()} className="btn white">
-                Trocar imagem
-              </button>
-              <button onClick={saveEditing} className="btn green">
-                Salvar
-              </button>
-              <button onClick={() => setEditing(null)} className="btn white">
-                Voltar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <section className="infoGrid">
+        <div className="info"><h3>Como usar</h3><p><b>1.</b> Toque nos cards para montar sua frase.<br/><b>2.</b> Clique em Falar frase.<br/><b>3.</b> Edite nomes e imagens.</p></div>
+        <div className="info"><h3>Cores por categoria</h3><p><span className="dot" style={{background:"#f04494"}}/>Básico / Respostas</p><p><span className="dot" style={{background:"#ff9f2d"}}/>Necessidades</p><p><span className="dot" style={{background:"#4fc667"}}/>Ações</p><p><span className="dot" style={{background:"#4b95ff"}}/>Emoções</p></div>
+        <div className="info"><h3>Funcionalidades</h3><ul><li>Fala ao tocar no card</li><li>Monta frases</li><li>Troca imagem</li><li>Baixa imagem</li><li>Salva no navegador</li></ul></div>
+        <div className="info"><h3>Dica de uso</h3><p>Personalize a prancha com palavras e imagens que façam sentido para o usuário.</p></div>
+      </section>
     </main>
   );
 }
