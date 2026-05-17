@@ -72,3 +72,159 @@ button.active{background:#062f1b!important;color:#fff!important;border-color:#06
   .caa-editing .caa-card{height:256px}
   .caa-buttons button{width:100%}
 }
+
+.caa-clinic-panel{
+  display:grid;
+  grid-template-columns:1fr 1.2fr;
+  gap:16px;
+  background:white;
+  border:1px solid #d8e0e6;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:18px;
+}
+
+.caa-clinic-panel h2,
+.caa-library h2,
+.caa-sessions h2{
+  margin:0 0 12px;
+  color:#06391f;
+  font-size:20px;
+}
+
+.caa-patient-row{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.caa-clinic-panel input,
+.caa-clinic-panel select,
+.caa-clinic-panel textarea{
+  width:100%;
+  border:1px solid #ccd6dd;
+  border-radius:10px;
+  padding:12px;
+  font-weight:700;
+  font-size:15px;
+}
+
+.caa-clinic-panel textarea{
+  min-height:92px;
+  resize:vertical;
+}
+
+.caa-clinic-panel button,
+.caa-clinic-actions button{
+  border:1px solid #d4dde5;
+  background:#fff;
+  border-radius:10px;
+  padding:12px 14px;
+  font-weight:900;
+  box-shadow:0 3px 10px #0001;
+}
+
+.caa-clinic-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.caa-library{
+  background:white;
+  border:1px solid #d8e0e6;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:18px;
+}
+
+.caa-library-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:10px;
+}
+
+.caa-library-grid button{
+  border:1px solid #d8e0e6;
+  border-radius:12px;
+  padding:12px;
+  background:#f8fafc;
+  text-align:left;
+}
+
+.caa-library-grid strong{
+  display:block;
+  font-size:16px;
+}
+
+.caa-library-grid small{
+  color:#60707a;
+}
+
+.caa-sessions{
+  background:white;
+  border:1px solid #d8e0e6;
+  border-radius:16px;
+  padding:18px;
+  margin-top:18px;
+}
+
+.caa-sessions article{
+  border-top:1px solid #e5ebef;
+  padding:12px 0;
+}
+
+.caa-sessions article span{
+  display:block;
+  color:#687680;
+  font-size:13px;
+  margin-top:4px;
+}
+
+@media(max-width:900px){
+  .caa-clinic-panel{
+    grid-template-columns:1fr;
+  }
+
+  .caa-patient-row{
+    display:block;
+  }
+
+  .caa-patient-row button{
+    margin-top:10px;
+    width:100%;
+  }
+}
+
+@media print{
+  .caa-clinic-panel,
+  .caa-tabs,
+  .caa-levels,
+  .caa-category-row,
+  .caa-editor,
+  .caa-sessions,
+  .caa-library,
+  .caa-top-actions,
+  .caa-buttons{
+    display:none!important;
+  }
+
+  body{
+    background:white;
+  }
+
+  .caa-page{
+    max-width:none;
+    padding:0;
+  }
+
+  .caa-layout{
+    display:block;
+  }
+
+  .caa-board{
+    border:none;
+    padding:0;
+  }
+}

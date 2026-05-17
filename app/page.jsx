@@ -91,20 +91,44 @@ export default function Home() {
   const [profile, setProfile] = useState("infantil");
   const [level, setLevel] = useState("emergente");
   const [category, setCategory] = useState("all");
+  const [patientName, setPatientName] = useState("");
+  const [patients, setPatients] = useState([]);
+  const [activePatientId, setActivePatientId] = useState("");
+  const [sessionNote, setSessionNote] = useState("");
+  const [sessions, setSessions] = useState([]);
+  const [showLibrary, setShowLibrary] = useState(false);
   const [cards, setCards] = useState(defaultBoard("infantil", "emergente"));
   const [phrase, setPhrase] = useState([]);
   const [editing, setEditing] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const fileRef = useRef(null);
 
-  const storageKey = `caa-${profile}-${level}`;
+  const patientPrefix = activePatientId || "sem-paciente";
+  const storageKey = `caa-${patientPrefix}-${profile}-${level}`;
+  const libraryCards = [
+    { label: "Sim", cat: "core" }, { label: "Não", cat: "core" }, { label: "Quero", cat: "core" },
+    { label: "Não quero", cat: "core" }, { label: "Ajuda", cat: "core" }, { label: "Mais", cat: "core" },
+    { label: "Água", cat: "necessidades" }, { label: "Comer", cat: "necessidades" }, { label: "Banheiro", cat: "necessidades" },
+    { label: "Feliz", cat: "emocoes" }, { label: "Triste", cat: "emocoes" }, { label: "Medo", cat: "emocoes" },
+    { label: "Dor", cat: "saude" }, { label: "Remédio", cat: "saude" }, { label: "Médico", cat: "saude" },
+    { label: "Oi", cat: "social" }, { label: "Obrigado", cat: "social" }, { label: "Por favor", cat: "social" },
+    { label: "Emergência", cat: "emergencia" }, { label: "Socorro", cat: "emergencia" }, { label: "Ligar família", cat: "emergencia" }
+  ];
+
+  useEffect(() => {
+    const savedPatients = localStorage.getItem("caa-patients");
+    const savedSessions = localStorage.getItem("caa-sessions");
+    if (savedPatients) setPatients(JSON.parse(savedPatients));
+    if (savedSessions) setSessions(JSON.parse(savedSessions));
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem(storageKey);
     setCards(saved ? JSON.parse(saved) : defaultBoard(profile, level));
     setEditing(null);
     setPhrase([]);
-  }, [profile, level]);
+    setCategory("all");
+  }, [profile, level, activePatientId]);
 
   function persist(next) {
     setCards(next);
@@ -183,6 +207,54 @@ export default function Home() {
     setPhrase([]);
   }
 
+  function createPatient() {
+    const name = patientName.trim();
+    if (!name) return;
+    const patient = {
+      id: crypto.randomUUID(),
+      name,
+      createdAt: new Date().toISOString(),
+    };
+    const next = [...patients, patient];
+    setPatients(next);
+    setActivePatientId(patient.id);
+    setPatientName("");
+    localStorage.setItem("caa-patients", JSON.stringify(next));
+  }
+
+  function saveSession() {
+    const activePatient = patients.find((p) => p.id === activePatientId);
+    const session = {
+      id: crypto.randomUUID(),
+      patientId: activePatientId || "",
+      patientName: activePatient?.name || "Sem paciente",
+      profile,
+      level,
+      phrase: phrase.join(" "),
+      note: sessionNote,
+      createdAt: new Date().toLocaleString("pt-BR"),
+    };
+    const next = [session, ...sessions].slice(0, 50);
+    setSessions(next);
+    setSessionNote("");
+    localStorage.setItem("caa-sessions", JSON.stringify(next));
+  }
+
+  function addLibraryCard(item) {
+    const card = {
+      id: crypto.randomUUID(),
+      label: item.label,
+      image: "",
+      cat: item.cat,
+      empty: true,
+    };
+    persist([...cards, card]);
+  }
+
+  function printBoard() {
+    window.print();
+  }
+
   let shownCards = category === "all" ? cards : cards.filter((c) => c.cat === category);
 
   if (!shownCards.length && category !== "all") {
@@ -197,6 +269,44 @@ export default function Home() {
 
   return (
     <main className={`caa-page ${editMode ? "caa-editing" : ""}`}>
+      <section className="caa-clinic-panel">
+        <div>
+          <h2>Paciente / Usuário</h2>
+          <div className="caa-patient-row">
+            <input placeholder="Nome do paciente/usuário" value={patientName} onChange={(e) => setPatientName(e.target.value)} />
+            <button onClick={createPatient}>Adicionar paciente</button>
+          </div>
+          <select value={activePatientId} onChange={(e) => setActivePatientId(e.target.value)}>
+            <option value="">Sem paciente selecionado</option>
+            {patients.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+        </div>
+
+        <div>
+          <h2>Sessão</h2>
+          <textarea placeholder="Observações do atendimento, objetivos e evolução..." value={sessionNote} onChange={(e) => setSessionNote(e.target.value)} />
+          <div className="caa-clinic-actions">
+            <button onClick={saveSession}>Salvar sessão</button>
+            <button onClick={() => setShowLibrary(!showLibrary)}>Biblioteca</button>
+            <button onClick={printBoard}>Imprimir / PDF</button>
+          </div>
+        </div>
+      </section>
+
+      {showLibrary && (
+        <section className="caa-library">
+          <h2>Biblioteca rápida</h2>
+          <div className="caa-library-grid">
+            {libraryCards.map((item, index) => (
+              <button key={index} onClick={() => addLibraryCard(item)}>
+                <strong>{item.label}</strong>
+                <small>{categories.find((c) => c.id === item.cat)?.label}</small>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
       <header className="caa-header">
         <div>
           <div className="caa-kicker">CAA Neuro</div>
@@ -302,6 +412,19 @@ export default function Home() {
             <p>Selecione um card para editar nome, categoria e imagem.</p>
           )}
         </aside>
+      </section>
+      <section className="caa-sessions">
+        <h2>Histórico de sessões</h2>
+        {!sessions.length && <p>Nenhuma sessão salva ainda.</p>}
+        {sessions.map((session) => (
+          <article key={session.id}>
+            <strong>{session.patientName}</strong>
+            <span>{session.createdAt}</span>
+            <p><b>Perfil:</b> {session.profile} · <b>Nível:</b> {session.level}</p>
+            {session.phrase && <p><b>Frase:</b> {session.phrase}</p>}
+            {session.note && <p><b>Observações:</b> {session.note}</p>}
+          </article>
+        ))}
       </section>
     </main>
   );
