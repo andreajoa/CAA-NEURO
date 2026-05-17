@@ -26,9 +26,9 @@ button.active{background:#062f1b!important;color:#fff!important;border-color:#06
 .caa-buttons button.dark{background:#171d26;color:white}
 
 .caa-board{background:#fff;border:2px solid #1686ff;border-radius:16px;padding:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px}
-.caa-card{height:214px;position:relative;border-radius:18px;background:#fff;box-shadow:0 5px 16px #0002}
-
-.caa-card-inner{height:100%;padding:8px;border-radius:18px;background:white;position:relative;z-index:1;display:flex;flex-direction:column}
+.caa-card{height:214px;position:relative;border-radius:18px;background:#fff;border:2px solid #e4eaf0;box-shadow:0 5px 16px #0002;transition:.18s ease}
+.caa-card:hover,.caa-card.active{outline:3px solid var(--cat,#e91e78);outline-offset:2px;transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.12)}
+.caa-card-inner{height:100%;padding:8px;border-radius:16px;background:white;position:relative;display:flex;flex-direction:column}
 .caa-card-button{border:0;background:transparent;padding:0;width:100%;flex:1;display:flex;flex-direction:column}
 .caa-image-frame{aspect-ratio:1/1;border:5px solid var(--cat,#e91e78);border-radius:14px;overflow:hidden;background:#f8fafc}
 .caa-image-frame img{width:100%;height:100%;object-fit:cover;display:block}
@@ -56,24 +56,19 @@ button.active{background:#062f1b!important;color:#fff!important;border-color:#06
 .cat-social{--cat:#15b8a6}
 .cat-emergencia{--cat:#ff3b30}
 
+@media(max-width:1100px){
+  .caa-layout{grid-template-columns:1fr}
+  .caa-editor{position:static}
+  .caa-header{display:block}
+  .caa-top-actions{margin-top:14px}
+  .caa-board{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}
 }
 
-@media(max-width:1100px){.caa-layout{grid-template-columns:1fr}.caa-editor{position:static}.caa-header{display:block}.caa-top-actions{margin-top:14px}.caa-board{grid-template-columns:repeat(auto-fill,minmax(135px,1fr))}}
-@media(max-width:700px){.caa-page{padding:12px}.caa-header h1{font-size:32px}.caa-board{grid-template-columns:repeat(2,1fr);gap:12px}.caa-card{height:220px}.caa-editing .caa-card{height:256px}.caa-buttons button{width:100%}}
-
-.caa-card:hover,
-.caa-card.active{
-  outline:3px solid var(--cat,#e91e78);
-  outline-offset:2px;
-  box-shadow:0 8px 22px rgba(0,0,0,.18);
+@media(max-width:700px){
+  .caa-page{padding:12px}
+  .caa-header h1{font-size:32px}
+  .caa-board{grid-template-columns:repeat(2,1fr);gap:12px}
+  .caa-card{height:220px}
+  .caa-editing .caa-card{height:256px}
+  .caa-buttons button{width:100%}
 }
-
-.caa-card:hover,
-.caa-card.active{
-outline:3px solid var(--cat,#e91e78);
-outline-offset:2px;
-transform:translateY(-2px);
-transition:.18s ease;
-box-shadow:0 8px 18px rgba(0,0,0,.12);
-}
-
