@@ -47,19 +47,25 @@ button{font-family:inherit;cursor:pointer}
 .caa-card::before{
   content:"";
   position:absolute;
-  inset:-4px;
-  border-radius:22px;
-  background:conic-gradient(from 0deg,#ff2f92,#ffffff,#23d7ff,#8b5cff,#ffcc30,#ff2f92);
+  inset:0;
+  border-radius:18px;
+  padding:2px;
+  background:conic-gradient(from 0deg, transparent 0deg, transparent 255deg, rgba(255,255,255,.95) 285deg, #ff4fa3 310deg, transparent 340deg, transparent 360deg);
   opacity:0;
-  transition:opacity .18s ease;
-  z-index:0;
+  z-index:3;
+  pointer-events:none;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
 }
 
 .caa-card:hover::before,
 .caa-card.active::before{
   opacity:1;
-  animation:caa-spin 1.2s linear infinite;
-  filter:drop-shadow(0 0 10px #ff48a6) drop-shadow(0 0 16px #23d7ff);
+  animation:caa-spin 1.8s linear infinite;
+  filter:drop-shadow(0 0 4px rgba(255,79,163,.55));
 }
 
 .caa-card-inner{
