@@ -11,11 +11,18 @@ const initialCards = [
 ].map(([id,label,file,cat])=>({id,label,image:`/cards/level-1/${file}`,cat}));
 
 export default function Home(){
-  const emptyLevel2Cards = Array.from({ length: 24 }).map((_, index) => ({
+  const level2Labels = [
+  "Eu", "Você", "Quero", "Não quero", "Preciso", "Sinto",
+  "Estou", "Tenho", "Gosto", "Não gosto", "Ir", "Voltar",
+  "Casa", "Escola", "Banheiro", "Comer", "Beber", "Dor",
+  "Ajuda", "Mais", "Parar", "Esperar", "Agora", "Depois"
+];
+
+const emptyLevel2Cards = level2Labels.map((label, index) => ({
   id: `nivel-2-card-${index + 1}`,
-  label: `Card ${index + 1}`,
+  label,
   image: "",
-  cat: "basic",
+  cat: index < 10 ? "basic" : index < 18 ? "need" : "action",
   empty: true
 }));
 
