@@ -100,6 +100,9 @@ export default function Home() {
   const [cards, setCards] = useState(defaultBoard("infantil", "emergente"));
   const [phrase, setPhrase] = useState([]);
   const [editing, setEditing] = useState(null);
+  const [imagePickerOpen, setImagePickerOpen] = useState(false);
+  const [imageLibrary, setImageLibrary] = useState({ platformImages: [], userImages: [] });
+  const [imageLibraryLoading, setImageLibraryLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const fileRef = useRef(null);
 
@@ -255,6 +258,82 @@ export default function Home() {
     window.print();
   }
 
+  async function openImagePicker() {
+    setImagePickerOpen(true);
+    setImageLibraryLoading(true);
+
+    try {
+      const res = await fetch("/api/images/library");
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data?.error || "Erro ao carregar biblioteca");
+
+      setImageLibrary({
+        platformImages: data.platformImages || [],
+        userImages: data.userImages || [],
+      });
+    } catch (error) {
+      alert("Não foi possível carregar o banco de imagens.");
+      console.error(error);
+    } finally {
+      setImageLibraryLoading(false);
+    }
+  }
+
+  function chooseImageFromLibrary(image) {
+    if (!editing) return;
+
+    setEditing({
+      ...editing,
+      image: image.url,
+      empty: false,
+    });
+
+    setImagePickerOpen(false);
+  }
+
+  async function uploadImageToLibrary(file) {
+    if (!file || !editing) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("label", editing.label || "Imagem do card");
+
+    setImageLibraryLoading(true);
+
+    try {
+      const res = await fetch("/api/images/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data?.error || "Erro no upload");
+
+      setEditing({
+        ...editing,
+        image: data.url,
+        empty: false,
+      });
+
+      const libraryRes = await fetch("/api/images/library");
+      const libraryData = await libraryRes.json();
+
+      setImageLibrary({
+        platformImages: libraryData.platformImages || [],
+        userImages: libraryData.userImages || [],
+      });
+
+      setImagePickerOpen(false);
+    } catch (error) {
+      alert("Não foi possível enviar a imagem.");
+      console.error(error);
+    } finally {
+      setImageLibraryLoading(false);
+    }
+  }
+
   let shownCards = category === "all" ? cards : cards.filter((c) => c.cat === category);
 
   if (!shownCards.length && category !== "all") {
@@ -401,9 +480,9 @@ export default function Home() {
                 {categories.map((cat) => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
               </select>
 
-              <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => replaceImage(e.target.files?.[0])} />
+              <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => uploadImageToLibrary(e.target.files?.[0])} />
 
-              <button onClick={() => fileRef.current?.click()}>Trocar imagem</button>
+              <button onClick={openImagePicker}>Trocar imagem</button>
               <button onClick={() => downloadImage(editing)}>Baixar imagem</button>
               <button className="green" onClick={saveEditing}>Salvar alterações</button>
               <button onClick={() => setEditing(null)}>Cancelar</button>
@@ -426,6 +505,53 @@ export default function Home() {
           </article>
         ))}
       </section>
+    
+      {imagePickerOpen && (
+        <div className="imagePickerOverlay" onClick={() => setImagePickerOpen(false)}>
+          <div className="imagePickerModal" onClick={(e) => e.stopPropagation()}>
+            <div className="imagePickerHeader">
+              <div>
+                <h2>Banco de imagens</h2>
+                <p>Escolha uma imagem já existente ou envie uma nova do celular/computador.</p>
+              </div>
+              <button onClick={() => setImagePickerOpen(false)}>×</button>
+            </div>
+
+            <div className="imagePickerUpload">
+              <button onClick={() => fileRef.current?.click()}>
+                Enviar imagem do dispositivo
+              </button>
+            </div>
+
+            {imageLibraryLoading && <p className="imagePickerLoading">Carregando imagens...</p>}
+
+            {!!imageLibrary.userImages.length && (
+              <>
+                <h3>Suas imagens salvas</h3>
+                <div className="imagePickerGrid">
+                  {imageLibrary.userImages.map((image) => (
+                    <button key={image.id} onClick={() => chooseImageFromLibrary(image)}>
+                      <img src={image.url} alt={image.label} />
+                      <span>{image.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <h3>Banco de imagens da plataforma</h3>
+            <div className="imagePickerGrid">
+              {imageLibrary.platformImages.map((image) => (
+                <button key={image.id} onClick={() => chooseImageFromLibrary(image)}>
+                  <img src={image.url} alt={image.label} />
+                  <span>{image.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
     </main>
   );
 }

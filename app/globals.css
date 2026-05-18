@@ -513,3 +513,134 @@ display:none;
     display:block;
   }
 }
+
+.imagePickerOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.imagePickerModal{
+  width:100%;
+  max-width:980px;
+  max-height:88vh;
+  overflow:auto;
+  background:white;
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 30px 90px rgba(0,0,0,.25);
+}
+
+.imagePickerHeader{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
+  margin-bottom:18px;
+}
+
+.imagePickerHeader h2{
+  margin:0;
+  color:#06391f;
+  font-size:30px;
+}
+
+.imagePickerHeader p{
+  margin:8px 0 0;
+  color:#51606a;
+}
+
+.imagePickerHeader button{
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  background:#f1f5f4;
+  font-size:28px;
+  font-weight:900;
+}
+
+.imagePickerUpload{
+  margin-bottom:20px;
+}
+
+.imagePickerUpload button{
+  width:100%;
+  border:2px dashed #00885f;
+  background:#f0fdf7;
+  color:#006b4b;
+  border-radius:16px;
+  padding:18px;
+  font-weight:900;
+  font-size:16px;
+}
+
+.imagePickerLoading{
+  padding:14px;
+  background:#f8fafc;
+  border-radius:12px;
+  font-weight:800;
+}
+
+.imagePickerModal h3{
+  color:#06391f;
+  margin:22px 0 12px;
+}
+
+.imagePickerGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+  gap:14px;
+}
+
+.imagePickerGrid button{
+  border:1px solid #d8e2e7;
+  background:white;
+  border-radius:16px;
+  padding:8px;
+  box-shadow:0 4px 14px rgba(0,0,0,.06);
+  transition:.15s ease;
+}
+
+.imagePickerGrid button:hover{
+  transform:translateY(-2px);
+  border-color:#00885f;
+}
+
+.imagePickerGrid img{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  border-radius:12px;
+  display:block;
+}
+
+.imagePickerGrid span{
+  display:block;
+  padding:8px 4px 2px;
+  text-align:center;
+  font-weight:900;
+  color:#071b2c;
+  font-size:14px;
+}
+
+@media(max-width:700px){
+  .imagePickerOverlay{
+    align-items:flex-end;
+    padding:0;
+  }
+
+  .imagePickerModal{
+    border-radius:24px 24px 0 0;
+    max-height:86vh;
+  }
+
+  .imagePickerGrid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
