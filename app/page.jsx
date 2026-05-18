@@ -1,5 +1,6 @@
-import { Brain, Users, Heart, BarChart3, Grid2X2, BookOpen, CalendarCheck, Pencil, FileText, GraduationCap, MessageCircle, Hand, ShieldCheck } from "lucide-react";
+import { Brain, Users, Heart, BarChart3, Grid2X2, BookOpen, CalendarCheck, Pencil, FileText, GraduationCap, MessageCircle, Hand } from "lucide-react";
 import Link from "next/link";
+import TestimonialsSection from "./components/TestimonialsSection";
 
 export default function LandingPage() {
   return (
@@ -9,7 +10,6 @@ export default function LandingPage() {
           <Brain size={42} />
           <div><strong>CAA</strong><span>NEURO</span></div>
         </div>
-
         <nav>
           <Link href="/recursos">Recursos</Link>
           <Link href="/para-quem">Para quem é</Link>
@@ -19,7 +19,6 @@ export default function LandingPage() {
           <Link href="/duvidas">Dúvidas</Link>
           <Link href="/suporte">Suporte</Link>
         </nav>
-
         <div className="navActions">
           <Link href="/sign-in" className="loginBtn">Entrar</Link>
           <Link href="/sign-up" className="primaryBtn">Começar gratuitamente</Link>
@@ -52,9 +51,9 @@ export default function LandingPage() {
         </div>
 
         <div className="heroVisual">
-          <div className="heroImage"></div>
+          <div className="heroImage" style={{ backgroundPosition:"55% center" }}></div>
           <div className="quoteCard">
-            <strong>“</strong>
+            <strong>"</strong>
             <p>Não é apenas sobre falar. É sobre ser <span>compreendido.</span></p>
             <Heart />
           </div>
@@ -75,7 +74,6 @@ export default function LandingPage() {
           <h2>Tudo que você precisa <span>em um só lugar</span></h2>
           <p>Recursos completos, simples de usar e feitos para transformar atendimentos e vidas.</p>
         </div>
-
         {[
           ["Pacientes", "Gerencie seus pacientes e acompanhe cada etapa.", Users],
           ["Sessões", "Registre sessões, anotações e evolução.", CalendarCheck],
@@ -91,6 +89,8 @@ export default function LandingPage() {
           </div>
         ))}
       </section>
+
+      <TestimonialsSection />
 
       <section className="bottomCta">
         <div className="brainBadge"><Brain /></div>

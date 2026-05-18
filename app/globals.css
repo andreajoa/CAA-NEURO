@@ -741,3 +741,51 @@ display:none;
   align-items:center;
   justify-content:center;
 }
+
+.heroImage{background-position:center center !important;background-size:cover !important}
+.heroVisual{overflow:hidden}
+
+.testimonialsSection{padding:72px 48px;background:#f9fafb}
+.testimonialsSection h2{font-size:36px;font-weight:800;color:#071b2c;text-align:center;margin:0 0 12px}
+.testimonialsSection .sub{text-align:center;color:#42515e;font-size:17px;margin:0 0 48px}
+.testimonialsGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;max-width:1100px;margin:0 auto}
+.testimonialCard{background:white;border-radius:18px;border:1px solid #e5e7eb;padding:28px;display:flex;flex-direction:column;gap:14px}
+.testimonialCard.destaque{border:2px solid #00885f}
+.testimonialQuote{font-size:36px;color:#d1fae5;line-height:1}
+.testimonialText{color:#374151;font-size:15px;line-height:1.75;flex:1}
+.testimonialAuthor{display:flex;align-items:center;gap:12px;border-top:1px solid #f3f4f6;padding-top:16px}
+.testimonialAvatar{width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.testimonialInitials{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:15px;flex-shrink:0}
+.testimonialName{font-weight:800;font-size:14px;color:#071b2c}
+.testimonialRole{font-size:13px;color:#6b7280}
+.testimonialsCtaRow{text-align:center;margin-top:40px}
+.testimonialsCtaRow a{display:inline-block;border:2px solid #00885f;color:#00885f;padding:12px 32px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none}
+
+@media(max-width:768px){
+.testimonialsSection{padding:48px 20px}
+.testimonialsSection h2{font-size:26px}
+}
+
+.heroImage{background-position:center center !important;background-size:cover !important}
+.heroVisual{overflow:hidden}
+
+.testimonialsSection{padding:72px 48px;background:#f9fafb}
+.testimonialsSection h2{font-size:36px;font-weight:800;color:#071b2c;text-align:center;margin:0 0 12px}
+.testimonialsSection .sub{text-align:center;color:#42515e;font-size:17px;margin:0 0 48px}
+.testimonialsGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;max-width:1100px;margin:0 auto}
+.testimonialCard{background:white;border-radius:18px;border:1px solid #e5e7eb;padding:28px;display:flex;flex-direction:column;gap:14px}
+.testimonialCard.destaque{border:2px solid #00885f}
+.testimonialQuote{font-size:36px;color:#d1fae5;line-height:1}
+.testimonialText{color:#374151;font-size:15px;line-height:1.75;flex:1}
+.testimonialAuthor{display:flex;align-items:center;gap:12px;border-top:1px solid #f3f4f6;padding-top:16px}
+.testimonialAvatar{width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.testimonialInitials{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:15px;flex-shrink:0}
+.testimonialName{font-weight:800;font-size:14px;color:#071b2c}
+.testimonialRole{font-size:13px;color:#6b7280}
+.testimonialsCtaRow{text-align:center;margin-top:40px}
+.testimonialsCtaRow a{display:inline-block;border:2px solid #00885f;color:#00885f;padding:12px 32px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none}
+
+@media(max-width:768px){
+.testimonialsSection{padding:48px 20px}
+.testimonialsSection h2{font-size:26px}
+}
