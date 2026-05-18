@@ -1,17 +1,17 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 export const metadata = {
   title: "CAA Neuro",
-  description: "Prancha CAA personalizada com voz em português brasileiro",
-  icons: {
-    icon: "/favicon.svg",
-  },
+  description: "Comunicação que transforma vidas.",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR">
-      <body>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="pt-BR">
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }

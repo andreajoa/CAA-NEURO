@@ -336,3 +336,79 @@ display:none;
   border-radius:20px;
   letter-spacing:1px;
 }
+
+.landingPage{min-height:100vh;background:#f8fbf9;color:#071b2c;font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+.landingNav{height:92px;display:flex;align-items:center;justify-content:space-between;padding:0 64px;position:relative;z-index:5}
+.brand{display:flex;align-items:center;gap:12px;color:#00855c}
+.brand strong{display:block;font-size:28px;letter-spacing:1px;color:#071b2c;line-height:.8}
+.brand span{display:block;color:#00855c;font-size:20px;letter-spacing:2px}
+.landingNav nav{display:flex;gap:38px;font-weight:800}
+.landingNav nav a{color:#071b2c;text-decoration:none}
+.navActions{display:flex;gap:18px;align-items:center}
+.loginBtn,.primaryBtn,.primaryBig,.secondaryBig{border-radius:12px;text-decoration:none;font-weight:900}
+.loginBtn{border:1px solid #cbd7de;color:#071b2c;padding:16px 30px;background:white}
+.primaryBtn{background:#00885f;color:white;padding:17px 32px;box-shadow:0 10px 22px rgba(0,136,95,.18)}
+
+.heroLanding{display:grid;grid-template-columns:1fr 1.15fr;min-height:620px;padding:40px 64px 0;position:relative}
+.heroText{max-width:720px;padding-top:40px;z-index:2}
+.badge{display:inline-flex;border:1px solid #9ed6c1;background:#eefaf4;color:#007b54;padding:8px 18px;border-radius:999px;text-transform:uppercase;font-size:13px;font-weight:900;margin-bottom:22px}
+.heroText h1{font-size:64px;line-height:1.05;margin:0;color:#071b2c;letter-spacing:-2px}
+.heroText h1 span{color:#00885f}
+.heroText p{font-size:18px;line-height:1.7;max-width:620px;color:#233444}
+.painGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:30px 0}
+.painGrid div{border-right:1px solid #d8e3e7;padding-right:14px}
+.painGrid svg{color:#00885f;margin-bottom:8px}
+.painGrid b{display:block;font-size:14px}
+.painGrid small{display:block;color:#42515e;line-height:1.5;margin-top:6px}
+.heroActions{display:flex;gap:24px;margin:24px 0}
+.primaryBig{background:#00885f;color:white;padding:20px 36px;box-shadow:0 16px 28px rgba(0,136,95,.22)}
+.secondaryBig{background:white;color:#071b2c;border:1px solid #bdd0d8;padding:20px 40px}
+.trustRow{display:flex;gap:34px;color:#0a6b50;font-weight:800}
+.heroVisual{position:relative;min-height:620px}
+.heroImage{position:absolute;inset:-80px -80px 0 0;background:linear-gradient(90deg,rgba(248,251,249,.05),rgba(248,251,249,.18)),url('/hero-caa.jpg');background-size:cover;background-position:center;border-bottom-left-radius:240px}
+.heroImage:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#f8fbf9 0%,rgba(248,251,249,.68) 25%,rgba(0,80,60,.05) 65%,rgba(0,70,55,.28) 100%)}
+.quoteCard{position:absolute;right:10px;top:230px;width:310px;background:rgba(0,55,48,.76);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.35);border-radius:24px;color:white;padding:30px;box-shadow:0 30px 70px rgba(0,0,0,.18)}
+.quoteCard strong{font-size:72px;color:#50e1a2;line-height:.6}
+.quoteCard p{font-size:27px;line-height:1.25;margin:0}
+.quoteCard span{color:#5ee0a4}
+
+.professionalsStrip{margin:-10px auto 40px;width:88%;background:#05283a;color:white;border-radius:18px;padding:24px 38px;display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:22px;align-items:center;box-shadow:0 20px 55px rgba(3,40,56,.2)}
+.professionalsStrip div{display:flex;align-items:center;gap:14px;border-right:1px solid rgba(255,255,255,.18);min-height:44px}
+.professionalsStrip div:last-child{border-right:0}
+.professionalsStrip svg{color:#4fe2a6}
+
+.featuresLanding{padding:40px 64px 30px;display:grid;grid-template-columns:1.8fr repeat(6,1fr);gap:20px;align-items:stretch}
+.featuresIntro h2{font-size:34px;line-height:1.15;margin:0 0 18px}
+.featuresIntro span{display:block;color:#00885f}
+.featuresIntro p{font-size:17px;color:#405047;line-height:1.6}
+.featureCard{background:white;border:1px solid #e2eaee;border-radius:18px;padding:26px 22px;text-align:center;box-shadow:0 18px 45px rgba(0,0,0,.04)}
+.featureCard svg{color:#00885f;width:42px;height:42px;margin-bottom:14px}
+.featureCard h3{font-size:17px;margin:0 0 12px}
+.featureCard p{font-size:14px;line-height:1.55;color:#405047}
+
+.bottomCta{width:88%;margin:10px auto 46px;background:#052d3b;color:white;border-radius:18px;padding:30px;display:grid;grid-template-columns:120px repeat(5,1fr) 1.8fr;gap:24px;align-items:center}
+.bottomCta>div{border-right:1px solid rgba(255,255,255,.14);min-height:70px;display:flex;flex-direction:column;justify-content:center}
+.bottomCta strong{font-size:31px;color:#65df9a}
+.bottomCta span{font-size:14px}
+.brainBadge svg{width:54px;height:54px;color:#65df9a}
+.ctaBox{border-right:0!important}
+.ctaBox b{font-size:20px;color:white;margin-bottom:12px}
+.ctaBox a{background:#00885f;color:white;text-decoration:none;border-radius:12px;padding:17px 26px;text-align:center;font-weight:900}
+
+.authPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f5f7fb}
+
+@media(max-width:1100px){
+.landingNav{padding:0 24px}.landingNav nav{display:none}
+.heroLanding{grid-template-columns:1fr;padding:30px 24px}
+.heroText h1{font-size:46px}.heroVisual{min-height:360px}.heroImage{position:relative;height:360px;inset:auto;border-radius:24px}.quoteCard{right:20px;top:80px}
+.painGrid{grid-template-columns:repeat(2,1fr)}
+.professionalsStrip,.bottomCta{width:94%;grid-template-columns:1fr 1fr}
+.featuresLanding{grid-template-columns:1fr 1fr;padding:30px 24px}
+}
+
+@media(max-width:700px){
+.landingNav{height:auto;padding:18px;align-items:flex-start}.navActions{flex-direction:column;gap:8px}.loginBtn,.primaryBtn{padding:12px 16px}
+.heroText h1{font-size:38px}.heroActions,.trustRow{flex-direction:column}.painGrid{grid-template-columns:1fr}
+.featuresLanding,.professionalsStrip,.bottomCta{grid-template-columns:1fr}
+.quoteCard{position:relative;right:auto;top:auto;width:auto;margin-top:20px}
+}
