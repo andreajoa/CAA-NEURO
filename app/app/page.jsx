@@ -489,7 +489,7 @@ export default function Home() {
     />
   </div>
 </div>
-<div className="appLogout"><UserButton afterSignOutUrl="/" /></div></div>
+<div className="appLogout"></div></div>
           <p>Perfil → nível linguístico → categorias → cards editáveis.</p>
         </div>
 
