@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 
 const img = (name) => `/cards/level-1/${name}.png`;
 
@@ -88,6 +89,16 @@ function defaultBoard(profile, level) {
 }
 
 export default function Home() {
+  const { user, isLoaded } = useUser();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
+  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || "tdahma2@gmail.com";
+  const isAdmin = userEmail === adminEmail;
+
+  if (!isLoaded) return (
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",fontSize:24,color:"#06391f"}}>
+      Carregando...
+    </div>
+  );
   const [profile, setProfile] = useState("infantil");
   const [level, setLevel] = useState("emergente");
   const [category, setCategory] = useState("all");

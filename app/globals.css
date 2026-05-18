@@ -305,3 +305,34 @@ display:none;
 }
 }
 
+
+.caa-userbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:white;
+  border:1px solid #e4eaf0;
+  border-radius:14px;
+  padding:12px 20px;
+  margin-bottom:18px;
+  box-shadow:0 2px 8px #0001;
+}
+
+.caa-username{
+  font-weight:900;
+  color:#06391f;
+  font-size:15px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.caa-admin-badge{
+  background:#e91e78;
+  color:white;
+  font-size:11px;
+  font-weight:900;
+  padding:3px 10px;
+  border-radius:20px;
+  letter-spacing:1px;
+}
