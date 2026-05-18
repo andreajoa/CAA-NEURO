@@ -107,8 +107,7 @@ export default function Home() {
   const fileRef = useRef(null);
 
   const patientPrefix = activePatientId || "sem-paciente";
-  const storageKey = `caa-${patientPrefix}-${profile}-${level}`;
-  const libraryCards = [
+    const libraryCards = [
     { label: "Sim", cat: "core" }, { label: "Não", cat: "core" }, { label: "Quero", cat: "core" },
     { label: "Não quero", cat: "core" }, { label: "Ajuda", cat: "core" }, { label: "Mais", cat: "core" },
     { label: "Água", cat: "necessidades" }, { label: "Comer", cat: "necessidades" }, { label: "Banheiro", cat: "necessidades" },
@@ -144,8 +143,21 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const saved = localStorage.getItem(storageKey);
-    setCards(saved ? JSON.parse(saved) : defaultBoard(profile, level));
+    const res = await fetch(`/api/cards?profile=${profile}&level=${level}`);
+const data = await res.json();
+
+if (res.ok && data.cards?.length) {
+  setCards(
+    data.cards.map(card => ({
+      id: card.id,
+      label: card.label,
+      image: card.image_url,
+      cat: card.category
+    }))
+  );
+} else {
+  setCards(defaultBoard(profile, level));
+}
     setEditing(null);
     setPhrase([]);
     setCategory("all");
