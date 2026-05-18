@@ -17,6 +17,7 @@ export default function LandingPage() {
           <Link href="/como-funciona">Como funciona</Link>
           <Link href="/depoimentos">Depoimentos</Link>
           <Link href="/duvidas">Dúvidas</Link>
+          <Link href="/suporte">Suporte</Link>
         </nav>
 
         <div className="navActions">
@@ -135,6 +136,7 @@ export default function LandingPage() {
               <p style={{color:"rgba(255,255,255,0.4)",fontSize:12,fontWeight:700,marginBottom:14,letterSpacing:1}}>SUPORTE</p>
               <div style={{display:"flex",flexDirection:"column",gap:10}}>
                 <Link href="/duvidas" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Dúvidas frequentes</Link>
+                <Link href="/suporte" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Suporte</Link>
                 <Link href="/sign-up" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Criar conta</Link>
                 <Link href="/sign-in" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Entrar</Link>
               </div>
