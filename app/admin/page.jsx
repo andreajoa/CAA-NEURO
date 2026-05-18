@@ -9,12 +9,11 @@ const {user,isLoaded}=useUser();
 
 const [stats,setStats]=useState(null);
 const [logs,setLogs]=useState([]);
+const [loading,setLoading]=useState(false);
 
 const email=user?.primaryEmailAddress?.emailAddress;
 
-useEffect(()=>{
-
-async function load(){
+async function loadData(){
 
 try{
 
@@ -30,19 +29,62 @@ setStats(statsData);
 setLogs(logsData.logs||[]);
 
 }catch(e){
-console.error(e)
+console.error(e);
 }
 
 }
 
-if(isLoaded && email==="tdahma2@gmail.com"){
-load();
+async function createBackup(){
+
+setLoading(true);
+
+try{
+
+const res=await fetch(
+"/api/backup-auto",
+{
+method:"POST"
+}
+);
+
+const data=await res.json();
+
+if(data.success){
+alert("Backup criado");
+}else{
+alert(data.error||"Erro backup");
+}
+
+}catch(e){
+alert("Erro ao criar backup");
+}
+
+setLoading(false);
+
+}
+
+async function downloadBackup(){
+
+window.open(
+"/api/backup",
+"_blank"
+);
+
+}
+
+useEffect(()=>{
+
+if(
+isLoaded &&
+email==="tdahma2@gmail.com"
+){
+loadData();
 }
 
 },[isLoaded,email]);
 
 if(!isLoaded){
-return <main style={{padding:40}}>Carregando...</main>
+return <main style={{padding:40}}>Carregando...</main>;
 }
 
 if(email!=="tdahma2@gmail.com"){
@@ -62,6 +104,27 @@ margin:"0 auto"
 }}>
 
 <h1>Painel Administrativo</h1>
+
+<div style={{
+display:"flex",
+gap:"10px",
+marginBottom:"30px"
+}}>
+
+<button
+onClick={createBackup}
+disabled={loading}
+>
+{loading?"Criando...":"Criar backup"}
+</button>
+
+<button
+onClick={downloadBackup}
+>
+Baixar backup
+</button>
+
+</div>
 
 <div style={{
 display:"grid",
@@ -85,8 +148,10 @@ background:"#fff",
 borderRadius:"20px"
 }}
 >
+
 <h3>{title}</h3>
 <h2>{value ?? 0}</h2>
+
 </div>
 
 ))}
@@ -101,7 +166,7 @@ borderRadius:"20px"
 }}
 >
 
-<h2>Últimos Logs</h2>
+<h2>Últimos logs</h2>
 
 {logs.slice(0,10).map(log=>(
 
