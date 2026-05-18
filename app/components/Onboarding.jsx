@@ -2,28 +2,42 @@
 import { useState, useEffect } from "react";
 
 const steps = [
-  { icon:"👤", title:"Cadastre seu primeiro paciente", desc:"Acesse 'Pacientes' e crie o prontuário com diagnóstico, objetivos terapêuticos e responsável.", href:"/pacientes", action:"Ir para Pacientes" },
-  { icon:"🗂️", title:"Escolha o perfil e nível linguístico", desc:"Na prancha, selecione o perfil (Infantil, Adulto...) e o nível linguístico adequado para o paciente.", href:"/app", action:"Ver prancha" },
-  { icon:"🖼️", title:"Personalize os cards", desc:"Clique em 'Editar prancha' e busque nos 45.000+ pictogramas ARASAAC ou gere imagens únicas com IA.", href:"/app", action:"Ver prancha" },
-  { icon:"📝", title:"Registre a sessão", desc:"Após o atendimento, registre evolução e objetivos. A IA analisa o histórico e gera insights clínicos.", href:"/pacientes", action:"Ver pacientes" },
-  { icon:"📄", title:"Exporte relatórios", desc:"Baixe PDF profissional ou exporte para Excel/CSV direto do prontuário do paciente.", href:"/pacientes", action:"Ver pacientes" },
+  { icon:"👤", title:"Cadastre seu primeiro paciente", desc:"Acesse 'Pacientes' e crie o prontuário com diagnóstico, objetivos terapêuticos e responsável.", href:"/pacientes" },
+  { icon:"🗂️", title:"Escolha o perfil e nível linguístico", desc:"Na prancha, selecione o perfil (Infantil, Adulto...) e o nível linguístico adequado para o paciente.", href:"/app" },
+  { icon:"🖼️", title:"Personalize os cards", desc:"Clique em 'Editar prancha' e busque nos 45.000+ pictogramas ARASAAC ou gere imagens únicas com IA.", href:"/app" },
+  { icon:"📝", title:"Registre a sessão", desc:"Após o atendimento, registre evolução e objetivos. A IA analisa o histórico e gera insights clínicos.", href:"/pacientes" },
+  { icon:"📄", title:"Exporte relatórios", desc:"Baixe PDF profissional ou exporte para Excel/CSV direto do prontuário do paciente.", href:"/pacientes" },
 ];
 
 export default function Onboarding() {
   const [visible, setVisible] = useState(false);
   const [done, setDone] = useState(true);
   const [step, setStep] = useState(0);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const finished = localStorage.getItem("caa-onboarding-v1");
-    if (!finished) { setDone(false); setVisible(true); }
-    else { setDone(true); }
+    fetch("/api/user-prefs")
+      .then(r => r.json())
+      .then(d => {
+        const isDone = d.prefs?.onboarding_done === 1;
+        setDone(isDone);
+        setVisible(!isDone);
+        setLoaded(true);
+      })
+      .catch(() => setLoaded(true));
   }, []);
 
-  function finish() {
-    localStorage.setItem("caa-onboarding-v1", "1");
-    setVisible(false); setDone(true);
+  async function finish() {
+    setVisible(false);
+    setDone(true);
+    await fetch("/api/user-prefs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ onboarding_done: true }),
+    }).catch(() => {});
   }
+
+  if (!loaded) return null;
 
   const curr = steps[step];
   const isLast = step === steps.length - 1;
@@ -31,11 +45,11 @@ export default function Onboarding() {
   return (
     <>
       {done && (
-        <button onClick={() => { setVisible(true); setStep(0); }}
+        <button
+          onClick={() => { setVisible(true); setStep(0); }}
           title="Guia de início"
-          style={{ position:"fixed", bottom:"24px", right:"24px", zIndex:200, background:"#00885f", color:"white", border:"none", borderRadius:"50%", width:"50px", height:"50px", fontSize:"22px", cursor:"pointer", boxShadow:"0 4px 16px rgba(0,136,95,0.4)", display:"flex", alignItems:"center", justifyContent:"center" }}>
-          ?
-        </button>
+          style={{ position:"fixed", bottom:"24px", right:"24px", zIndex:200, background:"#00885f", color:"white", border:"none", borderRadius:"50%", width:"50px", height:"50px", fontSize:"22px", cursor:"pointer", boxShadow:"0 4px 16px rgba(0,136,95,0.4)", display:"flex", alignItems:"center", justifyContent:"center" }}
+        >?</button>
       )}
 
       {visible && (
