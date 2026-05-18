@@ -1,40 +1,87 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
-import { d1Query } from "../../../lib/d1";
+import { auth } from "@clerk/nextjs/server";
 
-export async function GET() {
+const getDB = (request) => request.env?.DB || globalThis.__D1_DB;
+
+export async function GET(request) {
   const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const patients = await d1Query(
-    "SELECT * FROM patients WHERE user_id = ? ORDER BY created_at DESC",
-    [userId]
-  );
-
-  return NextResponse.json({ patients });
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const db = getDB(request);
+    const { results } = await db.prepare(
+      "SELECT * FROM patients WHERE user_id = ? ORDER BY created_at DESC"
+    ).bind(userId).all();
+    return Response.json({ patients: results });
+  } catch (e) {
+    return Response.json({ error: e.message }, { status: 500 });
+  }
 }
 
-export async function POST(req) {
+export async function POST(request) {
   const { userId } = await auth();
-  const user = await currentUser();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const body = await request.json();
+    const {
+      nome, data_nascimento, diagnostico, responsavel,
+      escola, medicamentos, objetivos_terapeuticos, observacoes
+    } = body;
+    if (!nome) return Response.json({ error: "Nome obrigatório" }, { status: 400 });
+    const db = getDB(request);
+    const result = await db.prepare(`
+      INSERT INTO patients
+        (user_id, nome, data_nascimento, diagnostico, responsavel,
+         escola, medicamentos, objetivos_terapeuticos, observacoes, anexos, created_at)
+      VALUES (?,?,?,?,?,?,?,?,?,?,datetime('now'))
+    `).bind(
+      userId, nome, data_nascimento||null, diagnostico||null,
+      responsavel||null, escola||null, medicamentos||null,
+      objetivos_terapeuticos||null, observacoes||null, '[]'
+    ).run();
+    return Response.json({ success: true, id: result.meta?.last_row_id });
+  } catch (e) {
+    return Response.json({ error: e.message }, { status: 500 });
+  }
+}
 
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function PUT(request) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const body = await request.json();
+    const {
+      id, nome, data_nascimento, diagnostico, responsavel,
+      escola, medicamentos, objetivos_terapeuticos, observacoes
+    } = body;
+    if (!id) return Response.json({ error: "ID obrigatório" }, { status: 400 });
+    const db = getDB(request);
+    await db.prepare(`
+      UPDATE patients SET
+        nome=?, data_nascimento=?, diagnostico=?, responsavel=?,
+        escola=?, medicamentos=?, objetivos_terapeuticos=?, observacoes=?,
+        updated_at=datetime('now')
+      WHERE id=? AND user_id=?
+    `).bind(
+      nome, data_nascimento||null, diagnostico||null, responsavel||null,
+      escola||null, medicamentos||null, objetivos_terapeuticos||null,
+      observacoes||null, id, userId
+    ).run();
+    return Response.json({ success: true });
+  } catch (e) {
+    return Response.json({ error: e.message }, { status: 500 });
+  }
+}
 
-  const body = await req.json();
-  const id = body.id || crypto.randomUUID();
-  const name = body.name || "";
-  const age = body.age || "";
-  const notes = body.notes || "";
-
-  await d1Query(
-    "INSERT OR IGNORE INTO users (id, email) VALUES (?, ?)",
-    [userId, user?.emailAddresses?.[0]?.emailAddress || ""]
-  );
-
-  await d1Query(
-    "INSERT OR REPLACE INTO patients (id, user_id, name, age, notes) VALUES (?, ?, ?, ?, ?)",
-    [id, userId, name, age, notes]
-  );
-
-  return NextResponse.json({ patient: { id, user_id: userId, name, age, notes } });
+export async function DELETE(request) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) return Response.json({ error: "ID obrigatório" }, { status: 400 });
+    const db = getDB(request);
+    await db.prepare("DELETE FROM patients WHERE id=? AND user_id=?").bind(id, userId).run();
+    return Response.json({ success: true });
+  } catch (e) {
+    return Response.json({ error: e.message }, { status: 500 });
+  }
 }
