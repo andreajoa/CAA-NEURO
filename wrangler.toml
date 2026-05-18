@@ -1,0 +1,6 @@
+name="caa-neuro"
+
+[[d1_databases]]
+binding="DB"
+database_name="caa-neuro-db"
+database_id="8616e6de-fa52-488a-a68c-274bfc630439"
