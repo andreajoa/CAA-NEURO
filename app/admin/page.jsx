@@ -1,53 +1,64 @@
-async function getData(endpoint){
-  const res=await fetch(process.env.NEXT_PUBLIC_BASE_URL + endpoint,{
-    cache:"no-store"
-  });
+"use client";
 
-  return res.json();
-}
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
-export default async function AdminPage(){
+export default function AdminPage() {
+  const { user, isLoaded } = useUser();
+  const [logs, setLogs] = useState([]);
+  const [error, setError] = useState("");
 
-  const logs=await getData("/api/logs");
+  const adminEmail = "tdahma2@gmail.com";
+  const email = user?.primaryEmailAddress?.emailAddress;
+
+  useEffect(() => {
+    async function loadLogs() {
+      try {
+        const res = await fetch("/api/logs");
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data?.error || "Erro ao carregar logs");
+
+        setLogs(data.logs || []);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+
+    if (isLoaded && email === adminEmail) loadLogs();
+  }, [isLoaded, email]);
+
+  if (!isLoaded) return <main style={{padding:40}}>Carregando...</main>;
+
+  if (email !== adminEmail) {
+    return (
+      <main style={{padding:40}}>
+        <h1>Acesso restrito</h1>
+        <p>Você não tem permissão para acessar esta área.</p>
+      </main>
+    );
+  }
 
   return (
-    <main style={{
-      padding:"40px",
-      maxWidth:"1200px",
-      margin:"0 auto"
-    }}>
+    <main style={{padding:40,maxWidth:1200,margin:"0 auto"}}>
+      <h1 style={{fontSize:40,marginBottom:30}}>Painel administrativo</h1>
 
-      <h1 style={{
-        fontSize:"40px",
-        marginBottom:"30px"
-      }}>
-        Painel administrativo
-      </h1>
+      {error && <p style={{color:"red"}}>{error}</p>}
 
-      <div style={{
-        background:"#fff",
-        padding:"20px",
-        borderRadius:"20px"
-      }}>
+      <section style={{background:"#fff",padding:20,borderRadius:20}}>
+        <h2>Últimos logs</h2>
 
-      <h2>Últimos logs</h2>
+        {!logs.length && <p>Nenhum log encontrado.</p>}
 
-      {logs.logs?.map(log=>(
-        <div
-        key={log.id}
-        style={{
-          borderBottom:"1px solid #ddd",
-          padding:"15px"
-        }}
-        >
-          <b>{log.level}</b>
-          <p>{log.source}</p>
-          <p>{log.message}</p>
-        </div>
-      ))}
-
-      </div>
-
+        {logs.map((log) => (
+          <div key={log.id} style={{borderBottom:"1px solid #ddd",padding:15}}>
+            <b>{log.level}</b>
+            <p><strong>Fonte:</strong> {log.source}</p>
+            <p><strong>Mensagem:</strong> {log.message}</p>
+            <small>{log.created_at}</small>
+          </div>
+        ))}
+      </section>
     </main>
-  )
+  );
 }

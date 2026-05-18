@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { d1Query } from "../../../lib/d1";
 
@@ -29,9 +29,17 @@ export async function POST(req) {
 
 export async function GET() {
   const { userId } = await auth();
+  const user = await currentUser();
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const email = user?.emailAddresses?.[0]?.emailAddress || "";
+  const adminEmail = process.env.ADMIN_EMAIL || process.env.NEXT_PUBLIC_ADMIN_EMAIL || "tdahma2@gmail.com";
+
+  if (email !== adminEmail) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const logs = await d1Query(
