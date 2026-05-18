@@ -1,5 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import ErrorTracker from "./providers/ErrorTracker";
 
 export const metadata = {
   title: "CAA Neuro",
@@ -10,7 +11,7 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="pt-BR">
-        <body>{children}</body>
+        <body><ErrorTracker />{children}</body>
       </html>
     </ClerkProvider>
   );
