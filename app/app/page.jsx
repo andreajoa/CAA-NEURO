@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Onboarding from "../components/Onboarding";
 import { UserButton } from "@clerk/nextjs";
 
 const img = (name) => `/cards/level-1/${name}.png`;
@@ -570,6 +571,7 @@ export default function Home() {
           </div>
         </div>
       )}
+    <Onboarding />
     </main>
   );
 }
