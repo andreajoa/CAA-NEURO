@@ -449,3 +449,67 @@ display:none;
 .toolPanel,.toolLayout{grid-template-columns:1fr}
 .toolEditor{position:static}
 }
+
+.brand{
+  text-decoration:none;
+}
+
+.publicFooter{
+  background:#062414;
+  color:white;
+  padding:56px 8%;
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:48px;
+}
+
+.publicFooter h3{
+  color:#65df9a;
+  font-size:24px;
+  margin:0 0 16px;
+}
+
+.publicFooter h4{
+  color:rgba(255,255,255,.55);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:13px;
+  margin:0 0 16px;
+}
+
+.publicFooter p{
+  color:rgba(255,255,255,.68);
+  line-height:1.7;
+}
+
+.publicFooter a{
+  display:block;
+  color:rgba(255,255,255,.72);
+  text-decoration:none;
+  margin:0 0 10px;
+  font-size:14px;
+}
+
+.publicFooter a:hover{
+  color:#65df9a;
+}
+
+.footerBottom{
+  grid-column:1 / -1;
+  border-top:1px solid rgba(255,255,255,.12);
+  padding-top:26px;
+  display:flex;
+  justify-content:space-between;
+  color:rgba(255,255,255,.5);
+  font-size:13px;
+}
+
+@media(max-width:800px){
+  .publicFooter{
+    grid-template-columns:1fr;
+  }
+
+  .footerBottom{
+    display:block;
+  }
+}

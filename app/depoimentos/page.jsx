@@ -1,6 +1,7 @@
+import PublicShell from "../../components/PublicShell";
 import Link from "next/link";
 export default function Page() {
-  return (
+  return (<PublicShell>
     <main style={{minHeight:"100vh",fontFamily:"Arial,sans-serif",background:"#f5f7fb"}}>
       <div style={{background:"#0a1e0f",padding:"20px 40px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <Link href="/" style={{color:"#4ec9a0",fontWeight:700,fontSize:20,textDecoration:"none"}}>CAA Neuro</Link>
@@ -24,6 +25,6 @@ export default function Page() {
           <Link href="/sign-up" style={{background:"#1d9e75",color:"white",padding:"14px 32px",borderRadius:8,textDecoration:"none",fontWeight:"bold",fontSize:16}}>Criar minha conta gratuita →</Link>
         </div>
       </div>
-    </main>
+    </main></PublicShell>
   );
 }
