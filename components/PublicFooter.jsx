@@ -29,6 +29,7 @@ export default function PublicFooter() {
       <div>
         <h4>Suporte</h4>
         <Link href="/duvidas">Dúvidas frequentes</Link>
+        <Link href="/suporte">Suporte</Link>
         <Link href="/sign-up">Criar conta</Link>
         <Link href="/sign-in">Entrar</Link>
       </div>

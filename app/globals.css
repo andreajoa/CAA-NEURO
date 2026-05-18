@@ -644,3 +644,87 @@ display:none;
     grid-template-columns:repeat(2,1fr);
   }
 }
+
+.supportPage{
+  background:#f8fbf9;
+  padding:70px 8%;
+  color:#071b2c;
+}
+
+.supportHero{
+  max-width:760px;
+  margin:0 auto 32px;
+  text-align:center;
+}
+
+.supportHero span{
+  display:inline-block;
+  color:#00885f;
+  background:#eefaf4;
+  border:1px solid #b8e4d0;
+  border-radius:999px;
+  padding:8px 16px;
+  font-weight:900;
+  text-transform:uppercase;
+  font-size:13px;
+}
+
+.supportHero h1{
+  font-size:48px;
+  margin:18px 0 10px;
+  color:#06391f;
+}
+
+.supportHero p{
+  font-size:18px;
+  color:#405047;
+}
+
+.supportForm{
+  max-width:720px;
+  margin:0 auto;
+  background:white;
+  border:1px solid #d8e4ea;
+  border-radius:22px;
+  padding:30px;
+  box-shadow:0 18px 50px rgba(0,0,0,.06);
+}
+
+.supportForm label{
+  display:block;
+  font-weight:900;
+  margin:16px 0 8px;
+}
+
+.supportForm input,
+.supportForm textarea{
+  width:100%;
+  border:1px solid #ccd8df;
+  border-radius:12px;
+  padding:14px;
+  font-size:16px;
+  font-weight:700;
+}
+
+.supportForm textarea{
+  min-height:160px;
+  resize:vertical;
+}
+
+.supportForm button{
+  width:100%;
+  margin-top:22px;
+  border:0;
+  border-radius:14px;
+  background:#00885f;
+  color:white;
+  padding:16px;
+  font-weight:900;
+  font-size:16px;
+}
+
+.supportNote{
+  text-align:center;
+  color:#52606b;
+  margin-top:16px;
+}

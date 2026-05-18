@@ -16,6 +16,7 @@ export default function PublicHeader() {
         <Link href="/como-funciona">Como funciona</Link>
         <Link href="/depoimentos">Depoimentos</Link>
         <Link href="/duvidas">Dúvidas</Link>
+        <Link href="/suporte">Suporte</Link>
       </nav>
 
       <div className="navActions">
