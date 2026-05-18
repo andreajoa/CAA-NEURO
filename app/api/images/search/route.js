@@ -1,16 +1,14 @@
-import { auth } from "@clerk/nextjs/server";
+export const runtime = "edge";
 
 export async function GET(request) {
-  const { userId } = await auth();
-  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
-
-  const q = new URL(request.url).searchParams.get("q");
-  if (!q) return Response.json({ results: [] });
+  const url = new URL(request.url);
+  const q = url.searchParams.get("q");
+  if (!q?.trim()) return Response.json({ results: [] });
 
   try {
     const res = await fetch(
-      `https://api.arasaac.org/v1/pictograms/pt/search/${encodeURIComponent(q)}`,
-      { headers: { "Accept": "application/json" } }
+      `https://api.arasaac.org/v1/pictograms/pt/search/${encodeURIComponent(q.trim())}`,
+      { headers: { "Accept": "application/json" }, signal: AbortSignal.timeout(8000) }
     );
 
     if (!res.ok) return Response.json({ results: [] });

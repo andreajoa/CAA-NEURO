@@ -1,16 +1,27 @@
-import { auth } from "@clerk/nextjs/server";
 export const runtime = "nodejs";
-const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
 
 export async function GET(request) {
-  const start = Date.now();
   const checks = {};
   let allOk = true;
 
   try {
-    const db = getDB(request);
-    await db.prepare("SELECT 1").first();
-    checks.database = { ok: true, ms: Date.now() - start };
+    const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+    const dbId = process.env.CLOUDFLARE_D1_DATABASE_ID;
+    const token = process.env.CLOUDFLARE_D1_API_TOKEN;
+
+    const start = Date.now();
+    const res = await fetch(
+      `https://api.cloudflare.com/client/v4/accounts/${accountId}/d1/database/${dbId}/query`,
+      {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ sql: "SELECT 1 as ok" }),
+      }
+    );
+    const data = await res.json();
+    const dbOk = data?.success === true;
+    checks.database = { ok: dbOk, ms: Date.now() - start };
+    if (!dbOk) allOk = false;
   } catch (e) {
     checks.database = { ok: false, error: e.message };
     allOk = false;
@@ -18,28 +29,25 @@ export async function GET(request) {
 
   checks.encryption = { ok: !!process.env.ENCRYPTION_KEY };
   checks.clerk = { ok: !!process.env.CLERK_SECRET_KEY };
-  checks.uptime = process.uptime ? Math.floor(process.uptime()) : null;
   checks.timestamp = new Date().toISOString();
 
   if (!allOk) {
-    try {
-      const resend = process.env.RESEND_API_KEY;
-      if (resend) {
-        await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: { "Authorization": `Bearer ${resend}`, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            from: "alertas@caa-neuro.com.br",
-            to: "tdahma2@gmail.com",
-            subject: "⚠️ CAA Neuro — Falha detectada",
-            html: `<h2>Alerta automático CAA Neuro</h2><pre>${JSON.stringify(checks, null, 2)}</pre><p>Verifique imediatamente.</p>`
-          })
-        });
-      }
-    } catch {}
+    const resend = process.env.RESEND_API_KEY;
+    if (resend) {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${resend}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          from: "alertas@adhdautism.online",
+          to: "tdahma2@gmail.com",
+          subject: "⚠️ CAA Neuro — Falha detectada",
+          html: `<h2>Alerta CAA Neuro</h2><pre>${JSON.stringify(checks, null, 2)}</pre>`,
+        }),
+      }).catch(() => {});
+    }
   }
 
   return Response.json({ status: allOk ? "ok" : "degraded", checks }, {
-    status: allOk ? 200 : 503
+    status: allOk ? 200 : 503,
   });
 }
