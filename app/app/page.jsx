@@ -471,7 +471,25 @@ export default function Home() {
       <header className="caa-header">
         <div>
           <div className="caa-kicker">CAA Neuro</div>
-          <div className="appTopBar"><h1>Prancha profissional de comunicação</h1><div className="appLogout"><UserButton afterSignOutUrl="/" /></div></div>
+          <div className="appTopBar">
+<div className="appTopBar">
+  <h1>Prancha profissional de comunicação</h1>
+
+  <div className="appLogout">
+    <UserButton
+      appearance={{
+        elements:{
+          avatarBox:{
+            width:"44px",
+            height:"44px"
+          }
+        }
+      }}
+      afterSignOutUrl="/"
+    />
+  </div>
+</div>
+<div className="appLogout"><UserButton afterSignOutUrl="/" /></div></div>
           <p>Perfil → nível linguístico → categorias → cards editáveis.</p>
         </div>
 
