@@ -57,11 +57,14 @@ export default function PacientesPage() {
   const saveSession = async () => {
     if (!selected) return;
     setLoading(true);
-    await fetch("/api/sessions", { method:"POST", headers:{"Content-Type":"application/json"},
+    await fetch("/api/sessions", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
       body: JSON.stringify({ patient_id: selected.id, ...sessionForm, duracao_minutos: sessionForm.duracao_minutos ? Number(sessionForm.duracao_minutos) : null })
     });
     setSessionForm({ evolucao_observada:"", notas:"", objetivos_sessao:"", duracao_minutos:"" });
-    await loadSessions(selected.id); setLoading(false);
+    await loadSessions(selected.id);
+    setLoading(false);
   };
 
   const inp = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
@@ -98,10 +101,15 @@ export default function PacientesPage() {
       <div className="flex items-center gap-3 mb-6">
         <button onClick={()=>setView("list")} className="text-gray-500 hover:text-gray-800 text-sm">← Pacientes</button>
         <h1 className="text-xl font-semibold">{selected.nome}</h1>
-        <button onClick={()=>{setEditing(selected);setForm({nome:selected.nome,data_nascimento:selected.data_nascimento||"",diagnostico:selected.diagnostico||"",responsavel:selected.responsavel||"",escola:selected.escola||"",medicamentos:selected.medicamentos||"",objetivos_terapeuticos:selected.objetivos_terapeuticos||"",observacoes:selected.observacoes||""});setView("form");}} className="ml-auto text-xs border border-gray-200 px-3 py-1 rounded-lg text-gray-600">Editar dados</button>
+        <div className="ml-auto flex gap-2">
+          <a href={`/api/report?patient_id=${selected.id}`} target="_blank" className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 font-medium">Baixar PDF</a>
+          <a href={`/api/export?patient_id=${selected.id}&format=xlsx`} className="text-xs border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 font-medium">Excel</a>
+          <a href={`/api/export?patient_id=${selected.id}&format=csv`} className="text-xs border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 font-medium">CSV</a>
+          <button onClick={()=>{setEditing(selected);setForm({nome:selected.nome,data_nascimento:selected.data_nascimento||"",diagnostico:selected.diagnostico||"",responsavel:selected.responsavel||"",escola:selected.escola||"",medicamentos:selected.medicamentos||"",objetivos_terapeuticos:selected.objetivos_terapeuticos||"",observacoes:selected.observacoes||""});setView("form");}} className="text-xs border border-gray-200 px-3 py-1.5 rounded-lg text-gray-600">Editar</button>
+        </div>
       </div>
       <div className="grid grid-cols-2 gap-4 mb-6">
-        {[["Diagnóstico",selected.diagnostico],["Responsável",selected.responsavel],["Escola",selected.escola],["Medicamentos",selected.medicamentos]].map(([k,v])=> v ? (
+        {([["Diagnóstico",selected.diagnostico],["Responsável",selected.responsavel],["Escola",selected.escola],["Medicamentos",selected.medicamentos]] as [string,string|undefined][]).map(([k,v])=> v ? (
           <div key={k} className="bg-white rounded-xl border border-gray-100 p-4">
             <div className="text-xs text-gray-500 mb-1">{k}</div>
             <div className="text-sm font-medium text-gray-800">{v}</div>
@@ -117,22 +125,24 @@ export default function PacientesPage() {
       <div className="bg-white rounded-2xl border border-gray-100 p-5 mb-5">
         <h2 className="text-sm font-semibold mb-4">Registrar sessão</h2>
         <div className="space-y-3">
-          <div><label className={lbl}>Evolução observada</label><textarea className={inp} rows={2} value={sessionForm.evolucao_observada} onChange={e=>setSessionForm({...sessionForm,evolucao_observada:e.target.value})} placeholder="Como foi a sessão? O que o paciente fez?" /></div>
+          <div><label className={lbl}>Evolução observada</label><textarea className={inp} rows={2} value={sessionForm.evolucao_observada} onChange={e=>setSessionForm({...sessionForm,evolucao_observada:e.target.value})} placeholder="Como foi a sessão?" /></div>
           <div><label className={lbl}>Objetivos da sessão</label><input className={inp} value={sessionForm.objetivos_sessao} onChange={e=>setSessionForm({...sessionForm,objetivos_sessao:e.target.value})} placeholder="O que foi trabalhado hoje?" /></div>
           <div className="grid grid-cols-2 gap-3">
             <div><label className={lbl}>Duração (min)</label><input type="number" className={inp} value={sessionForm.duracao_minutos} onChange={e=>setSessionForm({...sessionForm,duracao_minutos:e.target.value})} placeholder="45" /></div>
-            <div><label className={lbl}>Notas</label><input className={inp} value={sessionForm.notas} onChange={e=>setSessionForm({...sessionForm,notas:e.target.value})} placeholder="Observações da sessão" /></div>
+            <div><label className={lbl}>Notas</label><input className={inp} value={sessionForm.notas} onChange={e=>setSessionForm({...sessionForm,notas:e.target.value})} placeholder="Observações" /></div>
           </div>
           <button onClick={saveSession} disabled={loading||!sessionForm.evolucao_observada} className={`${btn} bg-green-600 text-white disabled:opacity-50`}>{loading?"Salvando...":"Salvar sessão"}</button>
         </div>
       </div>
       <div>
         <h2 className="text-sm font-semibold mb-3">Histórico de sessões ({sessions.length})</h2>
-        {sessions.length === 0 ? <div className="text-sm text-gray-400 py-4 text-center">Nenhuma sessão registrada ainda.</div> : sessions.map((s,i) => (
+        {sessions.length === 0 ? (
+          <div className="text-sm text-gray-400 py-4 text-center">Nenhuma sessão registrada ainda.</div>
+        ) : sessions.map((s,i) => (
           <div key={s.id} className="bg-white rounded-xl border border-gray-100 p-4 mb-3">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-semibold text-gray-500">Sessão #{sessions.length - i}</span>
-              <span className="text-xs text-gray-400">{new Date(s.created_at).toLocaleDateString("pt-BR")} {s.duracao_minutos ? `· ${s.duracao_minutos} min` : ""}</span>
+              <span className="text-xs text-gray-400">{new Date(s.created_at).toLocaleDateString("pt-BR")}{s.duracao_minutos ? ` · ${s.duracao_minutos} min` : ""}</span>
             </div>
             {s.evolucao_observada && <p className="text-sm text-gray-700 mb-1">{s.evolucao_observada}</p>}
             {s.objetivos_sessao && <p className="text-xs text-blue-600">Objetivo: {s.objetivos_sessao}</p>}
@@ -160,11 +170,11 @@ export default function PacientesPage() {
           <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-sm">{p.nome.charAt(0).toUpperCase()}</div>
           <div className="flex-1">
             <div className="font-medium text-sm text-gray-800">{p.nome}</div>
-            <div className="text-xs text-gray-400">{p.diagnostico||"Sem diagnóstico"} {p.escola ? `· ${p.escola}` : ""}</div>
+            <div className="text-xs text-gray-400">{p.diagnostico||"Sem diagnóstico"}{p.escola ? ` · ${p.escola}` : ""}</div>
           </div>
-          <div className="flex gap-2">
-            <button onClick={e=>{e.stopPropagation();openProntuario(p);}} className="text-xs border border-gray-200 px-3 py-1 rounded-lg text-gray-600 hover:bg-gray-50">Ver prontuário</button>
-            <button onClick={e=>{e.stopPropagation();del(p.id);}} className="text-xs border border-red-100 px-3 py-1 rounded-lg text-red-500 hover:bg-red-50">Excluir</button>
+          <div className="flex gap-2" onClick={e=>e.stopPropagation()}>
+            <button onClick={()=>openProntuario(p)} className="text-xs border border-gray-200 px-3 py-1 rounded-lg text-gray-600 hover:bg-gray-50">Prontuário</button>
+            <button onClick={()=>del(p.id)} className="text-xs border border-red-100 px-3 py-1 rounded-lg text-red-500 hover:bg-red-50">Excluir</button>
           </div>
         </div>
       ))}
