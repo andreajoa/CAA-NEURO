@@ -728,3 +728,16 @@ display:none;
   color:#52606b;
   margin-top:16px;
 }
+
+.appTopBar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.appLogout{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}

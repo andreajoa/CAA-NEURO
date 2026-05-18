@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { UserButton } from "@clerk/nextjs";
 
 const img = (name) => `/cards/level-1/${name}.png`;
 
@@ -470,7 +471,7 @@ export default function Home() {
       <header className="caa-header">
         <div>
           <div className="caa-kicker">CAA Neuro</div>
-          <h1>Prancha profissional de comunicação</h1>
+          <div className="appTopBar"><h1>Prancha profissional de comunicação</h1><div className="appLogout"><UserButton afterSignOutUrl="/" /></div></div>
           <p>Perfil → nível linguístico → categorias → cards editáveis.</p>
         </div>
 
