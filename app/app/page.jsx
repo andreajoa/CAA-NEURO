@@ -119,10 +119,28 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    const savedPatients = localStorage.getItem("caa-patients");
-    const savedSessions = localStorage.getItem("caa-sessions");
-    if (savedPatients) setPatients(JSON.parse(savedPatients));
-    if (savedSessions) setSessions(JSON.parse(savedSessions));
+    async function loadD1Data() {
+      try {
+        const [patientsRes, sessionsRes] = await Promise.all([
+          fetch("/api/patients"),
+          fetch("/api/sessions"),
+        ]);
+
+        if (patientsRes.ok) {
+          const data = await patientsRes.json();
+          setPatients(data.patients || []);
+        }
+
+        if (sessionsRes.ok) {
+          const data = await sessionsRes.json();
+          setSessions(data.sessions || []);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados do D1:", error);
+      }
+    }
+
+    loadD1Data();
   }, []);
 
   useEffect(() => {
@@ -133,9 +151,19 @@ export default function Home() {
     setCategory("all");
   }, [profile, level, activePatientId]);
 
-  function persist(next) {
+  async function persist(next) {
     setCards(next);
-    localStorage.setItem(storageKey, JSON.stringify(next));
+
+    try {
+      await fetch("/api/cards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile, level, cards: next }),
+      });
+    } catch (error) {
+      console.error("Erro ao salvar cards no D1:", error);
+      alert("Não foi possível salvar os cards no banco.");
+    }
   }
 
   function speak(text) {
@@ -203,33 +231,50 @@ export default function Home() {
     setEditMode(true);
   }
 
-  function resetBoard() {
-    localStorage.removeItem(storageKey);
-    setCards(defaultBoard(profile, level));
+  async function resetBoard() {
+    const next = defaultBoard(profile, level);
+    await persist(next);
     setEditing(null);
     setPhrase([]);
   }
 
-  function createPatient() {
+  async function createPatient() {
     const name = patientName.trim();
     if (!name) return;
+
     const patient = {
       id: crypto.randomUUID(),
       name,
-      createdAt: new Date().toISOString(),
+      age: "",
+      notes: "",
     };
-    const next = [...patients, patient];
-    setPatients(next);
-    setActivePatientId(patient.id);
-    setPatientName("");
-    localStorage.setItem("caa-patients", JSON.stringify(next));
+
+    try {
+      const res = await fetch("/api/patients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patient),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Erro ao salvar paciente");
+
+      const next = [...patients, data.patient];
+      setPatients(next);
+      setActivePatientId(data.patient.id);
+      setPatientName("");
+    } catch (error) {
+      console.error("Erro ao salvar paciente no D1:", error);
+      alert("Não foi possível salvar o paciente.");
+    }
   }
 
-  function saveSession() {
+  async function saveSession() {
     const activePatient = patients.find((p) => p.id === activePatientId);
+
     const session = {
       id: crypto.randomUUID(),
-      patientId: activePatientId || "",
+      patient_id: activePatientId || "",
       patientName: activePatient?.name || "Sem paciente",
       profile,
       level,
@@ -237,10 +282,25 @@ export default function Home() {
       note: sessionNote,
       createdAt: new Date().toLocaleString("pt-BR"),
     };
-    const next = [session, ...sessions].slice(0, 50);
-    setSessions(next);
-    setSessionNote("");
-    localStorage.setItem("caa-sessions", JSON.stringify(next));
+
+    try {
+      const res = await fetch("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(session),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Erro ao salvar sessão");
+
+      const next = [session, ...sessions].slice(0, 50);
+      setSessions(next);
+      setSessionNote("");
+      alert("Sessão salva no banco.");
+    } catch (error) {
+      console.error("Erro ao salvar sessão no D1:", error);
+      alert("Não foi possível salvar a sessão.");
+    }
   }
 
   function addLibraryCard(item) {
