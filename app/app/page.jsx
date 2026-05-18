@@ -143,21 +143,30 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const res = await fetch(`/api/cards?profile=${profile}&level=${level}`);
-const data = await res.json();
+    async function loadCards() {
+      try {
+        const res = await fetch(`/api/cards?profile=${profile}&level=${level}`);
+        const data = await res.json();
 
-if (res.ok && data.cards?.length) {
-  setCards(
-    data.cards.map(card => ({
-      id: card.id,
-      label: card.label,
-      image: card.image_url,
-      cat: card.category
-    }))
-  );
-} else {
-  setCards(defaultBoard(profile, level));
-}
+        if (res.ok && data.cards?.length) {
+          setCards(
+            data.cards.map(card => ({
+              id: card.id,
+              label: card.label,
+              image: card.image_url,
+              cat: card.category
+            }))
+          );
+        } else {
+          setCards(defaultBoard(profile, level));
+        }
+      } catch(err){
+        console.error(err);
+        setCards(defaultBoard(profile, level));
+      }
+    }
+
+    loadCards();
     setEditing(null);
     setPhrase([]);
     setCategory("all");
