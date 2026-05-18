@@ -1,0 +1,14 @@
+{
+  "name": "CAA Neuro",
+  "short_name": "CAA Neuro",
+  "description": "Sistema de comunicação aumentativa e alternativa",
+  "start_url": "/app",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "any",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
+  ]
+}
