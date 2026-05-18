@@ -338,18 +338,18 @@ display:none;
 }
 
 .landingPage{min-height:100vh;background:#f8fbf9;color:#071b2c;font-family:Arial,Helvetica,sans-serif;overflow:hidden}
-.landingNav{height:92px;display:flex;align-items:center;justify-content:space-between;padding:0 64px;position:relative;z-index:5}
+.landingNav{height:86px;display:flex;align-items:center;justify-content:space-between;gap:22px;padding:0 46px;position:relative;z-index:5}
 .brand{display:flex;align-items:center;gap:12px;color:#00855c}
 .brand strong{display:block;font-size:28px;letter-spacing:1px;color:#071b2c;line-height:.8}
 .brand span{display:block;color:#00855c;font-size:20px;letter-spacing:2px}
-.landingNav nav{display:flex;gap:38px;font-weight:800}
+.landingNav nav{display:flex;gap:22px;font-weight:800;font-size:14px;white-space:nowrap;align-items:center}
 .landingNav nav a{color:#071b2c;text-decoration:none}
 .navActions{display:flex;gap:18px;align-items:center}
 .loginBtn,.primaryBtn,.primaryBig,.secondaryBig{border-radius:12px;text-decoration:none;font-weight:900}
-.loginBtn{border:1px solid #cbd7de;color:#071b2c;padding:16px 30px;background:white}
-.primaryBtn{background:#00885f;color:white;padding:17px 32px;box-shadow:0 10px 22px rgba(0,136,95,.18)}
+.loginBtn{border:1px solid #cbd7de;color:#071b2c;padding:13px 24px;background:white;white-space:nowrap}
+.primaryBtn{background:#00885f;color:white;padding:14px 24px;box-shadow:0 10px 22px rgba(0,136,95,.18);white-space:nowrap}
 
-.heroLanding{display:grid;grid-template-columns:1fr 1.15fr;min-height:720px;padding:40px 64px 90px;position:relative}
+.heroLanding{display:grid;grid-template-columns:0.95fr 1.25fr;min-height:720px;padding:40px 46px 90px;position:relative}
 .heroText{max-width:720px;padding-top:40px;z-index:2}
 .badge{display:inline-flex;border:1px solid #9ed6c1;background:#eefaf4;color:#007b54;padding:8px 18px;border-radius:999px;text-transform:uppercase;font-size:13px;font-weight:900;margin-bottom:22px}
 .heroText h1{font-size:64px;line-height:1.05;margin:0;color:#071b2c;letter-spacing:-2px}
@@ -365,7 +365,7 @@ display:none;
 .secondaryBig{background:white;color:#071b2c;border:1px solid #bdd0d8;padding:20px 40px}
 .trustRow{display:flex;gap:34px;color:#0a6b50;font-weight:800;margin-top:30px;margin-bottom:80px;flex-wrap:wrap}
 .heroVisual{position:relative;min-height:720px}
-.heroImage{position:absolute;inset:-80px -80px 0 0;background:linear-gradient(90deg,rgba(248,251,249,.05),rgba(248,251,249,.18)),url('/hero-caa.png');background-size:cover;background-position:42% center;border-bottom-left-radius:90px}
+.heroImage{position:absolute;inset:-80px -80px 0 0;background:linear-gradient(90deg,rgba(248,251,249,.05),rgba(248,251,249,.18)),url('/hero-caa.png');background-size:cover;background-position:35% center;border-bottom-left-radius:70px}
 .heroImage:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#f8fbf9 0%,rgba(248,251,249,.55) 24%,rgba(248,251,249,.08) 58%,rgba(0,70,55,.16) 100%)}
 .quoteCard{position:absolute;right:10px;top:230px;width:310px;background:rgba(0,55,48,.76);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.35);border-radius:24px;color:white;padding:30px;box-shadow:0 30px 70px rgba(0,0,0,.18)}
 .quoteCard strong{font-size:72px;color:#50e1a2;line-height:.6}
