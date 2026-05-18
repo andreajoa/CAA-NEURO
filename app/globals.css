@@ -412,3 +412,40 @@ display:none;
 .featuresLanding,.professionalsStrip,.bottomCta{grid-template-columns:1fr}
 .quoteCard{position:relative;right:auto;top:auto;width:auto;margin-top:20px}
 }
+
+.toolPage{min-height:100vh;background:#f5f7fb;padding:24px;color:#071b2c}
+.toolTop{display:flex;justify-content:space-between;align-items:flex-start;background:white;border:1px solid #dde7ec;border-radius:18px;padding:22px;margin-bottom:18px}
+.backHome{color:#00885f;font-weight:900;text-decoration:none}
+.toolTop h1{margin:8px 0 4px;color:#06391f;font-size:42px}
+.toolTop p{margin:0;color:#52606b}
+.toolPanel{display:grid;grid-template-columns:320px 1fr;gap:18px;background:white;border:1px solid #dde7ec;border-radius:18px;padding:18px;margin-bottom:18px}
+.toolPanel label,.toolEditor label{display:block;font-weight:900;margin-bottom:8px}
+.toolPanel input,.toolEditor input,.toolEditor select{width:100%;border:1px solid #ccd6dd;border-radius:12px;padding:13px;font-weight:800}
+.phraseBox{min-height:54px;border:1px solid #d9e3e9;border-radius:12px;padding:10px;display:flex;gap:8px;flex-wrap:wrap}
+.phraseBox span{background:#eefaf4;border:1px solid #a9dbc7;border-radius:10px;padding:10px 16px;font-weight:900}
+.toolActions,.categoryBar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.toolActions button,.categoryBar button,.toolEditor button,.editSmall{border:1px solid #d4dde5;background:white;border-radius:10px;padding:11px 14px;font-weight:900}
+.categoryBar{margin-bottom:18px}
+.categoryBar .active{background:#06391f;color:white}
+.toolLayout{display:grid;grid-template-columns:1fr 320px;gap:18px}
+.toolGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.toolCard{background:white;border:2px solid #e4eaf0;border-radius:18px;padding:8px;box-shadow:0 5px 16px #0001}
+.toolCardMain{border:0;background:transparent;width:100%;padding:0}
+.toolImg{aspect-ratio:1/1;border:5px solid var(--cat,#e91e78);border-radius:14px;overflow:hidden;background:#f8fafc}
+.toolImg img{width:100%;height:100%;object-fit:cover}
+.emptyCard{height:100%;display:flex;align-items:center;justify-content:center;font-size:54px;color:#9aa6af;font-weight:900}
+.toolCard strong{display:flex;min-height:42px;align-items:center;justify-content:center;text-align:center;font-size:20px}
+.editSmall{width:100%;margin-top:8px}
+.toolEditor{background:white;border:1px solid #dde7ec;border-radius:18px;padding:18px;position:sticky;top:20px}
+.editorPreview{width:180px;margin:0 auto 16px}
+.editorPreview img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;border:5px solid #e91e78}
+.toolEditor button{display:block;width:100%;margin-top:10px}
+.saveBtn{background:#00885f!important;color:white!important}
+.sessionHistory{background:white;border:1px solid #dde7ec;border-radius:18px;padding:18px;margin-top:18px}
+.sessionHistory article{border-top:1px solid #e5edf1;padding:10px 0}
+.sessionHistory span{display:block;color:#65717a;font-size:13px}
+
+@media(max-width:900px){
+.toolPanel,.toolLayout{grid-template-columns:1fr}
+.toolEditor{position:static}
+}
