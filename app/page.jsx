@@ -144,7 +144,7 @@ export default function LandingPage() {
           </div>
           <div style={{borderTop:"0.5px solid rgba(255,255,255,0.1)",paddingTop:24,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
             <p style={{color:"rgba(255,255,255,0.35)",fontSize:13}}>© 2026 CAA Neuro · Todos os direitos reservados · Desenvolvido com propósito</p>
-            <p style={{color:"rgba(255,255,255,0.35)",fontSize:13}}>Dados protegidos pela LGPD</p>
+            <p style={{color:"rgba(255,255,255,0.35)",fontSize:13}}>Dados protegidos pela LGPD · <a href="/seguranca" style={{color:"rgba(255,255,255,0.6)",textDecoration:"underline"}}>Política de Segurança</a></p>
           </div>
         </div>
       </footer>
