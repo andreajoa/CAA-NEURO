@@ -3,62 +3,127 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 
-export default function AdminPage() {
-  const { user, isLoaded } = useUser();
-  const [logs, setLogs] = useState([]);
-  const [error, setError] = useState("");
+export default function AdminPage(){
 
-  const adminEmail = "tdahma2@gmail.com";
-  const email = user?.primaryEmailAddress?.emailAddress;
+const {user,isLoaded}=useUser();
 
-  useEffect(() => {
-    async function loadLogs() {
-      try {
-        const res = await fetch("/api/logs");
-        const data = await res.json();
+const [stats,setStats]=useState(null);
+const [logs,setLogs]=useState([]);
 
-        if (!res.ok) throw new Error(data?.error || "Erro ao carregar logs");
+const email=user?.primaryEmailAddress?.emailAddress;
 
-        setLogs(data.logs || []);
-      } catch (err) {
-        setError(err.message);
-      }
-    }
+useEffect(()=>{
 
-    if (isLoaded && email === adminEmail) loadLogs();
-  }, [isLoaded, email]);
+async function load(){
 
-  if (!isLoaded) return <main style={{padding:40}}>Carregando...</main>;
+try{
 
-  if (email !== adminEmail) {
-    return (
-      <main style={{padding:40}}>
-        <h1>Acesso restrito</h1>
-        <p>Você não tem permissão para acessar esta área.</p>
-      </main>
-    );
-  }
+const [statsRes,logsRes]=await Promise.all([
+fetch("/api/admin-stats"),
+fetch("/api/logs")
+]);
 
-  return (
-    <main style={{padding:40,maxWidth:1200,margin:"0 auto"}}>
-      <h1 style={{fontSize:40,marginBottom:30}}>Painel administrativo</h1>
+const statsData=await statsRes.json();
+const logsData=await logsRes.json();
 
-      {error && <p style={{color:"red"}}>{error}</p>}
+setStats(statsData);
+setLogs(logsData.logs||[]);
 
-      <section style={{background:"#fff",padding:20,borderRadius:20}}>
-        <h2>Últimos logs</h2>
+}catch(e){
+console.error(e)
+}
 
-        {!logs.length && <p>Nenhum log encontrado.</p>}
+}
 
-        {logs.map((log) => (
-          <div key={log.id} style={{borderBottom:"1px solid #ddd",padding:15}}>
-            <b>{log.level}</b>
-            <p><strong>Fonte:</strong> {log.source}</p>
-            <p><strong>Mensagem:</strong> {log.message}</p>
-            <small>{log.created_at}</small>
-          </div>
-        ))}
-      </section>
-    </main>
-  );
+if(isLoaded && email==="tdahma2@gmail.com"){
+load();
+}
+
+},[isLoaded,email]);
+
+if(!isLoaded){
+return <main style={{padding:40}}>Carregando...</main>
+}
+
+if(email!=="tdahma2@gmail.com"){
+return(
+<main style={{padding:40}}>
+<h1>Acesso restrito</h1>
+</main>
+)
+}
+
+return(
+
+<main style={{
+padding:"40px",
+maxWidth:"1200px",
+margin:"0 auto"
+}}>
+
+<h1>Painel Administrativo</h1>
+
+<div style={{
+display:"grid",
+gridTemplateColumns:"repeat(4,1fr)",
+gap:"20px",
+marginBottom:"30px"
+}}>
+
+{[
+["Pacientes",stats?.patients],
+["Sessões",stats?.sessions],
+["Cards",stats?.cards],
+["Logs",stats?.logs]
+].map(([title,value])=>(
+
+<div
+key={title}
+style={{
+padding:"20px",
+background:"#fff",
+borderRadius:"20px"
+}}
+>
+<h3>{title}</h3>
+<h2>{value ?? 0}</h2>
+</div>
+
+))}
+
+</div>
+
+<div
+style={{
+background:"#fff",
+padding:"20px",
+borderRadius:"20px"
+}}
+>
+
+<h2>Últimos Logs</h2>
+
+{logs.slice(0,10).map(log=>(
+
+<div
+key={log.id}
+style={{
+padding:"12px",
+borderBottom:"1px solid #ddd"
+}}
+>
+
+<b>{log.level}</b>
+<p>{log.message}</p>
+
+</div>
+
+))}
+
+</div>
+
+</main>
+
+)
+
 }
