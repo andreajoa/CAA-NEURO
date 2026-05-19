@@ -337,7 +337,7 @@ display:none;
   letter-spacing:1px;
 }
 
-.landingPage{min-height:100vh;background:#f8fbf9;color:#071b2c;font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+.landingPage{min-height:100vh;background:#f8fbf9;color:#071b2c;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
 .landingNav{height:86px;display:flex;align-items:center;justify-content:space-between;gap:22px;padding:0 46px;position:relative;z-index:5}
 .brand{display:flex;align-items:center;gap:12px;color:#00855c}
 .brand strong{display:block;font-size:28px;letter-spacing:1px;color:#071b2c;line-height:.8}
@@ -364,7 +364,7 @@ display:none;
 .primaryBig{background:#00885f;color:white;padding:20px 36px;box-shadow:0 16px 28px rgba(0,136,95,.22)}
 .secondaryBig{background:white;color:#071b2c;border:1px solid #bdd0d8;padding:20px 40px}
 .trustRow{display:flex;gap:34px;color:#0a6b50;font-weight:800;margin-top:30px;margin-bottom:80px;flex-wrap:wrap}
-.heroVisual{position:relative;min-height:720px}
+.heroVisual{position:relative;min-height:720px;overflow:hidden}
 .heroImage{position:absolute;inset:-80px -80px 0 0;background:linear-gradient(90deg,rgba(248,251,249,.05),rgba(248,251,249,.18)),url('/hero-caa.png');background-size:cover;background-position:35% center;border-bottom-left-radius:70px}
 .heroImage:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#f8fbf9 0%,rgba(248,251,249,.55) 24%,rgba(248,251,249,.08) 58%,rgba(0,70,55,.16) 100%)}
 .quoteCard{position:absolute;right:10px;top:230px;width:310px;background:rgba(0,55,48,.76);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.35);border-radius:24px;color:white;padding:30px;box-shadow:0 30px 70px rgba(0,0,0,.18)}
@@ -400,7 +400,7 @@ display:none;
 @media(max-width:1100px){
 .landingNav{padding:0 24px}.landingNav nav{display:none}
 .heroLanding{grid-template-columns:1fr;padding:30px 24px}
-.heroText h1{font-size:46px}.heroVisual{min-height:360px}.heroImage{position:relative;height:360px;inset:auto;border-radius:24px}.quoteCard{right:20px;top:80px}
+.heroText h1{font-size:46px}.heroVisual{min-height:360px}.heroImage{position:relative;height:420px;inset:auto;border-radius:24px;background-size:cover;background-position:center center}.quoteCard{right:20px;top:80px}
 .painGrid{grid-template-columns:repeat(2,1fr)}
 .professionalsStrip,.bottomCta{width:94%;grid-template-columns:1fr 1fr}
 .featuresLanding{grid-template-columns:1fr 1fr;padding:30px 24px}
