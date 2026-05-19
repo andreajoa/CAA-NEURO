@@ -19,6 +19,18 @@ export default function PranchotecaPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  function normCat(v) {
+    const x = String(v || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    if (!x) return "";
+    if (["core","comunicacao","comunicação","core / comunicacao","core / comunicação"].includes(x)) return "core";
+    if (["necessidades","necessidades basicas","necessidades básicas"].includes(x)) return "necessidades";
+    if (["emocoes","emoções","emocoes"].includes(x)) return "emocoes";
+    if (["saude","saúde"].includes(x)) return "saude";
+    if (["escola","educacao","educação","escola / educacao","escola / educação"].includes(x)) return "escola";
+    if (["social","vida social"].includes(x)) return "social";
+    return x;
+  }
+
   async function importar(template) {
     setImporting(template.id);
     try {
@@ -36,7 +48,7 @@ export default function PranchotecaPage() {
   }
 
   const shown = templates.filter(t =>
-    (cat === "all" || t.category === cat) &&
+    (cat === "all" || normCat(t.category) === cat) &&
     (search === "" || t.title.toLowerCase().includes(search.toLowerCase()) || t.description?.toLowerCase().includes(search.toLowerCase()))
   );
 
@@ -83,7 +95,7 @@ export default function PranchotecaPage() {
                 {(t.autor || t.category) && (
                   <div style={{ fontSize:"12px", color:"#9ca3af" }}>
                     {t.autor && <span>👩‍⚕️ {t.autor}{t.autor_profissao ? ` · ${t.autor_profissao}` : ""}</span>}
-                    {t.category && <span style={{ marginLeft:"8px" }}>· {CATS[t.category]||t.category}</span>}
+                    {t.category && <span style={{ marginLeft:"8px" }}>· {CATS[normCat(t.category)] || t.category}</span>}
                   </div>
                 )}
                 <div style={{ display:"flex", gap:"8px", marginTop:"auto", flexWrap:"wrap" }}>
