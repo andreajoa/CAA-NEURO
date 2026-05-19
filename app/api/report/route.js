@@ -17,6 +17,13 @@ export async function GET(request) {
     if (!rawPatient) return new Response("Paciente não encontrado", { status: 404 });
     const patient = decryptPatient(rawPatient);
 
+    const profPrefs = await db.prepare("SELECT nome_profissional, registro_crfa, profissao, conselho_regional, telefone, assinatura_base64 FROM user_prefs WHERE user_id=?").bind(userId).first().catch(()=>null);
+    const nomeProfissional = profPrefs?.nome_profissional || "";
+    const registroCrfa = profPrefs?.registro_crfa || "";
+    const profissao = profPrefs?.profissao || "Fonoaudiólogo(a)";
+    const conselho = profPrefs?.conselho_regional ? `CRFa ${profPrefs.conselho_regional}` : "";
+    const assinatura = profPrefs?.assinatura_base64 || "";
+
     const { results: rawSessions } = await db.prepare(
       "SELECT * FROM sessions WHERE patient_id=? AND user_id=? ORDER BY data_sessao ASC"
     ).bind(patientId, userId).all();
@@ -134,11 +141,16 @@ ${sessions.length > 1 ? `
 
 <div class="footer">
   <div>
-    <p>CAA Neuro · caa-neuro.com.br</p>
-    <p>Documento gerado automaticamente · Dados protegidos pela LGPD</p>
+    <p><strong>${nomeProfissional || "Profissional"}</strong> · ${profissao}</p>
+    <p>${registroCrfa ? registroCrfa + " · " : ""}${conselho}</p>
+    <p style="margin-top:4px;color:#9ca3af">CAA Neuro · Dados protegidos pela LGPD · Res. CFFa 777/2025</p>
   </div>
-  <div class="sig-line">
-    Assinatura do Profissional
+  <div style="text-align:center">
+    ${assinatura
+      ? `<img src="${assinatura}" style="max-height:48px;max-width:160px;object-fit:contain;margin-bottom:4px;display:block"/>`
+      : `<div style="width:160px;height:48px;border-bottom:1.5px solid #374151;margin-bottom:4px"></div>`
+    }
+    <p style="font-size:11px;color:#6b7280">${nomeProfissional || "Assinatura do Profissional"}</p>
   </div>
 </div>
 </body>
