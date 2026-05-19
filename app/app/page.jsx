@@ -310,13 +310,15 @@ export default function Home() {
       setImageLibraryLoading(false);
     }
     if (editing?.label?.trim()) {
-      await searchArasaac(editing.label.trim());
+      await searchPictogramas(editing.label.trim(), searchSource);
     } else {
       setImagePickerError("Este card está sem nome. Dê um nome para buscar imagens.");
     }
   }
 
-  async function searchArasaac(q) {
+  const [searchSource, setSearchSource] = useState("all");
+
+  async function searchPictogramas(q, source) {
     if (!q?.trim()) {
       setImagePickerError("Digite um termo para buscar.");
       setSearchResults([]);
@@ -325,7 +327,8 @@ export default function Home() {
     setSearchLoading(true);
     setImagePickerError("");
     try {
-      const res = await fetch(`/api/images/search?q=${encodeURIComponent(q)}`);
+      const src = source || searchSource || "all";
+      const res = await fetch(`/api/images/search?q=${encodeURIComponent(q)}&source=${src}`);
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || `Erro ${res.status} ao buscar imagens`);
       const results = data.results || [];
@@ -334,7 +337,6 @@ export default function Home() {
         setImagePickerError(`Nenhuma imagem encontrada para "${q}".`);
       }
     } catch (e) {
-      console.error("Erro ao buscar imagens:", e);
       setSearchResults([]);
       setImagePickerError(e.message || "Não foi possível buscar imagens agora.");
     }
@@ -631,7 +633,7 @@ export default function Home() {
                     <div className="caa-image-frame" style={{filter:contrastFilter}}>
                       {card.image ? <img src={card.image} alt={card.label} /> : <div className="caa-empty">+</div>}
                     </div>
-                    <div className="caa-label" style={{fontSize:`${20*fontScale}px`}}>{card.label}</div>
+                    <div className="caa-label" style={{fontSize:`${20*fontScale}px`,textTransform:"uppercase"}}>{(card.label || "").toUpperCase()}</div>
                   </button>
                   {editMode && (
                     <div className="caa-tools">
@@ -731,48 +733,62 @@ export default function Home() {
 
             {/* Tabs */}
             <div style={{display:"flex",gap:"4px",padding:"0 0 16px",borderBottom:"1px solid #e5e7eb",marginBottom:"16px"}}>
-              {[["buscar","🔍 Buscar pictogramas"],["minhas","📁 Minhas imagens"],["gerar","✨ Gerar com IA"]].map(([id,label])=>(
+              {[["buscar","🔍 Buscar imagens"],["minhas","📁 Minhas imagens"],["gerar","✨ Gerar com IA"]].map(([id,label])=>(
                 <button key={id} style={tabStyle(pickerTab===id)} onClick={()=>setPickerTab(id)}>{label}</button>
               ))}
             </div>
 
-            {/* Tab: Buscar ARASAAC */}
+            {/* Tab: Buscar em todas as bibliotecas */}
             {pickerTab==="buscar" && (
               <div>
-                <div style={{display:"flex",gap:"8px",marginBottom:"16px"}}>
+                <div style={{display:"flex",gap:"8px",marginBottom:"16px",flexWrap:"wrap"}}>
+                  <select
+                    value={searchSource}
+                    onChange={e=>setSearchSource(e.target.value)}
+                    style={{padding:"10px 12px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"14px",background:"white"}}
+                  >
+                    <option value="all">Todas as bibliotecas</option>
+                    <option value="arasaac">ARASAAC</option>
+                    <option value="mulberry">Mulberry</option>
+                    <option value="sclera">Sclera</option>
+                    <option value="symbotalk">SymboTalk</option>
+                  </select>
                   <input
                     value={searchQuery}
                     onChange={e=>setSearchQuery(e.target.value)}
-                    onKeyDown={e=>e.key==="Enter"&&searchArasaac(searchQuery)}
+                    onKeyDown={e=>e.key==="Enter"&&searchPictogramas(searchQuery, searchSource)}
                     placeholder="Ex: água, comer, feliz, escola..."
-                    style={{flex:1,padding:"10px 12px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"14px"}}
+                    style={{flex:1,minWidth:"220px",padding:"10px 12px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"14px"}}
                   />
                   <button
-                    onClick={()=>searchArasaac(searchQuery)}
+                    onClick={()=>searchPictogramas(searchQuery, searchSource)}
                     disabled={searchLoading}
                     style={{padding:"10px 20px",background:"#2563eb",color:"white",border:"none",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"14px"}}
                   >
                     {searchLoading?"...":"Buscar"}
                   </button>
                 </div>
-                {searchLoading && <p style={{textAlign:"center",color:"#6b7280",fontSize:"13px"}}>Buscando pictogramas ARASAAC...</p>}
+                {searchLoading && <p style={{textAlign:"center",color:"#6b7280",fontSize:"13px"}}>Buscando imagens em todas as bibliotecas...</p>}
                 {!searchLoading && searchResults.length===0 && searchQuery && (
                   <p style={{textAlign:"center",color:"#9ca3af",fontSize:"13px"}}>Nenhum resultado. Tente outra palavra.</p>
                 )}
                 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(90px,1fr))",gap:"8px",maxHeight:"380px",overflowY:"auto"}}>
                   {searchResults.map(item=>(
                     <button key={item.id} onClick={()=>chooseImage(item.url, item.label)}
-                      style={{background:"white",border:"1px solid #e5e7eb",borderRadius:"10px",padding:"8px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:"4px",transition:"border-color 0.15s"}}
+                      style={{background:"white",border:"1px solid #e5e7eb",borderRadius:"10px",padding:"8px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:"6px",transition:"border-color 0.15s"}}
                       onMouseEnter={e=>e.currentTarget.style.borderColor="#2563eb"}
                       onMouseLeave={e=>e.currentTarget.style.borderColor="#e5e7eb"}
                     >
                       <img src={item.url} alt={item.label} style={{width:"64px",height:"64px",objectFit:"contain"}} />
-                      <span style={{fontSize:"11px",color:"#374151",textAlign:"center",lineHeight:"1.3"}}>{item.label}</span>
+                      <span style={{fontSize:"11px",color:"#374151",textAlign:"center",lineHeight:"1.3",textTransform:"uppercase"}}>{(item.label || "").toUpperCase()}</span>
+                      <span style={{fontSize:"10px",fontWeight:"700",color:item.source_color || "#6b7280",background:"#f8fafc",border:"1px solid #e5e7eb",borderRadius:"999px",padding:"2px 8px"}}>
+                        {item.source || "Biblioteca"}
+                      </span>
                     </button>
                   ))}
                 </div>
                 <p style={{fontSize:"11px",color:"#9ca3af",marginTop:"12px",textAlign:"center"}}>
-                  Pictogramas ARASAAC — licença Creative Commons (CC BY-NC-SA 4.0)
+                  Resultados de ARASAAC, Mulberry, Sclera e SymboTalk
                 </p>
               </div>
             )}
