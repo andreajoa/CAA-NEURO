@@ -29,7 +29,25 @@ export default function PranchaPublica() {
         audio.play();
       }
     } catch {
-      const u = new SpeechSynthesisUtterance(text);
+      
+const u = new SpeechSynthesisUtterance(text);
+
+const voices=speechSynthesis.getVoices();
+
+const selectedVoice=
+voices.find(
+v=>v.lang===lang
+) ||
+voices.find(
+v=>v.lang.startsWith(
+lang.split("-")[0]
+)
+);
+
+if(selectedVoice){
+u.voice=selectedVoice;
+}
+
       u.lang = lang; speechSynthesis.speak(u);
     }
   }

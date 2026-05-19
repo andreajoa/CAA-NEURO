@@ -31,8 +31,26 @@ export default function VarreduraPage() {
   }, []);
 
   const speak = useCallback((text) => {
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "pt-BR"; u.rate = 0.85;
+    
+const u = new SpeechSynthesisUtterance(text);
+
+const voices=speechSynthesis.getVoices();
+
+const selectedVoice=
+voices.find(
+v=>v.lang===lang
+) ||
+voices.find(
+v=>v.lang.startsWith(
+lang.split("-")[0]
+)
+);
+
+if(selectedVoice){
+u.voice=selectedVoice;
+}
+
+    u.lang = lang; u.rate = ttsRate || 1;
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
   }, []);

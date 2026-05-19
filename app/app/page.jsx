@@ -217,7 +217,25 @@ export default function Home() {
       const data = await res.json();
       if (data.audio) { const a = new Audio(`data:audio/mp3;base64,${data.audio}`); a.play(); return; }
     } catch {}
-    const u = new SpeechSynthesisUtterance(text); u.lang = ttsLang; u.rate = 0.88; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    
+const u = new SpeechSynthesisUtterance(text);
+
+const voices=speechSynthesis.getVoices();
+
+const selectedVoice=
+voices.find(
+v=>v.lang===lang
+) ||
+voices.find(
+v=>v.lang.startsWith(
+lang.split("-")[0]
+)
+);
+
+if(selectedVoice){
+u.voice=selectedVoice;
+}
+ u.lang = ttsLang; u.rate = ttsRate || 1; speechSynthesis.cancel(); speechSynthesis.speak(u);
   }
 
   const selectCard = applyIntelliTouch(function selectCard(card) {
