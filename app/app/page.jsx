@@ -175,6 +175,7 @@ export default function Home() {
   const [mobileTab, setMobileTab] = useState("prancha");
   const [showMobileTools, setShowMobileTools] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [imagePickerError, setImagePickerError] = useState("");
 
   // Aplicar tema escuro no <html>
   useEffect(() => {
@@ -241,9 +242,9 @@ export default function Home() {
 
 
   const selectCard = applyIntelliTouch(function selectCard(card) {
+    if (editMode) return;
     setPhrase(p => {
       const next = [...p, card.label];
-      // Buscar predição com os últimos 3 cards
       const last = next.slice(-3).join(",");
       const pid = activePatientId ? `&patient_id=${activePatientId}` : "";
       fetch(`/api/suggest-cards?last=${encodeURIComponent(last)}${pid}`)
@@ -252,7 +253,6 @@ export default function Home() {
         .catch(() => {});
       return next;
     });
-    setEditing(card);
     speak(card.label);
   });
   function saveEditing() { persist(cards.map(c => c.id === editing.id ? editing : c)); setEditing(null); }
@@ -298,31 +298,55 @@ export default function Home() {
   }
 
   async function openImagePicker() {
+    if (!editing) return;
     setImagePickerOpen(true);
     setPickerTab("buscar");
-    setSearchQuery(editing?.label || "");
+    setSearchQuery(editing.label || "");
     setSearchResults([]);
-    setGeneratePrompt(editing?.label || "");
+    setGeneratePrompt(editing.label || "");
     setGenerateError("");
+    setImagePickerError("");
     setImageLibraryLoading(true);
     try {
       const res = await fetch("/api/images/library");
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || `Erro ${res.status} ao carregar biblioteca`);
       setImageLibrary({ platformImages: data.platformImages || [], userImages: data.userImages || [] });
-    } catch {}
-    finally { setImageLibraryLoading(false); }
-    // Auto-buscar pelo nome do card
-    if (editing?.label) { searchArasaac(editing.label); }
+    } catch (e) {
+      console.error("Erro ao abrir banco de imagens:", e);
+      setImagePickerError(e.message || "Não foi possível carregar o banco de imagens.");
+    } finally {
+      setImageLibraryLoading(false);
+    }
+    if (editing?.label?.trim()) {
+      await searchArasaac(editing.label.trim());
+    } else {
+      setImagePickerError("Este card está sem nome. Dê um nome para buscar imagens.");
+    }
   }
 
   async function searchArasaac(q) {
-    if (!q?.trim()) return;
+    if (!q?.trim()) {
+      setImagePickerError("Digite um termo para buscar.");
+      setSearchResults([]);
+      return;
+    }
     setSearchLoading(true);
+    setImagePickerError("");
     try {
       const res = await fetch(`/api/images/search?q=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      setSearchResults(data.results || []);
-    } catch {}
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || `Erro ${res.status} ao buscar imagens`);
+      const results = data.results || [];
+      setSearchResults(results);
+      if (!results.length) {
+        setImagePickerError(`Nenhuma imagem encontrada para "${q}".`);
+      }
+    } catch (e) {
+      console.error("Erro ao buscar imagens:", e);
+      setSearchResults([]);
+      setImagePickerError(e.message || "Não foi possível buscar imagens agora.");
+    }
     finally { setSearchLoading(false); }
   }
 
@@ -338,13 +362,17 @@ export default function Home() {
     formData.append("file", file);
     formData.append("label", editing.label || "Imagem do card");
     setImageLibraryLoading(true);
+    setImagePickerError("");
     try {
       const res = await fetch("/api/images/upload", { method:"POST", body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || `Erro ${res.status} ao enviar imagem`);
       setEditing({ ...editing, image: data.url, empty: false });
       setImagePickerOpen(false);
-    } catch { alert("Não foi possível enviar a imagem."); }
+    } catch (e) {
+      console.error("Erro ao enviar imagem:", e);
+      setImagePickerError(e.message || "Não foi possível enviar a imagem.");
+    }
     finally { setImageLibraryLoading(false); }
   }
 
@@ -616,8 +644,8 @@ export default function Home() {
                   </button>
                   {editMode && (
                     <div className="caa-tools">
-                      <button onClick={()=>setEditing(card)}>Editar</button>
-                      <button onClick={()=>downloadImage(card)}>Baixar</button>
+                      <button onClick={(e)=>{e.stopPropagation(); setEditing(card);}}>Editar</button>
+                      <button onClick={(e)=>{e.stopPropagation(); downloadImage(card);}}>Baixar</button>
                     </div>
                   )}
                 </div>
@@ -640,7 +668,10 @@ export default function Home() {
                 {categories.map(cat=><option key={cat.id} value={cat.id}>{cat.label}</option>)}
               </select>
               <input ref={fileRef} type="file" accept="image/*" hidden onChange={e=>uploadImageToLibrary(e.target.files?.[0])} />
-              <button onClick={openImagePicker}>🔍 Buscar / Gerar imagem</button>
+              <button onClick={()=>{
+                setPickerTab("buscar");
+                openImagePicker();
+              }}>🔍 Trocar imagem</button>
               <button onClick={()=>downloadImage(editing)}>Baixar imagem</button>
               <button className="green" onClick={saveEditing}>Salvar alterações</button>
               <button onClick={()=>setEditing(null)}>Cancelar</button>
@@ -664,7 +695,10 @@ export default function Home() {
                 {categories.map(cat=><option key={cat.id} value={cat.id}>{cat.label}</option>)}
               </select>
               <input ref={fileRef} type="file" accept="image/*" hidden onChange={e=>uploadImageToLibrary(e.target.files?.[0])} />
-              <button onClick={openImagePicker}>🔍 Buscar / Gerar imagem</button>
+              <button onClick={()=>{
+                setPickerTab("buscar");
+                openImagePicker();
+              }}>🔍 Trocar imagem</button>
               <button onClick={()=>downloadImage(editing)}>Baixar imagem</button>
               <button className="green" onClick={saveEditing}>Salvar alterações</button>
               <button onClick={()=>setEditing(null)}>Cancelar</button>
@@ -693,10 +727,16 @@ export default function Home() {
             <div className="imagePickerHeader">
               <div>
                 <h2>Banco de imagens</h2>
-                <p>Busque em 45.000+ pictogramas ou gere com IA</p>
+                <p>Busque no banco de imagens da plataforma pelo nome do card ou gere com IA</p>
               </div>
               <button onClick={()=>setImagePickerOpen(false)} style={{fontSize:"24px",background:"none",border:"none",cursor:"pointer"}}>×</button>
             </div>
+
+            {imagePickerError && (
+              <div style={{background:"#fef2f2",border:"1px solid #fecaca",color:"#b91c1c",borderRadius:"10px",padding:"10px 12px",fontSize:"13px",margin:"0 0 14px"}}>
+                {imagePickerError}
+              </div>
+            )}
 
             {/* Tabs */}
             <div style={{display:"flex",gap:"4px",padding:"0 0 16px",borderBottom:"1px solid #e5e7eb",marginBottom:"16px"}}>
