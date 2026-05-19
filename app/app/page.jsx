@@ -133,22 +133,13 @@ export default function Home() {
           ? data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "", cat: c.category }))
           : defaultBoard(profile, level);
 
-        // Para cards sem imagem, busca no ARASAAC em paralelo
-        const enriched = await Promise.all(base.map(async (c) => {
+        // Para cards sem imagem, usa imagem local se existir
+        const LOCAL_IDS = ["sim","nao","me-da","nao-quero","mais","acabou","ajuda","esperar","agua","comer","banheiro","dor","dormir","tomar-banho","remedio","feliz","triste","bravo","medo","cansado","brincar","parar","sair","passear","escola"];
+        const enriched = base.map((c) => {
           if (c.image) return c;
-          // Tenta imagem local primeiro
-          const local = `/cards/level-1/${c.id}.png`;
-          const ok = await fetch(local, { method: "HEAD" }).then(r => r.ok).catch(() => false);
-          if (ok) return { ...c, image: local };
-          // Fallback ARASAAC
-          try {
-            const ar = await fetch(`/api/images/search?q=${encodeURIComponent(c.label)}`);
-            const ad = await ar.json();
-            const first = ad.results?.[0];
-            if (first?.url) return { ...c, image: first.url };
-          } catch {}
+          if (LOCAL_IDS.includes(c.id)) return { ...c, image: `/cards/level-1/${c.id}.png` };
           return c;
-        }));
+        });
 
         setCards(enriched);
       } catch { setCards(defaultBoard(profile, level)); }
