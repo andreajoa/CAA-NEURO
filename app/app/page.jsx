@@ -124,9 +124,28 @@ export default function Home() {
       try {
         const res = await fetch(`/api/cards?profile=${profile}&level=${level}`);
         const data = await res.json();
-        if (res.ok && data.cards?.length) {
-          setCards(data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url, cat: c.category })));
-        } else { setCards(defaultBoard(profile, level)); }
+        let base = (res.ok && data.cards?.length)
+          ? data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "", cat: c.category }))
+          : defaultBoard(profile, level);
+
+        // Para cards sem imagem, busca no ARASAAC em paralelo
+        const enriched = await Promise.all(base.map(async (c) => {
+          if (c.image) return c;
+          // Tenta imagem local primeiro
+          const local = `/cards/level-1/${c.id}.png`;
+          const ok = await fetch(local, { method: "HEAD" }).then(r => r.ok).catch(() => false);
+          if (ok) return { ...c, image: local };
+          // Fallback ARASAAC
+          try {
+            const ar = await fetch(`/api/images/search?q=${encodeURIComponent(c.label)}`);
+            const ad = await ar.json();
+            const first = ad.results?.[0];
+            if (first?.url) return { ...c, image: first.url };
+          } catch {}
+          return c;
+        }));
+
+        setCards(enriched);
       } catch { setCards(defaultBoard(profile, level)); }
     }
     loadCards();
