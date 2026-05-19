@@ -837,43 +837,85 @@ export default function Home() {
               </div>
             )}
 
-            {/* Tab: Gerar com IA */}
+            {/* Tab: Gerar com IA — Hook Story Offer */}
             {pickerTab==="gerar" && (
               <div>
-                <div style={{background:"#f5f3ff",border:"1px solid #ddd6fe",borderRadius:"12px",padding:"20px"}}>
-                  <p style={{fontSize:"13px",color:"#5b21b6",fontWeight:"600",marginBottom:"4px"}}>✨ Geração de imagem com IA</p>
-                  <p style={{fontSize:"12px",color:"#7c3aed",marginBottom:"16px"}}>Powered by fal.ai — disponível no plano Pro</p>
-                  <label style={{fontSize:"12px",fontWeight:"600",color:"#374151",display:"block",marginBottom:"6px"}}>Descreva a imagem que você quer:</label>
+                {/* HOOK */}
+                <div style={{textAlign:"center",padding:"8px 0 20px"}}>
+                  <div style={{fontSize:"32px",marginBottom:"8px"}}>✨</div>
+                  <h3 style={{fontSize:"18px",fontWeight:"900",color:"#1e0a3c",margin:"0 0 6px"}}>
+                    E se você pudesse criar o pictograma exato que seu paciente precisa?
+                  </h3>
+                  <p style={{fontSize:"13px",color:"#6b7280",margin:0,lineHeight:"1.6"}}>
+                    Sem depender de bancos genéricos. Sem adaptar o que existe. <strong>Do zero, em segundos.</strong>
+                  </p>
+                </div>
+
+                {/* STORY */}
+                <div style={{background:"#faf5ff",border:"1px solid #e9d5ff",borderRadius:"12px",padding:"16px",marginBottom:"16px"}}>
+                  <p style={{fontSize:"13px",color:"#4c1d95",margin:"0 0 10px",lineHeight:"1.7"}}>
+                    <strong>Fonoaudiólogos nos contam:</strong> "Meu paciente tem uma rotina específica — a terapia dele, o lanche dele, o remédio com o nome certo. Nunca encontro um pictograma exato para isso."
+                  </p>
+                  <p style={{fontSize:"13px",color:"#4c1d95",margin:0,lineHeight:"1.7"}}>
+                    Com geração por IA, você digita <em>"criança tomando Ritalina de manhã"</em> ou <em>"cadeira de rodas verde, vista de frente"</em> — e a imagem é criada exclusivamente para aquele paciente.
+                  </p>
+                </div>
+
+                {/* OFFER */}
+                <div style={{background:"linear-gradient(135deg,#7c3aed,#4f46e5)",borderRadius:"14px",padding:"20px",marginBottom:"16px"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"12px"}}>
+                    <span style={{background:"rgba(255,255,255,0.2)",borderRadius:"20px",padding:"3px 12px",fontSize:"11px",fontWeight:"700",color:"white"}}>PLANO PRO</span>
+                    <span style={{fontSize:"12px",color:"rgba(255,255,255,0.7)"}}>R$ 35/mês · cancele quando quiser</span>
+                  </div>
+                  <label style={{fontSize:"13px",fontWeight:"700",color:"white",display:"block",marginBottom:"8px"}}>
+                    Descreva o pictograma que você precisa:
+                  </label>
                   <input
                     value={generatePrompt}
                     onChange={e=>setGeneratePrompt(e.target.value)}
-                    placeholder={`Ex: pictograma simples de "${editing?.label||"água"}"`}
+                    placeholder={`Ex: "${editing?.label||"criança bebendo água"}" estilo pictograma simples`}
                     onKeyDown={e=>e.key==="Enter"&&generateImage()}
-                    style={{width:"100%",padding:"10px 12px",borderRadius:"8px",border:"1px solid #c4b5fd",fontSize:"14px",marginBottom:"12px",boxSizing:"border-box"}}
+                    style={{width:"100%",padding:"12px 14px",borderRadius:"10px",border:"2px solid rgba(255,255,255,0.3)",fontSize:"14px",marginBottom:"12px",boxSizing:"border-box",background:"rgba(255,255,255,0.1)",color:"white",outline:"none"}}
                   />
                   {generateError && (
-                    <div style={{background:"#fef2f2",border:"1px solid #fecaca",borderRadius:"8px",padding:"10px",marginBottom:"12px",fontSize:"12px",color:"#dc2626"}}>
+                    <div style={{background:"rgba(0,0,0,0.3)",borderRadius:"8px",padding:"10px",marginBottom:"12px",fontSize:"12px",color:"#fca5a5",lineHeight:"1.5"}}>
                       {generateError}
                       {generateError.includes("Pro") && (
-                        <a href="/planos" style={{display:"block",marginTop:"4px",color:"#2563eb",fontWeight:"600"}}>Ver planos →</a>
+                        <a href="/planos" style={{display:"block",marginTop:"6px",color:"#fde68a",fontWeight:"700",fontSize:"13px"}}>
+                          → Assinar Pro por R$ 35/mês e desbloquear agora
+                        </a>
                       )}
                     </div>
                   )}
                   <button
                     onClick={generateImage}
                     disabled={generating||!generatePrompt.trim()}
-                    style={{width:"100%",padding:"12px",background:generating?"#a78bfa":"#7c3aed",color:"white",border:"none",borderRadius:"8px",fontWeight:"600",cursor:generating?"wait":"pointer",fontSize:"14px"}}
+                    style={{width:"100%",padding:"14px",background:generating?"rgba(255,255,255,0.3)":"white",color:generating?"white":"#7c3aed",border:"none",borderRadius:"10px",fontWeight:"900",cursor:generating?"wait":"pointer",fontSize:"15px",transition:"all 0.2s",boxShadow:"0 4px 20px rgba(0,0,0,0.2)"}}
                   >
-                    {generating?"Gerando imagem...":"Gerar imagem com IA"}
+                    {generating?"⏳ Gerando sua imagem...":"✨ Gerar pictograma exclusivo"}
                   </button>
-                  <p style={{fontSize:"11px",color:"#9ca3af",marginTop:"8px",textAlign:"center"}}>
-                    Tempo estimado: 3–8 segundos por imagem
+                  <p style={{fontSize:"11px",color:"rgba(255,255,255,0.6)",marginTop:"8px",textAlign:"center"}}>
+                    Powered by fal.ai · Gerado em 3–8 segundos · Imagem exclusiva sua
                   </p>
                 </div>
-                <div style={{marginTop:"16px",padding:"12px",background:"#f9fafb",borderRadius:"8px",fontSize:"12px",color:"#6b7280"}}>
-                  <strong>Plano Gratuito:</strong> use os 45.000+ pictogramas ARASAAC<br/>
-                  <strong>Plano Pro:</strong> gere imagens únicas e personalizadas com IA<br/>
-                  <a href="/planos" style={{color:"#2563eb",marginTop:"4px",display:"inline-block"}}>Ver diferença entre planos →</a>
+
+                {/* Comparação plano */}
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
+                  <div style={{background:"#f9fafb",borderRadius:"10px",padding:"12px",textAlign:"center"}}>
+                    <div style={{fontSize:"20px",marginBottom:"4px"}}>🆓</div>
+                    <div style={{fontSize:"12px",fontWeight:"700",color:"#374151",marginBottom:"4px"}}>Plano Gratuito</div>
+                    <div style={{fontSize:"11px",color:"#6b7280",lineHeight:"1.5"}}>45.000+ pictogramas do banco ARASAAC. Busque na aba "Buscar imagens".</div>
+                  </div>
+                  <div style={{background:"#faf5ff",border:"1px solid #e9d5ff",borderRadius:"10px",padding:"12px",textAlign:"center"}}>
+                    <div style={{fontSize:"20px",marginBottom:"4px"}}>⭐</div>
+                    <div style={{fontSize:"12px",fontWeight:"700",color:"#7c3aed",marginBottom:"4px"}}>Plano Pro</div>
+                    <div style={{fontSize:"11px",color:"#6b7280",lineHeight:"1.5"}}>Crie qualquer pictograma com IA. Exclusivo, personalizado, seu.</div>
+                  </div>
+                </div>
+                <div style={{textAlign:"center",marginTop:"12px"}}>
+                  <a href="/planos" style={{fontSize:"13px",color:"#7c3aed",fontWeight:"700",textDecoration:"none"}}>
+                    Ver planos e assinar Pro →
+                  </a>
                 </div>
               </div>
             )}
