@@ -1,4 +1,5 @@
 "use client";
+import AppShell from "../components/AppShell";
 
 import { useEffect, useRef, useState } from "react";
 import DwellButton from "../components/DwellButton";
@@ -354,6 +355,7 @@ export default function Home() {
   const tabStyle = (active) => ({ padding:"8px 16px", borderRadius:"8px", border:"none", cursor:"pointer", fontSize:"13px", fontWeight:"500", background: active ? "#2563eb" : "transparent", color: active ? "white" : "#6b7280" });
 
   return (
+    <AppShell>
     <main className={`caa-page ${editMode ? "caa-editing" : ""}`}>
       <section className="caa-clinic-panel">
         <div>
@@ -759,5 +761,6 @@ export default function Home() {
         />
       )}
     </main>
+    </AppShell>
   );
 }
