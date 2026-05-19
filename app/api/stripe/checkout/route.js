@@ -19,7 +19,7 @@ export async function POST(request) {
     if (embedded) {
       // Modo embedded: retorna client_secret para renderizar dentro da página
       const session = await stripe.checkout.sessions.create({
-        ui_mode: "embedded",
+        ui_mode: "embedded_page",
         mode: "subscription",
         payment_method_types: ["card"],
         line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
