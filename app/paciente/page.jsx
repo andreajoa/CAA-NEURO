@@ -50,14 +50,14 @@ export default function ModoPaciente() {
 
         // Para cada card: tenta imagem salva, depois local, depois ARASAAC
         const withImages = await Promise.all(raw.map(async (c) => {
-          // 1. Já tem imagem salva
-          if (c.image || c.image_url) return { ...c, image: c.image || c.image_url };
-
-          // 2. Tenta imagem local
+          // 1. Prioriza imagem local pelo ID do card
           const localPath = `/cards/level-1/${c.id}.png`;
           const localOk = await fetch(localPath, { method: "HEAD" })
             .then(r => r.ok).catch(() => false);
           if (localOk) return { ...c, image: localPath };
+
+          // 2. Se não existir local, usa imagem salva
+          if (c.image || c.image_url) return { ...c, image: c.image || c.image_url };
 
           // 3. Busca no ARASAAC pelo label do card
           try {
