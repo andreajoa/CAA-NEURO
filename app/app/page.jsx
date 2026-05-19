@@ -77,6 +77,8 @@ export default function Home() {
   const [sessionNote, setSessionNote] = useState("");
   const [sessions, setSessions] = useState([]);
   const [showLibrary, setShowLibrary] = useState(false);
+  const [nextSuggestions, setNextSuggestions] = useState([]);
+  const [showQuickFires, setShowQuickFires] = useState(false);
   const [cards, setCards] = useState(defaultBoard("infantil", "emergente"));
   const [phrase, setPhrase] = useState([]);
   const [editing, setEditing] = useState(null);
@@ -184,7 +186,21 @@ export default function Home() {
     const u = new SpeechSynthesisUtterance(text); u.lang = ttsLang; u.rate = 0.88; speechSynthesis.cancel(); speechSynthesis.speak(u);
   }
 
-  function selectCard(card) { setPhrase(p => [...p, card.label]); setEditing(card); speak(card.label); }
+  function selectCard(card) {
+    setPhrase(p => {
+      const next = [...p, card.label];
+      // Buscar predição com os últimos 3 cards
+      const last = next.slice(-3).join(",");
+      const pid = activePatientId ? `&patient_id=${activePatientId}` : "";
+      fetch(`/api/suggest-cards?last=${encodeURIComponent(last)}${pid}`)
+        .then(r => r.json())
+        .then(d => setNextSuggestions(d.next_suggestions || []))
+        .catch(() => {});
+      return next;
+    });
+    setEditing(card);
+    speak(card.label);
+  }
   function saveEditing() { persist(cards.map(c => c.id === editing.id ? editing : c)); setEditing(null); }
 
   function downloadImage(card) {
@@ -401,6 +417,30 @@ export default function Home() {
               {phrase.map((w,i)=><span key={i}>{w}</span>)}
               {!phrase.length && <em>Toque nos cards para montar uma frase.</em>}
             </div>
+            {nextSuggestions.length > 0 && (
+              <div style={{display:"flex",gap:"6px",flexWrap:"wrap",padding:"8px 0 4px",borderBottom:"1px solid #e5e7eb",marginBottom:"4px"}}>
+                <span style={{fontSize:"11px",color:"#9ca3af",alignSelf:"center",marginRight:"2px"}}>💡 Próximo:</span>
+                {nextSuggestions.map((s,i) => (
+                  <button key={i} onClick={()=>{speak(s);setPhrase(p=>[...p,s]);}}
+                    style={{background:"#eff6ff",border:"1px solid #bfdbfe",color:"#2563eb",padding:"4px 10px",borderRadius:"20px",fontSize:"12px",fontWeight:"700",cursor:"pointer"}}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+            {showQuickFires && (
+              <div style={{background:"#faf5ff",border:"1px solid #e9d5ff",borderRadius:"10px",padding:"10px",marginBottom:"8px"}}>
+                <div style={{fontSize:"12px",fontWeight:"700",color:"#7c3aed",marginBottom:"8px"}}>⚡ QuickFires — frases rápidas</div>
+                <div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
+                  {["Preciso de ajuda","Eu quero água","Eu quero comer","Preciso ir ao banheiro","Eu estou com dor","Pode repetir?","Não entendi","Eu quero parar","Estou cansado","Eu quero brincar","Obrigado","Por favor"].map((f,i) => (
+                    <button key={i} onClick={()=>{speak(f);setPhrase(p=>[...p,...f.split(" ")]);}}
+                      style={{background:"white",border:"1px solid #e9d5ff",color:"#374151",padding:"6px 12px",borderRadius:"20px",fontSize:"13px",cursor:"pointer",fontWeight:"600"}}>
+                      {f}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="caa-buttons">
               <button className="green" onClick={()=>speak(phrase.join(" "))}>🔊 Falar frase</button>
               <select value={ttsLang} onChange={e=>setTtsLang(e.target.value)} style={{padding:"6px 10px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer"}}>
@@ -413,6 +453,18 @@ export default function Home() {
               </select>
               <button onClick={()=>setPhrase([])}>Limpar</button>
               <button className="yellow" onClick={()=>setPhrase(p=>p.slice(0,-1))}>Desfazer</button>
+              <button onClick={()=>setShowQuickFires(q=>!q)} style={{background:showQuickFires?"#7c3aed":"#ede9fe",color:showQuickFires?"white":"#7c3aed",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
+                ⚡ QuickFires
+              </button>
+              <button onClick={async()=>{
+                const res = await fetch("/api/export-board",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cards:cards.filter(c=>!c.empty),title:patientName||"Prancha CAA",cols:5})});
+                const html = await res.text();
+                const w = window.open("","_blank");
+                w.document.write(html);
+                w.document.close();
+              }} style={{background:"#eff6ff",color:"#2563eb",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
+                🖨️ Imprimir
+              </button>
               <button className="dark" onClick={addCard}>+ Novo card</button>
               <button onClick={()=>window.location.href="/biblioteca"} style={{background:"#7c3aed",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>📚 Biblioteca</button>
               <button onClick={shareBoard} disabled={sharing} style={{background:"#6366f1",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>
