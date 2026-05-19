@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { decryptPatient, decryptSession } from "../../lib/crypto";
+import { d1Query } from "../../../lib/d1";
 
 export const runtime = "nodejs";
-const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
 
 export async function GET(request) {
   const { userId } = await auth();
@@ -12,14 +12,11 @@ export async function GET(request) {
   if (!patientId) return Response.json({ error: "patient_id obrigatório" }, { status: 400 });
 
   try {
-    const db = getDB(request);
-    const rawPatient = await db.prepare("SELECT * FROM patients WHERE id=? AND user_id=?").bind(patientId, userId).first();
+    const [rawPatient] = await d1Query("SELECT * FROM patients WHERE id=? AND user_id=?", [patientId, userId]) || [];
     if (!rawPatient) return Response.json({ error: "Paciente não encontrado" }, { status: 404 });
     const patient = decryptPatient(rawPatient);
 
-    const { results: rawSessions } = await db.prepare(
-      "SELECT * FROM sessions WHERE patient_id=? AND user_id=? ORDER BY created_at DESC LIMIT 20"
-    ).bind(patientId, userId).all();
+    const rawSessions = await d1Query("SELECT * FROM sessions WHERE patient_id=? AND user_id=? ORDER BY created_at DESC LIMIT 20", [patientId, userId]) || [];
     const sessions = rawSessions.map(decryptSession);
 
     const prompt = `Você é um assistente clínico especializado em Comunicação Aumentativa e Alternativa (CAA).
@@ -77,10 +74,8 @@ Seja objetivo, clínico e útil para o fonoaudiólogo. Máximo 400 palavras.`;
 
     const insight = data.choices?.[0]?.message?.content || "Não foi possível gerar insights.";
 
-    await db.prepare(
-      `INSERT INTO audit_logs (user_id, acao, recurso, detalhes, created_at)
-       VALUES (?, 'IA_INSIGHT', 'patients', ?, datetime('now'))`
-    ).bind(userId, JSON.stringify({ patient_id: patientId })).run().catch(() => {});
+    await d1Query("INSERT INTO audit_logs (user_id, acao, recurso, detalhes, created_at) VALUES (?, 'IA_INSIGHT', 'patients', ?, datetime('now'))",
+      [userId, JSON.stringify({ patient_id: patientId })]).catch(() => {});
 
     return Response.json({ insight, sessions_analyzed: sessions.length });
   } catch (e) {
