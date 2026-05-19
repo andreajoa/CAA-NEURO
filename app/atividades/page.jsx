@@ -12,11 +12,37 @@ export default function Atividades() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const FALLBACK = [
+    {id:"sim",label:"Sim",image:"/cards/level-1/sim.png",cat:"core"},
+    {id:"nao",label:"Não",image:"/cards/level-1/nao.png",cat:"core"},
+    {id:"ajuda",label:"Ajuda",image:"/cards/level-1/ajuda.png",cat:"core"},
+    {id:"mais",label:"Mais",image:"/cards/level-1/mais.png",cat:"core"},
+    {id:"agua",label:"Água",image:"/cards/level-1/agua.png",cat:"necessidades"},
+    {id:"comer",label:"Comer",image:"/cards/level-1/comer.png",cat:"necessidades"},
+    {id:"banheiro",label:"Banheiro",image:"/cards/level-1/banheiro.png",cat:"necessidades"},
+    {id:"dormir",label:"Dormir",image:"/cards/level-1/dormir.png",cat:"necessidades"},
+    {id:"feliz",label:"Feliz",image:"/cards/level-1/feliz.png",cat:"emocoes"},
+    {id:"triste",label:"Triste",image:"/cards/level-1/triste.png",cat:"emocoes"},
+    {id:"medo",label:"Medo",image:"/cards/level-1/medo.png",cat:"emocoes"},
+    {id:"bravo",label:"Bravo",image:"/cards/level-1/bravo.png",cat:"emocoes"},
+    {id:"brincar",label:"Brincar",image:"/cards/level-1/brincar.png",cat:"acoes"},
+    {id:"parar",label:"Parar",image:"/cards/level-1/parar.png",cat:"acoes"},
+    {id:"esperar",label:"Esperar",image:"/cards/level-1/esperar.png",cat:"acoes"},
+    {id:"dor",label:"Dor",image:"/cards/level-1/dor.png",cat:"saude"},
+    {id:"remedio",label:"Remédio",image:"/cards/level-1/remedio.png",cat:"saude"},
+    {id:"escola",label:"Escola",image:"/cards/level-1/escola.png",cat:"lugares"},
+  ];
+
   useEffect(() => {
-    fetch("/api/cards").then(r => r.json()).then(d => {
-      setCards((d.cards || []).filter(c => c.image || c.label));
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    fetch("/api/cards?profile=infantil&level=emergente")
+      .then(r => r.json())
+      .then(d => {
+        const raw = (d.cards || []).filter(c => c.image || c.image_url || c.label);
+        const mapped = raw.map(c => ({...c, image: c.image || c.image_url || `/cards/level-1/${c.id}.png`}));
+        setCards(mapped.length >= 4 ? mapped : FALLBACK);
+        setLoading(false);
+      })
+      .catch(() => { setCards(FALLBACK); setLoading(false); });
   }, []);
 
   if (loading) return (
@@ -52,10 +78,14 @@ function Menu({ setMode, router, total }) {
 
   return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui,sans-serif"}}>
-      <div style={{background:"#071b2c",color:"white",padding:"14px 24px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-        <div style={{fontWeight:"800",fontSize:"18px",color:"#4ec9a0"}}>CAA Neuro</div>
-        <Link href="/app" style={{color:"rgba(255,255,255,0.7)",fontSize:"14px",textDecoration:"none"}}>← Voltar à Prancha</Link>
-      </div>
+      <nav style={{background:"#071b2c",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #00885f"}}>
+        <span style={{color:"#4ec9a0",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
+        <a href="/app" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏠 Prancha</a>
+        <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👥 Pacientes</a>
+        <a href="/biblioteca" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>📚 Biblioteca</a>
+        <a href="/atividades" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.3)",border:"1px solid #4ec9a0",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🎯 Atividades</a>
+        <a href="/suporte" style={{color:"rgba(255,255,255,0.6)",textDecoration:"none",fontSize:"12px",marginLeft:"auto"}}>❓ Ajuda</a>
+      </nav>
       <div style={{maxWidth:"720px",margin:"0 auto",padding:"40px 24px"}}>
         <div style={{textAlign:"center",marginBottom:"40px"}}>
           <h1 style={{fontSize:"28px",fontWeight:"800",color:"#071b2c",margin:"0 0 8px"}}>🎯 Atividades Terapêuticas</h1>
