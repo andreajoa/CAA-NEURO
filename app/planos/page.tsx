@@ -1,24 +1,52 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { loadStripe } from "@stripe/stripe-js";
+import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
+const NAV = () => (
+  <nav style={{background:"#071b2c",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #00885f"}}>
+    <span style={{color:"#4ec9a0",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
+    <a href="/app" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏠 Prancha</a>
+    <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👥 Pacientes</a>
+    <a href="/suporte" style={{color:"rgba(255,255,255,0.6)",textDecoration:"none",fontSize:"12px",marginLeft:"auto"}}>❓ Ajuda</a>
+  </nav>
+);
 
 export default function PlanosPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [planoAtual, setPlanoAtual] = useState("gratuito");
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
+  const [checkoutError, setCheckoutError] = useState("");
 
   useEffect(() => {
     fetch("/api/plano").then(r => r.json()).then(d => setPlanoAtual(d.plano || "gratuito"));
   }, []);
 
-  async function assinarPro() {
+  async function abrirCheckout() {
     setLoading(true);
+    setCheckoutError("");
     try {
-      const res = await fetch("/api/stripe/checkout", { method: "POST" });
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ embedded: true }),
+      });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
-      else alert("Erro ao iniciar pagamento. Tente novamente.");
-    } catch { alert("Erro de conexão."); }
+      if (data.clientSecret) {
+        setClientSecret(data.clientSecret);
+        setShowCheckout(true);
+        setTimeout(() => {
+          document.getElementById("checkout-section")?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else {
+        setCheckoutError(data.error || "Erro ao iniciar pagamento.");
+      }
+    } catch {
+      setCheckoutError("Erro de conexão. Tente novamente.");
+    }
     setLoading(false);
   }
 
@@ -29,8 +57,18 @@ export default function PlanosPage() {
       periodo: "para sempre",
       cor: "#e5e7eb",
       destaque: false,
-      recursos: ["✅ Até 3 pacientes","✅ Cards da biblioteca padrão","✅ 45.000+ pictogramas ARASAAC","✅ Histórico de sessões","✅ Exportação CSV","❌ Geração de imagens com IA","❌ Análise clínica com IA","❌ Relatório PDF profissional","❌ Exportação Excel"],
-      cta: planoAtual === "gratuito" ? "Plano atual" : "Fazer downgrade",
+      recursos: [
+        "✅ Até 3 pacientes",
+        "✅ Cards da biblioteca padrão",
+        "✅ 45.000+ pictogramas ARASAAC",
+        "✅ Histórico de sessões",
+        "✅ Exportação CSV",
+        "❌ Geração de imagens com IA",
+        "❌ Análise clínica com IA",
+        "❌ Relatório PDF profissional",
+        "❌ Exportação Excel",
+      ],
+      cta: planoAtual === "pro" ? "Fazer downgrade" : "Plano atual",
       action: null,
     },
     {
@@ -39,9 +77,19 @@ export default function PlanosPage() {
       periodo: "por mês",
       cor: "#00885f",
       destaque: true,
-      recursos: ["✅ Pacientes ilimitados","✅ Cards da biblioteca padrão","✅ 45.000+ pictogramas ARASAAC","✅ Histórico de sessões","✅ Exportação CSV","✅ Geração de imagens com IA","✅ Análise clínica com IA","✅ Relatório PDF profissional","✅ Exportação Excel"],
-      cta: planoAtual === "pro" ? "✅ Plano ativo" : loading ? "Processando..." : "Assinar Pro — R$ 35/mês",
-      action: planoAtual !== "pro" ? assinarPro : null,
+      recursos: [
+        "✅ Pacientes ilimitados",
+        "✅ Cards da biblioteca padrão",
+        "✅ 45.000+ pictogramas ARASAAC",
+        "✅ Histórico de sessões",
+        "✅ Exportação CSV",
+        "✅ Geração de imagens com IA",
+        "✅ Análise clínica com IA",
+        "✅ Relatório PDF profissional",
+        "✅ Exportação Excel",
+      ],
+      cta: planoAtual === "pro" ? "✅ Plano ativo" : loading ? "Carregando..." : "Assinar Pro — R$ 35/mês",
+      action: planoAtual !== "pro" ? abrirCheckout : null,
     },
     {
       nome: "Institucional",
@@ -49,7 +97,16 @@ export default function PlanosPage() {
       periodo: "por instituição",
       cor: "#7c3aed",
       destaque: false,
-      recursos: ["✅ Tudo do plano Pro","✅ Múltiplos profissionais","✅ Painel gestor centralizado","✅ Relatórios por unidade","✅ Onboarding dedicado","✅ Suporte prioritário","✅ Contrato e NF","✅ Conformidade LGPD completa"],
+      recursos: [
+        "✅ Tudo do plano Pro",
+        "✅ Múltiplos profissionais",
+        "✅ Painel gestor centralizado",
+        "✅ Relatórios por unidade",
+        "✅ Onboarding dedicado",
+        "✅ Suporte prioritário",
+        "✅ Contrato e NF",
+        "✅ Conformidade LGPD completa",
+      ],
       cta: "Falar com a equipe",
       action: () => window.location.href = "mailto:contato@adhdautism.online?subject=Plano Institucional CAA Neuro",
     },
@@ -57,12 +114,7 @@ export default function PlanosPage() {
 
   return (
     <div style={{minHeight:"100vh",background:"#f5f7fb",fontFamily:"Arial,Helvetica,sans-serif"}}>
-      <nav style={{background:"#071b2c",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #00885f"}}>
-        <span style={{color:"#4ec9a0",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
-        <a href="/app" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏠 Prancha</a>
-        <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👥 Pacientes</a>
-        <a href="/suporte" style={{color:"rgba(255,255,255,0.6)",textDecoration:"none",fontSize:"12px",marginLeft:"auto"}}>❓ Ajuda</a>
-      </nav>
+      <NAV />
 
       <div style={{maxWidth:"960px",margin:"0 auto",padding:"48px 24px"}}>
         <div style={{textAlign:"center",marginBottom:"48px"}}>
@@ -75,7 +127,8 @@ export default function PlanosPage() {
           )}
         </div>
 
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:"24px"}}>
+        {/* Cards de plano */}
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:"24px",marginBottom:"40px"}}>
           {planos.map(p => (
             <div key={p.nome} style={{background:"white",borderRadius:"20px",border:`2px solid ${p.destaque ? p.cor : "#e5e7eb"}`,padding:"28px",display:"flex",flexDirection:"column",boxShadow:p.destaque?"0 8px 32px rgba(0,136,95,0.15)":"0 2px 8px rgba(0,0,0,0.06)",position:"relative"}}>
               {p.destaque && (
@@ -98,7 +151,7 @@ export default function PlanosPage() {
               <button
                 onClick={p.action || undefined}
                 disabled={!p.action || loading}
-                style={{width:"100%",padding:"14px",borderRadius:"12px",border:"none",cursor:p.action&&!loading?"pointer":"default",fontWeight:"700",fontSize:"15px",background:p.action&&!loading?p.cor:"#f3f4f6",color:p.action&&!loading?"white":"#9ca3af",transition:"opacity 0.2s"}}
+                style={{width:"100%",padding:"14px",borderRadius:"12px",border:"none",cursor:p.action&&!loading?"pointer":"default",fontWeight:"700",fontSize:"15px",background:p.action&&!loading?p.cor:"#f3f4f6",color:p.action&&!loading?"white":"#9ca3af",transition:"opacity 0.2s",opacity:loading&&p.nome==="Pro"?0.7:1}}
               >
                 {p.cta}
               </button>
@@ -106,7 +159,34 @@ export default function PlanosPage() {
           ))}
         </div>
 
-        <p style={{textAlign:"center",color:"#9ca3af",fontSize:"13px",marginTop:"32px"}}>
+        {checkoutError && (
+          <div style={{background:"#fef2f2",border:"1px solid #fecaca",borderRadius:"12px",padding:"16px",marginBottom:"24px",color:"#dc2626",textAlign:"center",fontSize:"14px"}}>
+            {checkoutError}
+          </div>
+        )}
+
+        {/* Checkout Embedded */}
+        {showCheckout && clientSecret && (
+          <div id="checkout-section" style={{background:"white",borderRadius:"20px",border:"2px solid #00885f",padding:"32px",boxShadow:"0 8px 40px rgba(0,136,95,0.15)",marginBottom:"40px"}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"24px"}}>
+              <div>
+                <h2 style={{fontSize:"20px",fontWeight:"900",color:"#071b2c",margin:"0 0 4px"}}>Finalizar assinatura Pro</h2>
+                <p style={{margin:0,fontSize:"13px",color:"#6b7280"}}>Pagamento seguro via Stripe · Cancele quando quiser</p>
+              </div>
+              <button
+                onClick={() => { setShowCheckout(false); setClientSecret(""); }}
+                style={{background:"none",border:"1px solid #e5e7eb",borderRadius:"8px",padding:"6px 12px",cursor:"pointer",fontSize:"13px",color:"#6b7280"}}
+              >
+                ✕ Fechar
+              </button>
+            </div>
+            <EmbeddedCheckoutProvider stripe={stripePromise} options={{ clientSecret }}>
+              <EmbeddedCheckout />
+            </EmbeddedCheckoutProvider>
+          </div>
+        )}
+
+        <p style={{textAlign:"center",color:"#9ca3af",fontSize:"13px"}}>
           Pagamento seguro via Stripe · Cancele quando quiser · Sem fidelidade
         </p>
       </div>
