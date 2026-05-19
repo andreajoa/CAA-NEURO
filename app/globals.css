@@ -412,3 +412,136 @@ display:none;
 .featuresLanding,.professionalsStrip,.bottomCta{grid-template-columns:1fr}
 .quoteCard{position:relative;right:auto;top:auto;width:auto;margin-top:20px}
 }
+
+
+/* MOBILE CLEANUP */
+.caa-desktop-shortcuts{
+  background:#071b2c;
+  padding:10px 20px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  border-bottom:2px solid #00885f;
+  border-radius:16px;
+  margin-bottom:16px;
+}
+.caa-desktop-shortcuts a{
+  color:white;
+  text-decoration:none;
+  background:rgba(255,255,255,0.1);
+  padding:7px 14px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:600;
+}
+.caa-desktop-shortcuts a.highlight{
+  background:rgba(78,201,160,0.2);
+  border:1px solid #4ec9a0;
+}
+.caa-desktop-shortcuts-right{ margin-left:auto; }
+.caa-desktop-brand{ color:#4ec9a0; font-weight:800; font-size:15px; margin-right:8px; }
+.caa-mobile-bottomnav{ display:none; }
+
+@media(max-width:700px){
+  body{ background:#eef3f7; }
+  .caa-page{ padding:10px 10px 96px; }
+  .caa-desktop-shortcuts{ display:none; }
+  .caa-header{ margin-bottom:10px; gap:10px; }
+  .caa-kicker{ font-size:11px; letter-spacing:.08em; }
+  .caa-header h1{ font-size:28px; line-height:1.05; }
+  .caa-header p{ font-size:13px; line-height:1.45; }
+  .caa-top-actions{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .caa-top-actions button{ width:100%; padding:11px 12px; font-size:13px; }
+  .caa-clinic-panel,.caa-phrase,.caa-board,.caa-sessions,.caa-library{
+    border-radius:20px; box-shadow:0 8px 24px rgba(15,23,42,.06); border:1px solid #dde6ec;
+  }
+  .caa-clinic-panel{ padding:14px; gap:14px; margin-bottom:12px; }
+  .caa-clinic-panel h2,.caa-library h2,.caa-sessions h2{ font-size:16px; margin-bottom:10px; }
+  .caa-clinic-panel input,.caa-clinic-panel select,.caa-clinic-panel textarea{ font-size:14px; padding:12px; }
+  .caa-clinic-actions{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .caa-clinic-actions button{ padding:11px 8px; font-size:12px; }
+  .caa-tabs,.caa-levels,.caa-category-row{
+    display:flex; flex-wrap:nowrap; overflow:auto; gap:8px; padding-bottom:4px; scrollbar-width:none;
+  }
+  .caa-tabs::-webkit-scrollbar,.caa-levels::-webkit-scrollbar,.caa-category-row::-webkit-scrollbar{ display:none; }
+  .caa-tabs button,.caa-levels button,.caa-category-row button{
+    flex:0 0 auto; white-space:nowrap; padding:11px 14px; font-size:12px; border-radius:14px; box-shadow:none;
+  }
+  .caa-layout{ display:block; }
+  .caa-phrase{
+    position:sticky; top:8px; z-index:30; margin-bottom:12px; padding:14px; border:2px solid #f472b6;
+  }
+  .caa-phrase-title{ font-size:13px; margin-bottom:8px; }
+  .caa-words{ min-height:42px; gap:8px; margin-bottom:12px; }
+  .caa-words span{ padding:10px 14px; font-size:15px; border-radius:12px; }
+  .caa-buttons{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .caa-buttons > *{ width:100% !important; margin:0 !important; min-height:44px; font-size:12px !important; padding:10px 8px !important; }
+  .caa-board{ padding:12px; gap:10px; grid-template-columns:repeat(2,1fr); }
+  .caa-card{ height:auto; min-height:198px; border-radius:18px; }
+  .caa-card-inner{ padding:8px; }
+  .caa-image-frame{ border-width:4px; border-radius:14px; }
+  .caa-label{ min-height:40px; font-size:17px !important; padding-top:6px; }
+  .caa-tools{ grid-template-columns:1fr 1fr; }
+  .caa-editor{ display:none; }
+  .caa-sessions{ margin-top:14px; padding:14px; }
+  .caa-mobile-bottomnav{
+    position:fixed; left:50%; bottom:10px; transform:translateX(-50%);
+    width:calc(100% - 20px); max-width:420px; background:#062d24;
+    border-radius:20px; padding:8px 6px; display:grid; grid-template-columns:repeat(5,1fr);
+    gap:4px; box-shadow:0 20px 35px rgba(0,0,0,.22); z-index:60;
+  }
+  .caa-mobile-bottomnav button{
+    border:none; background:transparent; color:rgba(255,255,255,.72);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    font-size:18px; padding:8px 4px; min-height:58px;
+  }
+  .caa-mobile-bottomnav button span{ font-size:10px; font-weight:800; line-height:1; }
+  .caa-mobile-bottomnav button.active{ color:#6ee7b7 !important; background:rgba(255,255,255,.06); border-radius:14px; }
+}
+
+
+@media(max-width:700px){
+  .caa-buttons{
+    align-items:stretch;
+  }
+
+  .caa-buttons select{
+    width:100%;
+    min-height:44px;
+    border-radius:12px !important;
+    background:white;
+  }
+
+  .caa-buttons > div{
+    grid-column:1 / -1;
+  }
+
+  .caa-phrase .caa-buttons button.green{
+    grid-column:1 / -1;
+    min-height:48px;
+    font-size:14px !important;
+  }
+
+  .caa-phrase .caa-buttons button.yellow{
+    background:#facc15;
+    color:#1f2937;
+  }
+
+  .caa-phrase .caa-buttons button[style*="Menos opções"],
+  .caa-phrase .caa-buttons button[style*="Mais opções"]{
+    font-weight:800;
+  }
+
+  .caa-phrase{
+    box-shadow:0 10px 28px rgba(233,30,120,.10);
+  }
+
+  .caa-category-row{
+    margin-bottom:10px;
+  }
+
+  .caa-board{
+    margin-bottom:8px;
+  }
+}

@@ -172,6 +172,8 @@ export default function Home() {
   const { config: a11yConfig, overrides: a11yOverrides, setOverrides: setA11yOverrides,
           applyIntelliTouch, contrastFilter, fontScale, positionLocked } = useAccessibility(diagnostico);
   const [darkMode, setDarkMode] = useState(false);
+  const [mobileTab, setMobileTab] = useState("prancha");
+  const [showMobileTools, setShowMobileTools] = useState(false);
 
   // Aplicar tema escuro no <html>
   useEffect(() => {
@@ -411,16 +413,16 @@ export default function Home() {
       )}
 
       <PWABanner />
-      <nav style={{background:"#071b2c",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #00885f"}}>
-        <span style={{color:"#4ec9a0",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
-        <a href="/app" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏠 Prancha</a>
-        <a href="/biblioteca" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>📚 Biblioteca</a>
-        <a href="/paciente" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👤 Modo Paciente</a>
-        <a href="/atividades" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🎮 Atividades</a>
-        <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.2)",border:"1px solid #4ec9a0",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>✨ Relatório IA</a>
-        <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👥 Pacientes</a>
-        <div style={{marginLeft:"auto",display:"flex",gap:"8px",alignItems:"center"}}>
-          <a href="/suporte" style={{color:"rgba(255,255,255,0.6)",textDecoration:"none",fontSize:"12px"}}>❓ Ajuda</a>
+      <nav className="caa-desktop-shortcuts">
+        <span className="caa-desktop-brand">CAA Neuro</span>
+        <a href="/app">🏠 Prancha</a>
+        <a href="/biblioteca">📚 Biblioteca</a>
+        <a href="/paciente">👤 Modo Paciente</a>
+        <a href="/atividades">🎮 Atividades</a>
+        <a href="/pacientes" className="highlight">✨ Relatório IA</a>
+        <a href="/pacientes">👥 Pacientes</a>
+        <div className="caa-desktop-shortcuts-right">
+          <a href="/suporte">❓ Ajuda</a>
         </div>
       </nav>
       <header className="caa-header">
@@ -488,6 +490,7 @@ export default function Home() {
             )}
             <div className="caa-buttons">
               <button className="green" onClick={()=>speak(phrase.join(" "))}>🔊 Falar frase</button>
+              <button className="yellow" onClick={()=>setPhrase(p=>p.slice(0,-1))}>Desfazer</button>
               <select value={ttsLang} onChange={e=>setTtsLang(e.target.value)} style={{padding:"6px 10px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer"}}>
                 <option value="pt-BR">🇧🇷 PT-BR</option>
                 <option value="pt-PT">🇵🇹 PT-PT</option>
@@ -496,51 +499,58 @@ export default function Home() {
                 <option value="fr-FR">🇫🇷 FR</option>
                 <option value="de-DE">🇩🇪 DE</option>
               </select>
-              <button onClick={()=>setPhrase([])}>Limpar</button>
-              <button className="yellow" onClick={()=>setPhrase(p=>p.slice(0,-1))}>Desfazer</button>
-              <button onClick={()=>setShowQuickFires(q=>!q)} style={{background:showQuickFires?"#7c3aed":"#ede9fe",color:showQuickFires?"white":"#7c3aed",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
-                ⚡ QuickFires
-              </button>
               <select value={ttsGender} onChange={e=>setTtsGender(e.target.value)} title="Gênero da voz" style={{padding:"6px 8px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer",background:"white"}}>
                 <option value="NEUTRAL">🔊 Voz</option>
                 <option value="FEMALE">👩 Feminina</option>
                 <option value="MALE">👨 Masculina</option>
                 <option value="CHILD">🧒 Infantil</option>
               </select>
-              <select value={dwellMs} onChange={e=>setDwellMs(Number(e.target.value))} title="Dwell time — seleção por tempo de toque" style={{padding:"6px 8px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer",background:"white"}}>
-                <option value={0}>👆 Toque</option>
-                <option value={800}>⏱ 0.8s</option>
-                <option value={1500}>⏱ 1.5s</option>
-                <option value={2500}>⏱ 2.5s</option>
-                <option value={4000}>⏱ 4.0s</option>
-              </select>
-              <button onClick={()=>setDarkMode(d=>!d)} title="Alternar modo escuro" style={{background:darkMode?"#4ec9a0":"#f3f4f6",color:darkMode?"#0d1117":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer"}}>
-                {darkMode?"☀️":"🌙"}
+              <button onClick={()=>setShowMobileTools(v=>!v)} style={{background:showMobileTools?"#071b2c":"#f3f4f6",color:showMobileTools?"#4ec9a0":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
+                {showMobileTools ? "Menos opções" : "Mais opções"}
               </button>
-              <button onClick={()=>setShowAccessibility(true)} title="Acessibilidade adaptativa"
-                style={{background:diagnostico!=="padrao"?"#071b2c":"#f3f4f6",color:diagnostico!=="padrao"?"#4ec9a0":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer",fontWeight:diagnostico!=="padrao"?"700":"400"}}>
-                ♿{diagnostico!=="padrao"?` ${DIAGNOSTICO_PROFILES[diagnostico]?.icon}`:""}
-              </button>
-              <button onClick={async()=>{
-                const res = await fetch("/api/export-board",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cards:cards.filter(c=>!c.empty),title:patientName||"Prancha CAA",cols:5})});
-                const html = await res.text();
-                const w = window.open("","_blank");
-                w.document.write(html);
-                w.document.close();
-              }} style={{background:"#eff6ff",color:"#2563eb",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
-                🖨️ Imprimir
-              </button>
-              <button className="dark" onClick={addCard}>+ Novo card</button>
-              <button onClick={()=>window.location.href="/biblioteca"} style={{background:"#7c3aed",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>📚 Biblioteca</button>
-              <button onClick={shareBoard} disabled={sharing} style={{background:"#6366f1",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>
-                {sharing ? "..." : "🔗 Compartilhar"}
-              </button>
-              {shareUrl && (
-                <div style={{background:"#f0fdf4",border:"1px solid #00885f",borderRadius:"10px",padding:"10px 14px",fontSize:"13px",display:"flex",alignItems:"center",gap:"10px",flexWrap:"wrap",width:"100%",marginTop:"6px"}}>
-                  <span style={{color:"#065f46",fontWeight:"600"}}>✅ Link copiado!</span>
-                  <a href={shareUrl} target="_blank" rel="noopener noreferrer" style={{color:"#00885f",wordBreak:"break-all"}}>{shareUrl}</a>
-                  <button onClick={()=>setShareUrl(null)} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af",fontSize:"16px"}}>✕</button>
-                </div>
+
+              {showMobileTools && (
+                <>
+                  <button onClick={()=>setPhrase([])}>Limpar</button>
+                  <button onClick={()=>setShowQuickFires(q=>!q)} style={{background:showQuickFires?"#7c3aed":"#ede9fe",color:showQuickFires?"white":"#7c3aed",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
+                    ⚡ QuickFires
+                  </button>
+                  <select value={dwellMs} onChange={e=>setDwellMs(Number(e.target.value))} title="Dwell time — seleção por tempo de toque" style={{padding:"6px 8px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer",background:"white"}}>
+                    <option value={0}>👆 Toque</option>
+                    <option value={800}>⏱ 0.8s</option>
+                    <option value={1500}>⏱ 1.5s</option>
+                    <option value={2500}>⏱ 2.5s</option>
+                    <option value={4000}>⏱ 4.0s</option>
+                  </select>
+                  <button onClick={()=>setDarkMode(d=>!d)} title="Alternar modo escuro" style={{background:darkMode?"#4ec9a0":"#f3f4f6",color:darkMode?"#0d1117":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer"}}>
+                    {darkMode?"☀️":"🌙"}
+                  </button>
+                  <button onClick={()=>setShowAccessibility(true)} title="Acessibilidade adaptativa"
+                    style={{background:diagnostico!=="padrao"?"#071b2c":"#f3f4f6",color:diagnostico!=="padrao"?"#4ec9a0":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer",fontWeight:diagnostico!=="padrao"?"700":"400"}}>
+                    ♿{diagnostico!=="padrao"?` ${DIAGNOSTICO_PROFILES[diagnostico]?.icon}`:""}
+                  </button>
+                  <button onClick={async()=>{
+                    const res = await fetch("/api/export-board",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cards:cards.filter(c=>!c.empty),title:patientName||"Prancha CAA",cols:5})});
+                    const html = await res.text();
+                    const w = window.open("","_blank");
+                    w.document.write(html);
+                    w.document.close();
+                  }} style={{background:"#eff6ff",color:"#2563eb",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
+                    🖨️ Imprimir
+                  </button>
+                  <button className="dark" onClick={addCard}>+ Novo card</button>
+                  <button onClick={()=>window.location.href="/biblioteca"} style={{background:"#7c3aed",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>📚 Biblioteca</button>
+                  <button onClick={shareBoard} disabled={sharing} style={{background:"#6366f1",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>
+                    {sharing ? "..." : "🔗 Compartilhar"}
+                  </button>
+                  {shareUrl && (
+                    <div style={{background:"#f0fdf4",border:"1px solid #00885f",borderRadius:"10px",padding:"10px 14px",fontSize:"13px",display:"flex",alignItems:"center",gap:"10px",flexWrap:"wrap",width:"100%",marginTop:"6px"}}>
+                      <span style={{color:"#065f46",fontWeight:"600"}}>✅ Link copiado!</span>
+                      <a href={shareUrl} target="_blank" rel="noopener noreferrer" style={{color:"#00885f",wordBreak:"break-all"}}>{shareUrl}</a>
+                      <button onClick={()=>setShareUrl(null)} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af",fontSize:"16px"}}>✕</button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </section>
@@ -597,6 +607,28 @@ export default function Home() {
             <p>Selecione um card para editar nome, categoria e imagem.</p>
           )}
         </aside>
+
+        {editing && (
+          <div className="caa-mobile-overlay" onClick={()=>setEditing(null)}>
+            <div className="caa-mobile-editor" onClick={e=>e.stopPropagation()}>
+              <h2>Editor do card</h2>
+              <div className="caa-mobile-preview">
+                {editing.image ? <img src={editing.image} alt={editing.label} /> : <div className="caa-empty large">+</div>}
+              </div>
+              <label>Nome do card</label>
+              <input value={editing.label} onChange={e=>setEditing({...editing,label:e.target.value})} />
+              <label>Categoria</label>
+              <select value={editing.cat} onChange={e=>setEditing({...editing,cat:e.target.value})}>
+                {categories.map(cat=><option key={cat.id} value={cat.id}>{cat.label}</option>)}
+              </select>
+              <input ref={fileRef} type="file" accept="image/*" hidden onChange={e=>uploadImageToLibrary(e.target.files?.[0])} />
+              <button onClick={openImagePicker}>🔍 Buscar / Gerar imagem</button>
+              <button onClick={()=>downloadImage(editing)}>Baixar imagem</button>
+              <button className="green" onClick={saveEditing}>Salvar alterações</button>
+              <button onClick={()=>setEditing(null)}>Cancelar</button>
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="caa-sessions">
@@ -770,6 +802,14 @@ export default function Home() {
           onClose={()=>setShowAccessibility(false)}
         />
       )}
+      <nav className="caa-mobile-bottomnav">
+        <button className={mobileTab==="prancha"?"active":""} onClick={()=>setMobileTab("prancha")}>🏠<span>Prancha</span></button>
+        <button className={mobileTab==="pacientes"?"active":""} onClick={()=>window.location.href="/pacientes"}>👥<span>Pacientes</span></button>
+        <button className={mobileTab==="agenda"?"active":""} onClick={()=>window.location.href="/pacientes"}>📅<span>Agenda</span></button>
+        <button className={mobileTab==="biblioteca"?"active":""} onClick={()=>window.location.href="/biblioteca"}>📚<span>Biblioteca</span></button>
+        <button className={mobileTab==="ajuda"?"active":""} onClick={()=>window.location.href="/suporte"}>❓<span>Ajuda</span></button>
+      </nav>
+
     </main>
     </AppShell>
   );
