@@ -117,9 +117,7 @@ export default function SegurancaPage() {
         </div>
       </div>
 
-      <footer style={{ background:"#071b2c", color:"rgba(255,255,255,0.4)", padding:"24px 32px", textAlign:"center", fontSize:"13px" }}>
-        © 2026 CAA Neuro · Dados protegidos pela LGPD · AES-256-GCM
-      </footer>
+      
     </div>
           <PublicFooter />
     </PublicShell>
