@@ -36,13 +36,16 @@ export default function Biblioteca() {
 
   return (
     <div style={{ minHeight:"100vh", background:"#f9fafb", fontFamily:"system-ui" }}>
-      <div style={{ background:"#071b2c", padding:"16px 24px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <span style={{ color:"#4ec9a0", fontWeight:"800", fontSize:"20px" }}>CAA Neuro</span>
-        <button onClick={() => router.push("/app")}
-          style={{ background:"transparent", border:"1px solid rgba(255,255,255,0.3)", color:"white", padding:"8px 16px", borderRadius:"8px", cursor:"pointer", fontSize:"13px" }}>
-          ← Voltar à prancha
-        </button>
-      </div>
+      <nav style={{background:"#071b2c",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #00885f"}}>
+        <span style={{color:"#4ec9a0",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
+        <a href="/app" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏠 Prancha</a>
+        <a href="/biblioteca" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>📚 Biblioteca</a>
+        <a href="/paciente" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👤 Modo Paciente</a>
+        <a href="/atividades" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🎮 Atividades</a>
+        <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.2)",border:"1px solid #4ec9a0",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>✨ Relatório IA</a>
+        <a href="/admin" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>📊 Admin</a>
+        <a href="/suporte" style={{color:"rgba(255,255,255,0.6)",textDecoration:"none",fontSize:"12px",marginLeft:"auto"}}>❓ Ajuda</a>
+      </nav>
 
       <div style={{ maxWidth:"900px", margin:"0 auto", padding:"32px 24px" }}>
         <h1 style={{ fontSize:"28px", fontWeight:"800", color:"#071b2c", marginBottom:"8px" }}>📚 Biblioteca de Pranchas</h1>
