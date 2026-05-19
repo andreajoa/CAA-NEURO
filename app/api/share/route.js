@@ -28,3 +28,17 @@ export async function GET(request) {
     return Response.json({ board: { ...board, cards: JSON.parse(board.cards) } });
   } catch (e) { return Response.json({ error: e.message }, { status: 500 }); }
 }
+
+export async function PUT(request) {
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { token, cards, title } = await request.json();
+    if (!token) return Response.json({ error: "Token obrigatório" }, { status: 400 });
+    const rows = await d1Query("SELECT * FROM shared_boards WHERE token=? AND user_id=?", [token, userId]);
+    if (!rows?.length) return Response.json({ error: "Prancha não encontrada" }, { status: 404 });
+    await d1Query("UPDATE shared_boards SET cards=?, title=? WHERE token=? AND user_id=?",
+      [JSON.stringify(cards), title || rows[0].title, token, userId]);
+    return Response.json({ ok: true, message: "Prancha atualizada — o link já reflete as mudanças." });
+  } catch (e) { return Response.json({ error: e.message }, { status: 500 }); }
+}
