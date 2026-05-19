@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import DwellButton from "../components/DwellButton";
 import Onboarding from "../components/Onboarding";
 import { UserButton } from "@clerk/nextjs";
 import PWABanner from "../components/PWABanner";
@@ -162,6 +163,28 @@ export default function Home() {
   }
 
   const [ttsLang, setTtsLang] = useState("pt-BR");
+  const [ttsGender, setTtsGender] = useState("NEUTRAL"); // FEMALE | MALE | CHILD | NEUTRAL
+  const [dwellMs, setDwellMs] = useState(0); // 0 = desativado
+  const [darkMode, setDarkMode] = useState(false);
+
+  // Aplicar tema escuro no <html>
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
+    localStorage.setItem("caa-dark", darkMode ? "1" : "0");
+  }, [darkMode]);
+
+  // Restaurar preferência salva
+  useEffect(() => {
+    const saved = localStorage.getItem("caa-dark");
+    if (saved === "1") setDarkMode(true);
+    const savedDwell = localStorage.getItem("caa-dwell");
+    if (savedDwell) setDwellMs(Number(savedDwell));
+    const savedGender = localStorage.getItem("caa-gender");
+    if (savedGender) setTtsGender(savedGender);
+  }, []);
+
+  useEffect(() => { localStorage.setItem("caa-dwell", dwellMs); }, [dwellMs]);
+  useEffect(() => { localStorage.setItem("caa-gender", ttsGender); }, [ttsGender]);
   const [shareUrl, setShareUrl] = useState(null);
   const [sharing, setSharing] = useState(false);
 
@@ -179,7 +202,7 @@ export default function Home() {
 
   async function speak(text) {
     try {
-      const res = await fetch("/api/tts", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ text, lang: ttsLang }) });
+      const res = await fetch("/api/tts", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ text, lang: ttsLang, gender: ttsGender, profile }) });
       const data = await res.json();
       if (data.audio) { const a = new Audio(`data:audio/mp3;base64,${data.audio}`); a.play(); return; }
     } catch {}
@@ -455,6 +478,22 @@ export default function Home() {
               <button className="yellow" onClick={()=>setPhrase(p=>p.slice(0,-1))}>Desfazer</button>
               <button onClick={()=>setShowQuickFires(q=>!q)} style={{background:showQuickFires?"#7c3aed":"#ede9fe",color:showQuickFires?"white":"#7c3aed",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
                 ⚡ QuickFires
+              </button>
+              <select value={ttsGender} onChange={e=>setTtsGender(e.target.value)} title="Gênero da voz" style={{padding:"6px 8px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer",background:"white"}}>
+                <option value="NEUTRAL">🔊 Voz</option>
+                <option value="FEMALE">👩 Feminina</option>
+                <option value="MALE">👨 Masculina</option>
+                <option value="CHILD">🧒 Infantil</option>
+              </select>
+              <select value={dwellMs} onChange={e=>setDwellMs(Number(e.target.value))} title="Dwell time — seleção por tempo de toque" style={{padding:"6px 8px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer",background:"white"}}>
+                <option value={0}>👆 Toque</option>
+                <option value={800}>⏱ 0.8s</option>
+                <option value={1500}>⏱ 1.5s</option>
+                <option value={2500}>⏱ 2.5s</option>
+                <option value={4000}>⏱ 4.0s</option>
+              </select>
+              <button onClick={()=>setDarkMode(d=>!d)} title="Alternar modo escuro" style={{background:darkMode?"#4ec9a0":"#f3f4f6",color:darkMode?"#0d1117":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer"}}>
+                {darkMode?"☀️":"🌙"}
               </button>
               <button onClick={async()=>{
                 const res = await fetch("/api/export-board",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cards:cards.filter(c=>!c.empty),title:patientName||"Prancha CAA",cols:5})});

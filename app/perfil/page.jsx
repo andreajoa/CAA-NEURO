@@ -7,6 +7,13 @@ export default function PerfilPage() {
   const [form, setForm] = useState({ nome_profissional:"", registro_crfa:"", profissao:"Fonoaudiólogo(a)", conselho_regional:"", telefone:"", assinatura_base64:"" });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [dirVisible, setDirVisible] = useState(false);
+  const [dirBio, setDirBio] = useState("");
+  const [dirCidade, setDirCidade] = useState("");
+  const [dirEstado, setDirEstado] = useState("");
+  const [dirOnline, setDirOnline] = useState(false);
+  const [dirSaving, setDirSaving] = useState(false);
+  const [dirSaved, setDirSaved] = useState(false);
   const [assinaturaPreview, setAssinaturaPreview] = useState("");
   const fileRef = useRef(null);
 
@@ -28,6 +35,26 @@ export default function PerfilPage() {
       setForm(f => ({ ...f, assinatura_base64: e.target.result }));
     };
     reader.readAsDataURL(file);
+  }
+
+  async function saveDiretorio() {
+    setDirSaving(true);
+    try {
+      await fetch("/api/profissionais", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          visivel: dirVisible,
+          bio: dirBio,
+          cidade: dirCidade,
+          estado: dirEstado,
+          atende_online: dirOnline,
+        }),
+      });
+      setDirSaved(true);
+      setTimeout(() => setDirSaved(false), 3000);
+    } catch {}
+    setDirSaving(false);
   }
 
   async function save() {
@@ -115,6 +142,63 @@ export default function PerfilPage() {
               <input ref={fileRef} type="file" accept="image/*" hidden onChange={e=>uploadAssinatura(e.target.files?.[0])} />
             </div>
 
+          </div>
+
+          {/* ── Seção: Diretório de Profissionais ── */}
+          <div style={{ marginTop:"32px", background:"linear-gradient(135deg,#071b2c,#0d2d3e)", borderRadius:"16px", padding:"24px", color:"white" }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"16px", flexWrap:"wrap", gap:"12px" }}>
+              <div>
+                <div style={{ fontWeight:"800", fontSize:"16px", color:"#4ec9a0" }}>🌐 Diretório de Profissionais</div>
+                <div style={{ fontSize:"13px", color:"rgba(255,255,255,0.6)", marginTop:"4px" }}>Apareça para famílias e colegas que buscam especialistas em CAA</div>
+              </div>
+              <label style={{ display:"flex", alignItems:"center", gap:"10px", cursor:"pointer" }}>
+                <span style={{ fontSize:"13px", color:"rgba(255,255,255,0.7)" }}>{dirVisible ? "Visível" : "Oculto"}</span>
+                <div onClick={() => setDirVisible(v => !v)}
+                  style={{ width:"44px", height:"24px", borderRadius:"12px", background:dirVisible?"#4ec9a0":"rgba(255,255,255,0.2)", position:"relative", cursor:"pointer", transition:"background 0.2s" }}>
+                  <div style={{ position:"absolute", top:"3px", left:dirVisible?"23px":"3px", width:"18px", height:"18px", borderRadius:"50%", background:"white", transition:"left 0.2s" }} />
+                </div>
+              </label>
+            </div>
+
+            {dirVisible && (
+              <div style={{ display:"flex", flexDirection:"column", gap:"14px" }}>
+                <div>
+                  <label style={{ fontSize:"12px", fontWeight:"700", color:"rgba(255,255,255,0.6)", display:"block", marginBottom:"6px", textTransform:"uppercase", letterSpacing:"0.06em" }}>Bio / Apresentação</label>
+                  <textarea value={dirBio} onChange={e => setDirBio(e.target.value)} rows={3}
+                    placeholder="Ex: Fonoaudióloga especializada em TEA e CAA, com 8 anos de experiência clínica..."
+                    style={{ width:"100%", background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.15)", borderRadius:"10px", padding:"12px", color:"white", fontSize:"14px", resize:"vertical", boxSizing:"border-box" }} />
+                </div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 120px", gap:"10px" }}>
+                  <div>
+                    <label style={{ fontSize:"12px", fontWeight:"700", color:"rgba(255,255,255,0.6)", display:"block", marginBottom:"6px", textTransform:"uppercase", letterSpacing:"0.06em" }}>Cidade</label>
+                    <input value={dirCidade} onChange={e => setDirCidade(e.target.value)} placeholder="São Paulo"
+                      style={{ width:"100%", background:"rgba(255,255,255,0.08)", border:"1px solid rgba(255,255,255,0.15)", borderRadius:"10px", padding:"11px", color:"white", fontSize:"14px", boxSizing:"border-box" }} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize:"12px", fontWeight:"700", color:"rgba(255,255,255,0.6)", display:"block", marginBottom:"6px", textTransform:"uppercase", letterSpacing:"0.06em" }}>Estado</label>
+                    <select value={dirEstado} onChange={e => setDirEstado(e.target.value)}
+                      style={{ width:"100%", background:"rgba(255,255,255,0.1)", border:"1px solid rgba(255,255,255,0.15)", borderRadius:"10px", padding:"11px", color:"white", fontSize:"14px", boxSizing:"border-box" }}>
+                      <option value="">UF</option>
+                      {["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"].map(uf => (
+                        <option key={uf} value={uf}>{uf}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <label style={{ display:"flex", alignItems:"center", gap:"10px", cursor:"pointer" }}>
+                  <div onClick={() => setDirOnline(v => !v)}
+                    style={{ width:"36px", height:"20px", borderRadius:"10px", background:dirOnline?"#4ec9a0":"rgba(255,255,255,0.2)", position:"relative", cursor:"pointer", transition:"background 0.2s", flexShrink:0 }}>
+                    <div style={{ position:"absolute", top:"2px", left:dirOnline?"18px":"2px", width:"16px", height:"16px", borderRadius:"50%", background:"white", transition:"left 0.2s" }} />
+                  </div>
+                  <span style={{ fontSize:"13px", color:"rgba(255,255,255,0.8)" }}>Atendo online</span>
+                </label>
+                <button onClick={saveDiretorio} disabled={dirSaving}
+                  style={{ background:"#00885f", color:"white", border:"none", borderRadius:"10px", padding:"11px 20px", fontWeight:"700", fontSize:"14px", cursor:"pointer", alignSelf:"flex-start", display:"flex", alignItems:"center", gap:"8px" }}>
+                  {dirSaving ? "Salvando..." : "💾 Salvar no diretório"}
+                  {dirSaved && <span style={{ color:"#4ec9a0" }}>✅</span>}
+                </button>
+              </div>
+            )}
           </div>
 
           <div style={{ marginTop:"24px", display:"flex", gap:"10px", alignItems:"center" }}>

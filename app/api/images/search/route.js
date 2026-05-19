@@ -73,6 +73,26 @@ async function searchSclera(q) {
   } catch { return []; }
 }
 
+async function searchSymbotalk(q) {
+  try {
+    // SymboTalk — 28k símbolos, ARASAAC+Sclera+Tawasol, busca nativa em PT
+    const res = await fetch(
+      `https://api.symbotalk.com/symbols?q=${encodeURIComponent(q)}&lang=pt&limit=12`,
+      { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(5000) }
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    const items = Array.isArray(data) ? data : (data.symbols || data.results || []);
+    return items.slice(0, 12).map(item => ({
+      id: `symbotalk-${item._id || item.id}`,
+      label: item.name || item.translations?.find(t=>t.tLang==="pt")?.tName || q,
+      url: item.image_url || item.alt_url || "",
+      source: "SymboTalk",
+      source_color: "#d97706",
+    })).filter(r => r.url);
+  } catch { return []; }
+}
+
 export async function GET(request) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -99,10 +119,20 @@ export async function GET(request) {
       results = [...results, ...sclera];
     }
 
+    if (source === "all" || source === "symbotalk") {
+      const symbotalk = await searchSymbotalk(q);
+      results = [...results, ...symbotalk];
+    }
+
     return Response.json({
       results,
       total: results.length,
-      sources: { arasaac: results.filter(r=>r.source==="ARASAAC").length, mulberry: results.filter(r=>r.source==="Mulberry").length, sclera: results.filter(r=>r.source==="Sclera").length },
+      sources: {
+        arasaac: results.filter(r=>r.source==="ARASAAC").length,
+        mulberry: results.filter(r=>r.source==="Mulberry").length,
+        sclera: results.filter(r=>r.source==="Sclera").length,
+        symbotalk: results.filter(r=>r.source==="SymboTalk").length,
+      },
     });
   } catch (e) {
     return Response.json({ error: e.message, results: [] }, { status: 500 });
