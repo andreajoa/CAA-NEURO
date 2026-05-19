@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { decryptPatient, decryptSession } from "../../lib/crypto";
 
 export const runtime = "nodejs";
 const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
@@ -12,68 +13,76 @@ export async function GET(request) {
 
   try {
     const db = getDB(request);
-    const patient = await db.prepare("SELECT * FROM patients WHERE id=? AND user_id=?").bind(patientId, userId).first();
-    if (!patient) return Response.json({ error: "Paciente não encontrado" }, { status: 404 });
+    const rawPatient = await db.prepare("SELECT * FROM patients WHERE id=? AND user_id=?").bind(patientId, userId).first();
+    if (!rawPatient) return Response.json({ error: "Paciente não encontrado" }, { status: 404 });
+    const patient = decryptPatient(rawPatient);
 
-    const { results: sessions } = await db.prepare(
+    const { results: rawSessions } = await db.prepare(
       "SELECT * FROM sessions WHERE patient_id=? AND user_id=? ORDER BY created_at DESC LIMIT 20"
     ).bind(patientId, userId).all();
+    const sessions = rawSessions.map(decryptSession);
 
-    if (sessions.length === 0) {
-      return Response.json({ insights: null, message: "Registre pelo menos uma sessão para gerar insights." });
-    }
+    const prompt = `Você é um assistente clínico especializado em Comunicação Aumentativa e Alternativa (CAA).
 
-    const resumo = sessions.map((s, i) =>
-      `Sessão ${i+1} (${(s.created_at||"").split("T")[0]}): ${s.evolucao_observada||"sem registro"} ${s.objetivos_sessao ? `| Objetivo: ${s.objetivos_sessao}` : ""} ${s.duracao_minutos ? `| ${s.duracao_minutos}min` : ""}`
-    ).join("\n");
+Analise os dados deste paciente e gere insights clínicos objetivos em português brasileiro.
 
-    const prompt = `Você é um assistente clínico especializado em CAA (Comunicação Aumentativa e Alternativa).
-Analise o histórico de sessões e gere insights clínicos objetivos.
+PACIENTE:
+- Nome: ${patient.nome}
+- Diagnóstico: ${patient.diagnostico || "não informado"}
+- Objetivos terapêuticos: ${patient.objetivos_terapeuticos || "não informado"}
+- Medicamentos: ${patient.medicamentos || "nenhum"}
+- Escola: ${patient.escola || "não informado"}
 
-Paciente: ${patient.nome}
-Diagnóstico: ${patient.diagnostico || "Não informado"}
-Objetivos terapêuticos: ${patient.objetivos_terapeuticos || "Não informado"}
+HISTÓRICO DE SESSÕES (${sessions.length} sessões):
+${sessions.slice(0, 10).map((s, i) => `
+Sessão ${i+1} - ${s.data_sessao || "data não informada"}:
+- Duração: ${s.duracao_minutos || "?"}min
+- Objetivos: ${s.objetivos_sessao || "não registrado"}
+- Evolução: ${s.evolucao_observada || "não registrada"}
+- Notas: ${s.notas || "nenhuma"}
+`).join("")}
 
-Histórico (${sessions.length} sessões):
-${resumo}
+Gere uma análise clínica com:
+1. Resumo do progresso atual
+2. Padrões observados nas sessões
+3. Pontos de atenção
+4. Sugestões para próximas sessões
+5. Estimativa de evolução
 
-Responda APENAS em JSON válido, sem markdown, sem texto fora do JSON:
-{
-  "progresso": "frase curta sobre evolução geral",
-  "pontos_fortes": ["ponto 1", "ponto 2"],
-  "areas_atencao": ["área 1", "área 2"],
-  "sugestoes": ["sugestão 1", "sugestão 2", "sugestão 3"],
-  "tendencia": "crescente",
-  "proximos_passos": "recomendação para próximas sessões",
-  "total_sessoes": ${sessions.length},
-  "media_duracao": ${Math.round(sessions.reduce((a,s)=>a+(s.duracao_minutos||0),0)/Math.max(sessions.length,1))}
-}`;
+Seja objetivo, clínico e útil para o fonoaudiólogo. Máximo 400 palavras.`;
 
-    const response = await fetch("https://open.bigmodel.cn/api/paas/v4/chat/completions", {
+    const response = await fetch("https://api.z.ai/api/paas/v4/chat/completions", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.GLM_API_KEY}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "glm-4-flash",
+        model: "glm-4-plus",
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 1024,
-        temperature: 0.3,
+        max_tokens: 600,
+        temperature: 0.7,
       }),
     });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      return Response.json({ error: data.error?.message || "Erro na GLM API" }, { status: 500 });
+    if (!response.ok || data.error) {
+      const msg = data.error?.message || "Erro na IA";
+      if (msg.includes("balance") || msg.includes("recharge")) {
+        return Response.json({ error: "IA temporariamente indisponível. Créditos insuficientes." }, { status: 503 });
+      }
+      return Response.json({ error: msg }, { status: 500 });
     }
 
-    const text = data.choices?.[0]?.message?.content || "{}";
-    const clean = text.replace(/```json|```/g, "").trim();
-    const insights = JSON.parse(clean);
+    const insight = data.choices?.[0]?.message?.content || "Não foi possível gerar insights.";
 
-    return Response.json({ insights, patient_nome: patient.nome });
+    await db.prepare(
+      `INSERT INTO audit_logs (user_id, acao, recurso, detalhes, created_at)
+       VALUES (?, 'IA_INSIGHT', 'patients', ?, datetime('now'))`
+    ).bind(userId, JSON.stringify({ patient_id: patientId })).run().catch(() => {});
+
+    return Response.json({ insight, sessions_analyzed: sessions.length });
   } catch (e) {
     return Response.json({ error: e.message }, { status: 500 });
   }
