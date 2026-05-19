@@ -1,20 +1,21 @@
 import { auth } from "@clerk/nextjs/server";
+import { d1Query } from "../../../lib/d1";
 
 export const runtime = "nodejs";
-const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
 
 export async function POST(request) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const db = getDB(request);
+    const rows = await d1Query(
+      "SELECT plano, org_id FROM users WHERE id=?",
+      [userId]
+    ).catch(() => []);
 
-    const user = await db.prepare(
-      "SELECT plano FROM users WHERE user_id=?"
-    ).bind(userId).first().catch(() => null);
+    const user = rows?.[0];
+    const plano = user?.org_id ? "institucional" : (user?.plano || "gratuito");
 
-    const plano = user?.plano || "gratuito";
     if (plano === "gratuito") {
       return Response.json({
         error: "geração_bloqueada",
@@ -48,18 +49,15 @@ export async function POST(request) {
     });
 
     const data = await response.json();
-
-    if (!response.ok) {
-      return Response.json({ error: data.detail || "Erro na geração" }, { status: 500 });
-    }
+    if (!response.ok) return Response.json({ error: data.detail || "Erro na geração" }, { status: 500 });
 
     const imageUrl = data.images?.[0]?.url;
     if (!imageUrl) return Response.json({ error: "Imagem não gerada" }, { status: 500 });
 
-    await db.prepare(
-      `INSERT INTO images (user_id, url, nome, fonte, created_at)
-       VALUES (?,?,?,?,datetime('now'))`
-    ).bind(userId, imageUrl, descricao, "fal-ai").run().catch(() => {});
+    await d1Query(
+      `INSERT INTO images (user_id, url, nome, fonte, created_at) VALUES (?,?,?,?,datetime('now'))`,
+      [userId, imageUrl, descricao, "fal-ai"]
+    ).catch(() => {});
 
     return Response.json({ success: true, url: imageUrl, descricao });
   } catch (e) {

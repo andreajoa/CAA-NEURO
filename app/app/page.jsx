@@ -861,8 +861,8 @@ export default function Home() {
                   </p>
                 </div>
 
-                {/* OFFER */}
-                <div style={{background:"linear-gradient(135deg,#7c3aed,#4f46e5)",borderRadius:"14px",padding:"20px",marginBottom:"16px"}}>
+                {/* OFFER — cores verdes do app */}
+                <div style={{background:"linear-gradient(135deg,#062f1b,#00885f)",borderRadius:"14px",padding:"20px",marginBottom:"16px"}}>
                   <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"12px"}}>
                     <span style={{background:"rgba(255,255,255,0.2)",borderRadius:"20px",padding:"3px 12px",fontSize:"11px",fontWeight:"700",color:"white"}}>PLANO PRO</span>
                     <span style={{fontSize:"12px",color:"rgba(255,255,255,0.7)"}}>R$ 35/mês · cancele quando quiser</span>
@@ -881,7 +881,7 @@ export default function Home() {
                     <div style={{background:"rgba(0,0,0,0.3)",borderRadius:"8px",padding:"10px",marginBottom:"12px",fontSize:"12px",color:"#fca5a5",lineHeight:"1.5"}}>
                       {generateError}
                       {generateError.includes("Pro") && (
-                        <a href="/planos" style={{display:"block",marginTop:"6px",color:"#fde68a",fontWeight:"700",fontSize:"13px"}}>
+                        <a href="/planos" style={{display:"block",marginTop:"6px",color:"#4ec9a0",fontWeight:"700",fontSize:"13px"}}>
                           → Assinar Pro por R$ 35/mês e desbloquear agora
                         </a>
                       )}
@@ -890,7 +890,7 @@ export default function Home() {
                   <button
                     onClick={generateImage}
                     disabled={generating||!generatePrompt.trim()}
-                    style={{width:"100%",padding:"14px",background:generating?"rgba(255,255,255,0.3)":"white",color:generating?"white":"#7c3aed",border:"none",borderRadius:"10px",fontWeight:"900",cursor:generating?"wait":"pointer",fontSize:"15px",transition:"all 0.2s",boxShadow:"0 4px 20px rgba(0,0,0,0.2)"}}
+                    style={{width:"100%",padding:"14px",background:generating?"rgba(255,255,255,0.3)":"white",color:generating?"white":"#062f1b",border:"none",borderRadius:"10px",fontWeight:"900",cursor:generating?"wait":"pointer",fontSize:"15px",transition:"all 0.2s",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}
                   >
                     {generating?"⏳ Gerando sua imagem...":"✨ Gerar pictograma exclusivo"}
                   </button>
@@ -904,16 +904,16 @@ export default function Home() {
                   <div style={{background:"#f9fafb",borderRadius:"10px",padding:"12px",textAlign:"center"}}>
                     <div style={{fontSize:"20px",marginBottom:"4px"}}>🆓</div>
                     <div style={{fontSize:"12px",fontWeight:"700",color:"#374151",marginBottom:"4px"}}>Plano Gratuito</div>
-                    <div style={{fontSize:"11px",color:"#6b7280",lineHeight:"1.5"}}>45.000+ pictogramas do banco ARASAAC. Busque na aba "Buscar imagens".</div>
+                    <div style={{fontSize:"11px",color:"#6b7280",lineHeight:"1.5"}}>45.000+ pictogramas ARASAAC. Busque na aba ao lado.</div>
                   </div>
-                  <div style={{background:"#faf5ff",border:"1px solid #e9d5ff",borderRadius:"10px",padding:"12px",textAlign:"center"}}>
+                  <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:"10px",padding:"12px",textAlign:"center"}}>
                     <div style={{fontSize:"20px",marginBottom:"4px"}}>⭐</div>
-                    <div style={{fontSize:"12px",fontWeight:"700",color:"#7c3aed",marginBottom:"4px"}}>Plano Pro</div>
+                    <div style={{fontSize:"12px",fontWeight:"700",color:"#00885f",marginBottom:"4px"}}>Plano Pro</div>
                     <div style={{fontSize:"11px",color:"#6b7280",lineHeight:"1.5"}}>Crie qualquer pictograma com IA. Exclusivo, personalizado, seu.</div>
                   </div>
                 </div>
                 <div style={{textAlign:"center",marginTop:"12px"}}>
-                  <a href="/planos" style={{fontSize:"13px",color:"#7c3aed",fontWeight:"700",textDecoration:"none"}}>
+                  <a href="/planos" style={{fontSize:"13px",color:"#00885f",fontWeight:"700",textDecoration:"none"}}>
                     Ver planos e assinar Pro →
                   </a>
                 </div>
