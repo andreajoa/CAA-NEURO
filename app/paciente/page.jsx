@@ -39,18 +39,46 @@ export default function ModoPaciente() {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    fetch("/api/cards?profile=infantil&level=emergente")
-      .then(r => r.json())
-      .then(d => {
-        const raw = d.cards || [];
-        const mapped = raw.map(c => ({
-          ...c,
-          image: c.image || c.image_url || `/cards/level-1/${c.id}.png`
+    async function loadCards() {
+      try {
+        const res = await fetch("/api/cards?profile=infantil&level=emergente");
+        const data = await res.json();
+        let raw = data.cards || [];
+
+        // Usar FALLBACK_CARDS se a API retornar vazio
+        if (!raw.length) raw = FALLBACK_CARDS;
+
+        // Para cada card: tenta imagem salva, depois local, depois ARASAAC
+        const withImages = await Promise.all(raw.map(async (c) => {
+          // 1. Já tem imagem salva
+          if (c.image || c.image_url) return { ...c, image: c.image || c.image_url };
+
+          // 2. Tenta imagem local
+          const localPath = `/cards/level-1/${c.id}.png`;
+          const localOk = await fetch(localPath, { method: "HEAD" })
+            .then(r => r.ok).catch(() => false);
+          if (localOk) return { ...c, image: localPath };
+
+          // 3. Busca no ARASAAC pelo label do card
+          try {
+            const q = encodeURIComponent(c.label || c.id);
+            const ar = await fetch(`/api/images/search?q=${q}`);
+            const ad = await ar.json();
+            const first = ad.results?.[0];
+            if (first?.url) return { ...c, image: first.url };
+          } catch {}
+
+          return { ...c, image: "" };
         }));
-        setCards(mapped.length ? mapped : FALLBACK_CARDS);
+
+        setCards(withImages);
+      } catch {
+        setCards(FALLBACK_CARDS);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }
+    }
+    loadCards();
   }, []);
 
   async function speak(text) {
