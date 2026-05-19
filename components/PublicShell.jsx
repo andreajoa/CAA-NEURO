@@ -3,10 +3,12 @@ import PublicFooter from "./PublicFooter";
 
 export default function PublicShell({ children }) {
   return (
-    <>
+    <div className="publicShell">
       <PublicHeader />
-      {children}
+      <div className="publicShellBody">
+        {children}
+      </div>
       <PublicFooter />
-    </>
+    </div>
   );
 }

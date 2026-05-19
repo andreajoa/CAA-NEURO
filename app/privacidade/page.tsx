@@ -1,8 +1,10 @@
+import PublicShell from "../../components/PublicShell";
 export const metadata = { title: "Política de Privacidade — CAA Neuro" };
 
 export default function PrivacidadePage() {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
+    <PublicShell>
+      <div className="max-w-3xl mx-auto px-6 py-12">
       <h1 className="text-3xl font-semibold text-gray-900 mb-2">Política de Privacidade</h1>
       <p className="text-sm text-gray-500 mb-8">Última atualização: maio de 2025</p>
 
@@ -21,6 +23,7 @@ export default function PrivacidadePage() {
           <p className="text-sm text-gray-600 leading-relaxed">{s.content}</p>
         </div>
       ))}
-    </div>
+      </div>
+    </PublicShell>
   );
 }

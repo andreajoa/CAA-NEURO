@@ -1,4 +1,5 @@
 "use client";
+import PublicFooter from "../components/PublicFooter";
 
 import PublicShell from "../../components/PublicShell";
 import { useState } from "react";
@@ -54,7 +55,7 @@ ${form.mensagem}`
             A mensagem será enviada para <strong>info@adhdautism.online</strong>.
           </p>
         </form>
-      </main>
+      </main>          <PublicFooter />
     </PublicShell>
   );
 }

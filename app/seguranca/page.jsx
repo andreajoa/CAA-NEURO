@@ -1,4 +1,6 @@
+import PublicFooter from "../components/PublicFooter";
 import Link from "next/link";
+import PublicShell from "../../components/PublicShell";
 import { ShieldCheck, Lock, Eye, FileText, Server, AlertTriangle, CheckCircle } from "lucide-react";
 
 export const metadata = { title: "Segurança e Privacidade — CAA Neuro" };
@@ -12,11 +14,8 @@ export default function SegurancaPage() {
   const badge = (color) => ({ display:"inline-block", background:color+"15", color:color, padding:"4px 12px", borderRadius:"999px", fontSize:"13px", fontWeight:"700", border:`1px solid ${color}40` });
 
   return (
+    <PublicShell>
     <div style={s}>
-      <div style={{ background:"#071b2c", color:"white", padding:"16px 32px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <Link href="/" style={{ fontWeight:"800", fontSize:"20px", color:"#4ec9a0", textDecoration:"none" }}>CAA Neuro</Link>
-        <Link href="/" style={{ color:"rgba(255,255,255,0.7)", fontSize:"14px", textDecoration:"none" }}>← Página inicial</Link>
-      </div>
 
       <div style={{ background:"linear-gradient(135deg,#071b2c 0%,#0a2e1f 100%)", color:"white", padding:"80px 24px", textAlign:"center" }}>
         <div style={{ fontSize:"64px", marginBottom:"20px" }}>🔒</div>
@@ -122,5 +121,7 @@ export default function SegurancaPage() {
         © 2026 CAA Neuro · Dados protegidos pela LGPD · AES-256-GCM
       </footer>
     </div>
+          <PublicFooter />
+    </PublicShell>
   );
 }

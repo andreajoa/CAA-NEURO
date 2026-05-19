@@ -1,4 +1,5 @@
 "use client";
+import PublicFooter from "../components/PublicFooter";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import PublicShell from "../../components/PublicShell";
@@ -203,6 +204,7 @@ export default function DepoimentosPage() {
         </div>
       </div>
     </div>
+          <PublicFooter />
     </PublicShell>
   );
 }

@@ -1,3 +1,4 @@
+import PublicFooter from "../components/PublicFooter";
 import PublicShell from "../../components/PublicShell";
 import Link from "next/link";
 export default function Page() {
@@ -22,6 +23,8 @@ export default function Page() {
           <Link href="/sign-up" style={{background:"#1d9e75",color:"white",padding:"14px 32px",borderRadius:8,textDecoration:"none",fontWeight:"bold",fontSize:16}}>Começar gratuitamente →</Link>
         </div>
       </div>
-    </main></PublicShell>
+    </main>
+    <PublicFooter />
+  </PublicShell>
   );
 }

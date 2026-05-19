@@ -1,8 +1,10 @@
+import PublicShell from "../../components/PublicShell";
 export const metadata = { title: "Termos de Uso — CAA Neuro" };
 
 export default function TermosPage() {
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
+    <PublicShell>
+      <div className="max-w-3xl mx-auto px-6 py-12">
       <h1 className="text-3xl font-semibold text-gray-900 mb-2">Termos de Uso</h1>
       <p className="text-sm text-gray-500 mb-8">Última atualização: maio de 2025</p>
 
@@ -22,6 +24,7 @@ export default function TermosPage() {
           <p className="text-sm text-gray-600 leading-relaxed">{s.content}</p>
         </div>
       ))}
-    </div>
+      </div>
+    </PublicShell>
   );
 }
