@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import DwellButton from "../components/DwellButton";
+import { useAccessibility, AccessibilityPanel, DIAGNOSTICO_PROFILES } from "../components/AccessibilityEngine";
 import Onboarding from "../components/Onboarding";
 import { UserButton } from "@clerk/nextjs";
 import PWABanner from "../components/PWABanner";
@@ -165,6 +166,10 @@ export default function Home() {
   const [ttsLang, setTtsLang] = useState("pt-BR");
   const [ttsGender, setTtsGender] = useState("NEUTRAL"); // FEMALE | MALE | CHILD | NEUTRAL
   const [dwellMs, setDwellMs] = useState(0); // 0 = desativado
+  const [diagnostico, setDiagnostico] = useState("padrao");
+  const [showAccessibility, setShowAccessibility] = useState(false);
+  const { config: a11yConfig, overrides: a11yOverrides, setOverrides: setA11yOverrides,
+          applyIntelliTouch, contrastFilter, fontScale, positionLocked } = useAccessibility(diagnostico);
   const [darkMode, setDarkMode] = useState(false);
 
   // Aplicar tema escuro no <html>
@@ -184,6 +189,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => { localStorage.setItem("caa-dwell", dwellMs); }, [dwellMs]);
+  useEffect(() => {
+    const saved = localStorage.getItem("caa-diagnostico");
+    if (saved) setDiagnostico(saved);
+  }, []);
+  useEffect(() => { localStorage.setItem("caa-diagnostico", diagnostico); }, [diagnostico]);
   useEffect(() => { localStorage.setItem("caa-gender", ttsGender); }, [ttsGender]);
   const [shareUrl, setShareUrl] = useState(null);
   const [sharing, setSharing] = useState(false);
@@ -209,7 +219,7 @@ export default function Home() {
     const u = new SpeechSynthesisUtterance(text); u.lang = ttsLang; u.rate = 0.88; speechSynthesis.cancel(); speechSynthesis.speak(u);
   }
 
-  function selectCard(card) {
+  const selectCard = applyIntelliTouch(function selectCard(card) {
     setPhrase(p => {
       const next = [...p, card.label];
       // Buscar predição com os últimos 3 cards
@@ -223,7 +233,7 @@ export default function Home() {
     });
     setEditing(card);
     speak(card.label);
-  }
+  });
   function saveEditing() { persist(cards.map(c => c.id === editing.id ? editing : c)); setEditing(null); }
 
   function downloadImage(card) {
@@ -495,6 +505,10 @@ export default function Home() {
               <button onClick={()=>setDarkMode(d=>!d)} title="Alternar modo escuro" style={{background:darkMode?"#4ec9a0":"#f3f4f6",color:darkMode?"#0d1117":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer"}}>
                 {darkMode?"☀️":"🌙"}
               </button>
+              <button onClick={()=>setShowAccessibility(true)} title="Acessibilidade adaptativa"
+                style={{background:diagnostico!=="padrao"?"#071b2c":"#f3f4f6",color:diagnostico!=="padrao"?"#4ec9a0":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer",fontWeight:diagnostico!=="padrao"?"700":"400"}}>
+                ♿{diagnostico!=="padrao"?` ${DIAGNOSTICO_PROFILES[diagnostico]?.icon}`:""}
+              </button>
               <button onClick={async()=>{
                 const res = await fetch("/api/export-board",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({cards:cards.filter(c=>!c.empty),title:patientName||"Prancha CAA",cols:5})});
                 const html = await res.text();
@@ -530,11 +544,11 @@ export default function Home() {
             {shownCards.map(card=>(
               <article key={card.id} className={`caa-card cat-${card.cat} ${editing?.id===card.id?"active":""}`}>
                 <div className="caa-card-inner">
-                  <button className="caa-card-button" onClick={()=>selectCard(card)}>
-                    <div className="caa-image-frame">
+                  <button className="caa-card-button" onClick={()=>selectCard(card)} style={{padding:a11yConfig.touchTolerance>0?`${a11yConfig.touchTolerance/4}px`:undefined}}>
+                    <div className="caa-image-frame" style={{filter:contrastFilter}}>
                       {card.image ? <img src={card.image} alt={card.label} /> : <div className="caa-empty">+</div>}
                     </div>
-                    <div className="caa-label">{card.label}</div>
+                    <div className="caa-label" style={{fontSize:`${20*fontScale}px`}}>{card.label}</div>
                   </button>
                   {editMode && (
                     <div className="caa-tools">
@@ -734,6 +748,16 @@ export default function Home() {
         </div>
       )}
     <Onboarding />
+      {showAccessibility && (
+        <AccessibilityPanel
+          diagnostico={diagnostico}
+          setDiagnostico={setDiagnostico}
+          config={{...a11yConfig, ...a11yOverrides}}
+          overrides={a11yOverrides}
+          setOverrides={setA11yOverrides}
+          onClose={()=>setShowAccessibility(false)}
+        />
+      )}
     </main>
   );
 }

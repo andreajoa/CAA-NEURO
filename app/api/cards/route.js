@@ -12,7 +12,7 @@ export async function GET(req) {
   const boardKey = `${profile}-${level}`;
 
   const cards = await d1Query(
-    "SELECT * FROM cards WHERE user_id = ? AND card_key = ? ORDER BY created_at ASC",
+    "SELECT * FROM cards WHERE user_id = ? AND card_key = ? ORDER BY COALESCE(position_index, 9999), created_at ASC",
     [userId, boardKey]
   );
 
@@ -34,9 +34,10 @@ export async function POST(req) {
     [userId, boardKey]
   );
 
-  for (const card of cards) {
+  for (let i = 0; i < cards.length; i++) {
+    const card = cards[i];
     await d1Query(
-      "INSERT INTO cards (id, user_id, card_key, label, image_url, category) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO cards (id, user_id, card_key, label, image_url, category, position_index) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
         card.id || crypto.randomUUID(),
         userId,
@@ -44,6 +45,7 @@ export async function POST(req) {
         card.label || "",
         card.image || card.image_url || "",
         card.cat || card.category || "",
+        card.position_index ?? i,
       ]
     );
   }
