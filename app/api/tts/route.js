@@ -78,7 +78,7 @@ export async function POST(request) {
 
     const apiKey = process.env.GOOGLE_TTS_API_KEY;
     if (!apiKey) {
-      return Response.json({ fallback: true, lang, text });
+      return Response.json({ fallback: true, lang, text, translatedText: textToSpeak });
     }
 
     // ── TRADUÇÃO: se o idioma não for PT, traduz antes de falar ──
@@ -129,7 +129,7 @@ export async function POST(request) {
       );
       const data2 = await res2.json();
       if (!res2.ok || data2.error) {
-        return Response.json({ fallback: true, lang, text });
+        return Response.json({ fallback: true, lang, text, translatedText: textToSpeak });
       }
       return Response.json({ audio: data2.audioContent, voice: fallbackVoice.name, quality: "standard" });
     }
