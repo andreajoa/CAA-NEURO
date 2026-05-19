@@ -1,4 +1,5 @@
 "use client";
+import AppShell from "../components/AppShell";
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@clerk/nextjs";
 
@@ -69,11 +70,8 @@ export default function PerfilPage() {
   const lbl = { fontSize:"13px", fontWeight:"700", color:"#374151", display:"block", marginBottom:"6px" };
 
   return (
-    <div style={{ minHeight:"100vh", background:"#f9fafb", fontFamily:"system-ui,sans-serif" }}>
-      <div style={{ background:"white", borderBottom:"1px solid #e5e7eb", padding:"14px 24px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
-        <a href="/app" style={{ color:"#00885f", fontWeight:"800", textDecoration:"none", fontSize:"18px" }}>CAA Neuro</a>
-        <a href="/app" style={{ color:"#6b7280", fontSize:"14px", textDecoration:"none" }}>← Voltar ao app</a>
-      </div>
+    <AppShell>
+
 
       <div style={{ maxWidth:"640px", margin:"0 auto", padding:"40px 24px" }}>
         <h1 style={{ fontSize:"24px", fontWeight:"800", color:"#071b2c", margin:"0 0 6px" }}>Perfil profissional</h1>
@@ -215,6 +213,6 @@ export default function PerfilPage() {
           </p>
         </div>
       </div>
-    </div>
+  </AppShell>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import AppShell from "../components/AppShell";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
@@ -40,17 +41,8 @@ export default function PranchotecaPage() {
   );
 
   return (
-    <div style={{ minHeight:"100vh", background:"#f9fafb", fontFamily:"system-ui,sans-serif" }}>
-      <div style={{ background:"white", borderBottom:"1px solid #e5e7eb", padding:"14px 24px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"12px" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:"16px" }}>
-          <Link href="/app" style={{ color:"#00885f", fontWeight:"800", textDecoration:"none", fontSize:"18px" }}>CAA Neuro</Link>
-          <span style={{ color:"#d1d5db" }}>|</span>
-          <span style={{ fontWeight:"700", color:"#071b2c" }}>📚 Pranchoteca</span>
-        </div>
-        <div style={{ display:"flex", gap:"10px" }}>
-          <Link href="/app" style={{ border:"1px solid #e5e7eb", borderRadius:"8px", padding:"9px 16px", fontSize:"14px", textDecoration:"none", color:"#374151" }}>← Prancha</Link>
-        </div>
-      </div>
+    <AppShell>
+
 
       <div style={{ maxWidth:"1000px", margin:"0 auto", padding:"32px 24px" }}>
         <div style={{ marginBottom:"32px" }}>
@@ -108,6 +100,6 @@ export default function PranchotecaPage() {
           </div>
         )}
       </div>
-    </div>
+  </AppShell>
   );
 }
