@@ -1,207 +1,254 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Users, BarChart3, Building2, Plus, ChevronRight, Activity } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+const NAV = () => (
+  <nav style={{background:"#071b2c",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #00885f"}}>
+    <span style={{color:"#4ec9a0",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
+    <a href="/app" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏠 Prancha</a>
+    <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👥 Pacientes</a>
+    <a href="/admin" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>📊 Admin</a>
+    <a href="/institucional" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.3)",border:"1px solid #4ec9a0",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏛️ Institucional</a>
+  </nav>
+);
+
+const S = {
+  page: {minHeight:"100vh",background:"#f5f7fb",fontFamily:"Arial,Helvetica,sans-serif"},
+  container: {maxWidth:"1000px",margin:"0 auto",padding:"32px 24px"},
+  card: {background:"white",borderRadius:"16px",border:"1px solid #e2e8f0",padding:"24px",marginBottom:"16px",boxShadow:"0 2px 8px rgba(0,0,0,0.06)"},
+  title: {fontSize:"28px",fontWeight:"900",color:"#071b2c",margin:"0 0 4px"},
+  btn: {border:"none",borderRadius:"10px",padding:"10px 20px",fontWeight:"700",cursor:"pointer",fontSize:"14px"},
+  inp: {width:"100%",border:"1px solid #d4dde5",borderRadius:"10px",padding:"10px 14px",fontSize:"14px",fontFamily:"inherit",boxSizing:"border-box"},
+  lbl: {display:"block",fontSize:"12px",fontWeight:"700",color:"#4b5563",marginBottom:"6px",marginTop:"14px"},
+};
 
 export default function InstitucionalPage() {
+  const router = useRouter();
   const [orgs, setOrgs] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const [detail, setDetail] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ nome:"", tipo:"clinica", cidade:"", estado:"", cnpj:"", responsavel:"", email:"" });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [selectedOrg, setSelectedOrg] = useState(null);
+  const [orgDetails, setOrgDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [view, setView] = useState("list");
+  const [form, setForm] = useState({nome:"",tipo:"prefeitura",cidade:"",estado:"",cnpj:"",responsavel:"",email:""});
   const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("profissional");
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [inviteResult, setInviteResult] = useState("");
+
+  const loadOrgs = async () => {
+    const r = await fetch("/api/org");
+    const d = await r.json();
+    setOrgs(d.organizations || []);
+  };
+
+  const loadOrgDetails = async (id) => {
+    setLoading(true);
+    const r = await fetch(`/api/org?org_id=${id}`);
+    const d = await r.json();
+    setOrgDetails(d);
+    setLoading(false);
+  };
 
   useEffect(() => { loadOrgs(); }, []);
 
-  async function loadOrgs() {
+  const createOrg = async () => {
+    if (!form.nome.trim()) return;
     setLoading(true);
-    const r = await fetch("/api/org").then(r => r.json());
-    setOrgs(r.organizations || []);
-    setLoading(false);
-  }
-
-  async function loadDetail(org) {
-    setSelected(org);
-    const r = await fetch(`/api/org?org_id=${org.id}`).then(r => r.json());
-    setDetail(r);
-  }
-
-  async function createOrg(e) {
-    e.preventDefault();
-    setSaving(true);
     const r = await fetch("/api/org", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(form) });
     const d = await r.json();
-    if (d.success) { setShowForm(false); setForm({ nome:"", tipo:"clinica", cidade:"", estado:"", cnpj:"", responsavel:"", email:"" }); loadOrgs(); }
-    setSaving(false);
-  }
+    if (d.success) { setForm({nome:"",tipo:"prefeitura",cidade:"",estado:"",cnpj:"",responsavel:"",email:""}); setView("list"); await loadOrgs(); }
+    setLoading(false);
+  };
 
-  const inp = { width:"100%", padding:"10px 12px", borderRadius:"8px", border:"1px solid #e5e7eb", fontSize:"14px", boxSizing:"border-box", fontFamily:"inherit" };
-  const lbl = { fontSize:"13px", fontWeight:"600", color:"#374151", display:"block", marginBottom:"6px" };
+  const sendInvite = async () => {
+    if (!inviteEmail.trim() || !selectedOrg) return;
+    setInviteLoading(true);
+    setInviteResult("");
+    const r = await fetch("/api/org/invite", { method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ org_id: selectedOrg.id, email: inviteEmail, role: inviteRole })
+    });
+    const d = await r.json();
+    setInviteResult(d.success ? "✅ Convite enviado com sucesso!" : `❌ ${d.error}`);
+    setInviteEmail("");
+    setInviteLoading(false);
+  };
 
-  const tipoLabel = { clinica:"Clínica", prefeitura:"Prefeitura", escola:"Escola", sus:"UBS/SUS", outro:"Outro" };
-  const tipoColor = { clinica:"#2563eb", prefeitura:"#7c3aed", escola:"#059669", sus:"#dc2626", outro:"#6b7280" };
+  const tipoLabel = {prefeitura:"🏛️ Prefeitura", clinica:"🏥 Clínica", escola:"🏫 Escola", hospital:"🏨 Hospital", ong:"🤝 ONG"};
 
-  return (
-    <div style={{ minHeight:"100vh", background:"#f9fafb", fontFamily:"system-ui,sans-serif" }}>
-      <div style={{ background:"white", borderBottom:"1px solid #e5e7eb", padding:"16px 32px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"12px" }}>
-        <div style={{ fontWeight:"800", fontSize:"20px", color:"#00885f" }}>CAA Neuro — Painel Institucional</div>
-        <div style={{ display:"flex", gap:"12px" }}>
-          <a href="/admin" style={{ color:"#374151", fontSize:"14px", textDecoration:"none", padding:"9px 16px", border:"1px solid #e5e7eb", borderRadius:"8px" }}>Admin</a>
-          <a href="/pacientes" style={{ color:"#374151", fontSize:"14px", textDecoration:"none", padding:"9px 16px", border:"1px solid #e5e7eb", borderRadius:"8px" }}>← Plataforma</a>
+  if (view === "nova") return (
+    <div style={S.page}>
+      <NAV />
+      <div style={S.container}>
+        <div style={{display:"flex",gap:"12px",alignItems:"center",marginBottom:"24px"}}>
+          <button onClick={()=>setView("list")} style={{...S.btn,background:"#f3f4f6",color:"#374151"}}>← Voltar</button>
+          <h1 style={S.title}>Nova Organização</h1>
+        </div>
+        <div style={S.card}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px"}}>
+            <div style={{gridColumn:"1/-1"}}>
+              <label style={S.lbl}>Nome da organização *</label>
+              <input style={S.inp} value={form.nome} onChange={e=>setForm({...form,nome:e.target.value})} placeholder="Ex: Prefeitura de São Paulo — Secretaria de Saúde" />
+            </div>
+            <div>
+              <label style={S.lbl}>Tipo</label>
+              <select style={S.inp} value={form.tipo} onChange={e=>setForm({...form,tipo:e.target.value})}>
+                <option value="prefeitura">Prefeitura</option>
+                <option value="clinica">Clínica</option>
+                <option value="escola">Escola</option>
+                <option value="hospital">Hospital</option>
+                <option value="ong">ONG</option>
+              </select>
+            </div>
+            <div>
+              <label style={S.lbl}>CNPJ</label>
+              <input style={S.inp} value={form.cnpj} onChange={e=>setForm({...form,cnpj:e.target.value})} placeholder="00.000.000/0001-00" />
+            </div>
+            <div>
+              <label style={S.lbl}>Cidade</label>
+              <input style={S.inp} value={form.cidade} onChange={e=>setForm({...form,cidade:e.target.value})} placeholder="São Paulo" />
+            </div>
+            <div>
+              <label style={S.lbl}>Estado</label>
+              <input style={S.inp} value={form.estado} onChange={e=>setForm({...form,estado:e.target.value})} placeholder="SP" />
+            </div>
+            <div>
+              <label style={S.lbl}>Responsável</label>
+              <input style={S.inp} value={form.responsavel} onChange={e=>setForm({...form,responsavel:e.target.value})} placeholder="Nome do gestor" />
+            </div>
+            <div>
+              <label style={S.lbl}>E-mail institucional</label>
+              <input style={S.inp} value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="gestor@prefeitura.sp.gov.br" />
+            </div>
+          </div>
+          <button onClick={createOrg} disabled={loading||!form.nome} style={{...S.btn,background:"#00885f",color:"white",marginTop:"20px",opacity:loading||!form.nome?0.5:1}}>
+            {loading?"Criando...":"Criar organização"}
+          </button>
         </div>
       </div>
+    </div>
+  );
 
-      <div style={{ maxWidth:"1100px", margin:"0 auto", padding:"32px 24px" }}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"32px", flexWrap:"wrap", gap:"12px" }}>
+  if (view === "detalhes" && selectedOrg) return (
+    <div style={S.page}>
+      <NAV />
+      <div style={S.container}>
+        <div style={{display:"flex",gap:"12px",alignItems:"center",marginBottom:"24px",flexWrap:"wrap"}}>
+          <button onClick={()=>{setView("list");setSelectedOrg(null);setOrgDetails(null);}} style={{...S.btn,background:"#f3f4f6",color:"#374151"}}>← Organizações</button>
           <div>
-            <h1 style={{ fontSize:"26px", fontWeight:"800", color:"#071b2c", margin:"0 0 4px" }}>Organizações cadastradas</h1>
-            <p style={{ color:"#6b7280", fontSize:"14px", margin:0 }}>Clínicas, prefeituras, escolas e UBS usando o CAA Neuro.</p>
+            <h1 style={{...S.title,fontSize:"22px"}}>{selectedOrg.nome}</h1>
+            <p style={{fontSize:"13px",color:"#6b7280",margin:0}}>{tipoLabel[selectedOrg.tipo]||selectedOrg.tipo} · {selectedOrg.cidade||""}{selectedOrg.estado?`, ${selectedOrg.estado}`:""}</p>
           </div>
-          <button onClick={() => setShowForm(true)}
-            style={{ display:"flex", alignItems:"center", gap:"8px", background:"#00885f", color:"white", border:"none", padding:"12px 24px", borderRadius:"10px", fontSize:"14px", fontWeight:"700", cursor:"pointer" }}>
-            <Plus size={16} /> Nova organização
+        </div>
+
+        {/* Stats da organização */}
+        {orgDetails && (
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"12px",marginBottom:"16px"}}>
+            {[
+              {label:"Profissionais",val:orgDetails.members?.length||0,icon:"👩‍⚕️",color:"#eff6ff",tc:"#1d4ed8"},
+              {label:"Pacientes",val:orgDetails.stats?.patients||0,icon:"👥",color:"#f0fdf4",tc:"#166534"},
+              {label:"Sessões",val:orgDetails.stats?.sessions||0,icon:"📋",color:"#fdf4ff",tc:"#7e22ce"},
+            ].map(s=>(
+              <div key={s.label} style={{background:s.color,borderRadius:"14px",padding:"16px",textAlign:"center"}}>
+                <div style={{fontSize:"28px",marginBottom:"4px"}}>{s.icon}</div>
+                <div style={{fontSize:"28px",fontWeight:"900",color:s.tc}}>{s.val}</div>
+                <div style={{fontSize:"12px",color:"#6b7280"}}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Convidar profissional */}
+        <div style={S.card}>
+          <h2 style={{fontSize:"16px",fontWeight:"800",color:"#071b2c",marginBottom:"16px"}}>➕ Convidar profissional</h2>
+          <div style={{display:"grid",gridTemplateColumns:"1fr auto auto",gap:"10px",alignItems:"end"}}>
+            <div>
+              <label style={S.lbl}>E-mail do profissional</label>
+              <input style={S.inp} value={inviteEmail} onChange={e=>setInviteEmail(e.target.value)} placeholder="fonoaudiologo@email.com" />
+            </div>
+            <div>
+              <label style={S.lbl}>Perfil</label>
+              <select style={{...S.inp,width:"auto"}} value={inviteRole} onChange={e=>setInviteRole(e.target.value)}>
+                <option value="profissional">Profissional</option>
+                <option value="admin">Administrador</option>
+                <option value="visualizador">Visualizador</option>
+              </select>
+            </div>
+            <button onClick={sendInvite} disabled={inviteLoading||!inviteEmail}
+              style={{...S.btn,background:"#00885f",color:"white",opacity:inviteLoading||!inviteEmail?0.5:1,marginTop:"auto"}}>
+              {inviteLoading?"Enviando...":"Enviar convite"}
+            </button>
+          </div>
+          {inviteResult && <div style={{marginTop:"10px",fontSize:"13px",color:inviteResult.includes("✅")?"#166534":"#dc2626"}}>{inviteResult}</div>}
+        </div>
+
+        {/* Lista de membros */}
+        <div style={S.card}>
+          <h2 style={{fontSize:"16px",fontWeight:"800",color:"#071b2c",marginBottom:"16px"}}>
+            👩‍⚕️ Profissionais ({orgDetails?.members?.length||0})
+          </h2>
+          {loading && <p style={{color:"#9ca3af",fontSize:"13px"}}>Carregando...</p>}
+          {!loading && (!orgDetails?.members?.length) && <p style={{color:"#9ca3af",fontSize:"13px"}}>Nenhum profissional cadastrado ainda.</p>}
+          {orgDetails?.members?.map(m=>(
+            <div key={m.id} style={{display:"flex",alignItems:"center",gap:"12px",padding:"10px 0",borderBottom:"1px solid #f3f4f6"}}>
+              <div style={{width:"36px",height:"36px",borderRadius:"50%",background:"#00885f",display:"flex",alignItems:"center",justifyContent:"center",color:"white",fontWeight:"700",fontSize:"14px",flexShrink:0}}>
+                {(m.nome||m.email||"P").charAt(0).toUpperCase()}
+              </div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:"14px",fontWeight:"600",color:"#1f2937"}}>{m.nome||m.email||m.user_id}</div>
+                <div style={{fontSize:"12px",color:"#6b7280"}}>{m.email||""}{m.unidade?` · ${m.unidade}`:""}</div>
+              </div>
+              <span style={{background:m.role==="admin"?"#eff6ff":m.role==="visualizador"?"#fefce8":"#f0fdf4",color:m.role==="admin"?"#1d4ed8":m.role==="visualizador"?"#854d0e":"#166534",padding:"3px 10px",borderRadius:"20px",fontSize:"11px",fontWeight:"700"}}>
+                {m.role==="admin"?"Administrador":m.role==="visualizador"?"Visualizador":"Profissional"}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={S.page}>
+      <NAV />
+      <div style={S.container}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"28px",flexWrap:"wrap",gap:"12px"}}>
+          <div>
+            <h1 style={S.title}>🏛️ Painel Institucional</h1>
+            <p style={{margin:"4px 0 0",fontSize:"14px",color:"#6b7280"}}>{orgs.length} organização{orgs.length!==1?"s":""} cadastrada{orgs.length!==1?"s":""}</p>
+          </div>
+          <button onClick={()=>setView("nova")} style={{...S.btn,background:"#00885f",color:"white",fontSize:"15px",padding:"12px 24px"}}>
+            + Nova organização
           </button>
         </div>
 
-        {showForm && (
-          <div style={{ background:"white", borderRadius:"16px", border:"1px solid #e5e7eb", padding:"32px", marginBottom:"32px" }}>
-            <h2 style={{ fontSize:"18px", fontWeight:"800", color:"#071b2c", margin:"0 0 24px" }}>Cadastrar organização</h2>
-            <form onSubmit={createOrg} style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:"16px" }}>
-              <div style={{ gridColumn:"1/-1" }}>
-                <label style={lbl}>Nome da organização *</label>
-                <input style={inp} value={form.nome} onChange={e=>setForm({...form,nome:e.target.value})} required placeholder="Ex: Clínica Fono SP" />
-              </div>
-              <div>
-                <label style={lbl}>Tipo</label>
-                <select style={inp} value={form.tipo} onChange={e=>setForm({...form,tipo:e.target.value})}>
-                  {Object.entries(tipoLabel).map(([v,l]) => <option key={v} value={v}>{l}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={lbl}>Cidade</label>
-                <input style={inp} value={form.cidade} onChange={e=>setForm({...form,cidade:e.target.value})} placeholder="São Paulo" />
-              </div>
-              <div>
-                <label style={lbl}>Estado</label>
-                <input style={inp} value={form.estado} onChange={e=>setForm({...form,estado:e.target.value})} placeholder="SP" maxLength={2} />
-              </div>
-              <div>
-                <label style={lbl}>CNPJ</label>
-                <input style={inp} value={form.cnpj} onChange={e=>setForm({...form,cnpj:e.target.value})} placeholder="00.000.000/0001-00" />
-              </div>
-              <div>
-                <label style={lbl}>Responsável</label>
-                <input style={inp} value={form.responsavel} onChange={e=>setForm({...form,responsavel:e.target.value})} placeholder="Nome do responsável" />
-              </div>
-              <div>
-                <label style={lbl}>E-mail institucional</label>
-                <input style={inp} type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="contato@clinica.com" />
-              </div>
-              <div style={{ gridColumn:"1/-1", display:"flex", gap:"12px", justifyContent:"flex-end" }}>
-                <button type="button" onClick={()=>setShowForm(false)} style={{ padding:"11px 24px", border:"1px solid #e5e7eb", background:"white", borderRadius:"9px", fontSize:"14px", cursor:"pointer" }}>Cancelar</button>
-                <button type="submit" disabled={saving} style={{ padding:"11px 28px", background:"#00885f", color:"white", border:"none", borderRadius:"9px", fontSize:"14px", fontWeight:"700", cursor:"pointer" }}>
-                  {saving ? "Salvando..." : "Cadastrar"}
-                </button>
-              </div>
-            </form>
+        {orgs.length===0 ? (
+          <div style={{...S.card,textAlign:"center",padding:"60px 24px"}}>
+            <div style={{fontSize:"56px",marginBottom:"16px"}}>🏛️</div>
+            <div style={{fontSize:"18px",fontWeight:"700",color:"#1f2937",marginBottom:"8px"}}>Nenhuma organização cadastrada</div>
+            <p style={{color:"#6b7280",marginBottom:"24px"}}>Crie uma organização para gerenciar múltiplos profissionais, ver relatórios por unidade e apresentar para prefeituras e secretarias.</p>
+            <button onClick={()=>setView("nova")} style={{...S.btn,background:"#00885f",color:"white",fontSize:"15px",padding:"12px 28px"}}>Criar primeira organização</button>
           </div>
-        )}
-
-        {loading ? (
-          <div style={{ textAlign:"center", padding:"64px", color:"#9ca3af" }}>Carregando...</div>
-        ) : orgs.length === 0 ? (
-          <div style={{ textAlign:"center", padding:"80px", background:"white", borderRadius:"16px", border:"1px solid #e5e7eb" }}>
-            <Building2 size={48} color="#d1d5db" style={{ margin:"0 auto 16px", display:"block" }} />
-            <p style={{ fontSize:"18px", fontWeight:"700", color:"#374151", margin:"0 0 8px" }}>Nenhuma organização ainda</p>
-            <p style={{ color:"#9ca3af", fontSize:"14px" }}>Cadastre a primeira clínica, prefeitura ou escola.</p>
-          </div>
-        ) : (
-          <div style={{ display:"grid", gridTemplateColumns: selected ? "1fr" : "repeat(auto-fill,minmax(300px,1fr))", gap:"20px" }}>
-            {!selected && orgs.map(org => (
-              <div key={org.id} onClick={() => loadDetail(org)}
-                style={{ background:"white", borderRadius:"16px", border:"1px solid #e5e7eb", padding:"24px", cursor:"pointer", transition:"box-shadow 0.2s" }}
-                onMouseEnter={e=>e.currentTarget.style.boxShadow="0 4px 20px rgba(0,0,0,0.08)"}
-                onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}>
-                <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", marginBottom:"16px" }}>
-                  <div>
-                    <span style={{ fontSize:"11px", fontWeight:"800", color: tipoColor[org.tipo]||"#6b7280", background:(tipoColor[org.tipo]||"#6b7280")+"15", padding:"3px 10px", borderRadius:"999px", textTransform:"uppercase" }}>
-                      {tipoLabel[org.tipo]||org.tipo}
-                    </span>
-                    <h3 style={{ fontSize:"17px", fontWeight:"800", color:"#071b2c", margin:"10px 0 4px" }}>{org.nome}</h3>
-                    {(org.cidade||org.estado) && <p style={{ color:"#6b7280", fontSize:"13px", margin:0 }}>{org.cidade}{org.cidade&&org.estado?" — ":""}{org.estado}</p>}
-                  </div>
-                  <ChevronRight size={20} color="#9ca3af" />
-                </div>
-                {org.responsavel && <p style={{ fontSize:"13px", color:"#374151", margin:"0 0 4px" }}>👤 {org.responsavel}</p>}
-                {org.email && <p style={{ fontSize:"13px", color:"#2563eb", margin:0 }}>✉ {org.email}</p>}
+        ) : orgs.map(org=>(
+          <div key={org.id} style={{...S.card,display:"flex",alignItems:"center",gap:"16px",cursor:"pointer"}}
+            onClick={()=>{setSelectedOrg(org);setView("detalhes");loadOrgDetails(org.id);}}>
+            <div style={{width:"48px",height:"48px",borderRadius:"12px",background:"#071b2c",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"22px",flexShrink:0}}>
+              {org.tipo==="prefeitura"?"🏛️":org.tipo==="clinica"?"🏥":org.tipo==="escola"?"🏫":org.tipo==="hospital"?"🏨":"🤝"}
+            </div>
+            <div style={{flex:1}}>
+              <div style={{fontWeight:"800",fontSize:"16px",color:"#071b2c"}}>{org.nome}</div>
+              <div style={{fontSize:"13px",color:"#6b7280",marginTop:"2px"}}>
+                {tipoLabel[org.tipo]||org.tipo}{org.cidade?` · ${org.cidade}`:""}
+                {org.responsavel?` · ${org.responsavel}`:""}
               </div>
-            ))}
-
-            {selected && detail && (
-              <div>
-                <button onClick={()=>{setSelected(null);setDetail(null);}} style={{ display:"flex", alignItems:"center", gap:"6px", background:"none", border:"none", color:"#374151", fontSize:"14px", cursor:"pointer", marginBottom:"24px", fontWeight:"600" }}>
-                  ← Voltar para organizações
-                </button>
-                <div style={{ background:"white", borderRadius:"16px", border:"1px solid #e5e7eb", padding:"32px", marginBottom:"24px" }}>
-                  <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", flexWrap:"wrap", gap:"16px" }}>
-                    <div>
-                      <span style={{ fontSize:"11px", fontWeight:"800", color: tipoColor[selected.tipo]||"#6b7280", background:(tipoColor[selected.tipo]||"#6b7280")+"15", padding:"3px 10px", borderRadius:"999px", textTransform:"uppercase" }}>
-                        {tipoLabel[selected.tipo]||selected.tipo}
-                      </span>
-                      <h2 style={{ fontSize:"24px", fontWeight:"800", color:"#071b2c", margin:"12px 0 4px" }}>{selected.nome}</h2>
-                      <p style={{ color:"#6b7280", fontSize:"14px", margin:0 }}>{selected.cidade}{selected.cidade&&selected.estado?" — ":""}{selected.estado}{selected.cnpj?" · CNPJ: "+selected.cnpj:""}</p>
-                    </div>
-                  </div>
-                  <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(150px,1fr))", gap:"16px", marginTop:"28px" }}>
-                    {[
-                      [detail.members?.length||0, "Profissionais", Users, "#2563eb"],
-                      [detail.stats?.patients||0, "Pacientes", Activity, "#00885f"],
-                      [detail.stats?.sessions||0, "Sessões", BarChart3, "#7c3aed"],
-                    ].map(([val,label,Icon,color]) => (
-                      <div key={label} style={{ background:"#f9fafb", borderRadius:"12px", padding:"20px", textAlign:"center", border:"1px solid #e5e7eb" }}>
-                        <Icon size={22} color={color} style={{ margin:"0 auto 8px", display:"block" }} />
-                        <div style={{ fontSize:"28px", fontWeight:"800", color:"#071b2c" }}>{val}</div>
-                        <div style={{ fontSize:"13px", color:"#6b7280" }}>{label}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {detail.members?.length > 0 && (
-                  <div style={{ background:"white", borderRadius:"16px", border:"1px solid #e5e7eb", padding:"28px" }}>
-                    <h3 style={{ fontSize:"16px", fontWeight:"800", color:"#071b2c", margin:"0 0 20px" }}>Profissionais</h3>
-                    <table style={{ width:"100%", borderCollapse:"collapse" }}>
-                      <thead>
-                        <tr style={{ background:"#f9fafb" }}>
-                          {["Nome/ID","Função","Entrou em"].map(h => (
-                            <th key={h} style={{ padding:"10px 14px", fontSize:"12px", fontWeight:"700", color:"#6b7280", textAlign:"left", borderBottom:"1px solid #e5e7eb", textTransform:"uppercase" }}>{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {detail.members.map(m => (
-                          <tr key={m.id}>
-                            <td style={{ padding:"12px 14px", fontSize:"14px", color:"#071b2c", borderBottom:"1px solid #f3f4f6" }}>
-                              <div style={{ fontWeight:"600" }}>{m.nome || m.user_id.slice(0,12)+"..."}</div>
-                              {m.email && <div style={{ fontSize:"12px", color:"#6b7280" }}>{m.email}</div>}
-                            </td>
-                            <td style={{ padding:"12px 14px", fontSize:"13px", color:"#374151", borderBottom:"1px solid #f3f4f6" }}>
-                              <span style={{ background: m.role==="admin"?"#fef9c3":"#f3f4f6", padding:"3px 10px", borderRadius:"999px", fontSize:"12px", fontWeight:"700" }}>{m.role}</span>
-                            </td>
-                            <td style={{ padding:"12px 14px", fontSize:"13px", color:"#6b7280", borderBottom:"1px solid #f3f4f6" }}>
-                              {new Date(m.joined_at).toLocaleDateString("pt-BR")}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )}
+            </div>
+            <div style={{display:"flex",gap:"8px"}}>
+              <span style={{background:org.ativo?"#f0fdf4":"#fef2f2",color:org.ativo?"#166534":"#dc2626",padding:"4px 12px",borderRadius:"20px",fontSize:"12px",fontWeight:"700"}}>
+                {org.ativo?"Ativa":"Inativa"}
+              </span>
+              <button style={{...S.btn,background:"#eff6ff",color:"#2563eb",padding:"8px 14px",fontSize:"13px"}}>Ver detalhes →</button>
+            </div>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
