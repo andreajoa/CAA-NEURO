@@ -1,4 +1,3 @@
-import PublicFooter from "../components/PublicFooter";
 import PublicShell from "../../components/PublicShell";
 import Link from "next/link";
 export default function Page() {
@@ -25,7 +24,6 @@ export default function Page() {
         </div>
       </div>
     </main>
-    <PublicFooter />
   </PublicShell>
   );
 }

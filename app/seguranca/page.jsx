@@ -1,4 +1,3 @@
-import PublicFooter from "../components/PublicFooter";
 import Link from "next/link";
 import PublicShell from "../../components/PublicShell";
 import { ShieldCheck, Lock, Eye, FileText, Server, AlertTriangle, CheckCircle } from "lucide-react";
@@ -119,7 +118,6 @@ export default function SegurancaPage() {
 
       
     </div>
-          <PublicFooter />
     </PublicShell>
   );
 }
