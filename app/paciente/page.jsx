@@ -138,6 +138,7 @@ export default function ModoPaciente() {
     <div style={{ minHeight:"100vh", background:"#f0fdf7", fontFamily:"system-ui", display:"flex", flexDirection:"column" }}>
       {/* Header */}
       <div style={{ background:"#071b2c", padding:"12px 20px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"8px" }}>
+        <a href="/app" style={{ color:"#4ec9a0", textDecoration:"none", fontSize:"13px", fontWeight:"700", background:"rgba(78,201,160,0.15)", border:"1px solid rgba(78,201,160,0.3)", padding:"6px 14px", borderRadius:"8px", display:"flex", alignItems:"center", gap:"6px" }}>← Prancha</a>
         <span style={{ color:"#4ec9a0", fontWeight:"800", fontSize:"20px" }}>CAA Neuro</span>
         <div style={{ display:"flex", gap:"6px" }}>
           {langs.map(l => (
