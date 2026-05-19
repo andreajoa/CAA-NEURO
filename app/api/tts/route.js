@@ -1,6 +1,5 @@
 export const runtime = "nodejs";
 
-// Vozes neurais Google Cloud TTS por idioma + gênero
 const VOICES = {
   "pt-BR": {
     FEMALE:  { languageCode: "pt-BR", name: "pt-BR-Neural2-C", ssmlGender: "FEMALE" },
@@ -40,13 +39,36 @@ const VOICES = {
   },
 };
 
-// Mapear perfil do paciente → gênero de voz padrão
+// Mapeamento lang code → código da Translate API
+const LANG_TO_TRANSLATE = {
+  "pt-BR": "pt", "pt-PT": "pt", "en-US": "en",
+  "es-ES": "es", "fr-FR": "fr", "de-DE": "de",
+};
+
+// Traduz texto usando Google Translate API
+async function translateText(text, targetLang, apiKey) {
+  if (targetLang === "pt") return text; // já está em PT, não traduz
+  try {
+    const res = await fetch(
+      `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ q: text, source: "pt", target: targetLang, format: "text" }),
+      }
+    );
+    const data = await res.json();
+    return data?.data?.translations?.[0]?.translatedText || text;
+  } catch {
+    return text; // fallback: usa o texto original se tradução falhar
+  }
+}
+
 function profileToGender(profile, age) {
-  // Se age < 16 ou perfil infantil/escolar → voz infantil
   if (age && Number(age) < 16) return "CHILD";
   if (profile === "infantil" || profile === "escolar") return "CHILD";
   if (profile === "idoso") return "NEUTRAL";
-  return "NEUTRAL"; // default neutro — fonoaudiólogo escolhe no front
+  return "NEUTRAL";
 }
 
 export async function POST(request) {
@@ -56,9 +78,12 @@ export async function POST(request) {
 
     const apiKey = process.env.GOOGLE_TTS_API_KEY;
     if (!apiKey) {
-      // Fallback: retorna sinal para usar Web Speech API no cliente
       return Response.json({ fallback: true, lang, text });
     }
+
+    // ── TRADUÇÃO: se o idioma não for PT, traduz antes de falar ──
+    const translateTarget = LANG_TO_TRANSLATE[lang] || "pt";
+    const textToSpeak = await translateText(text.slice(0, 500), translateTarget, apiKey);
 
     const resolvedGender = gender !== "NEUTRAL" ? gender : profileToGender(profile, age);
     const langVoices = VOICES[lang] || VOICES["pt-BR"];
@@ -70,13 +95,13 @@ export async function POST(request) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          input: { text: text.slice(0, 500) },
+          input: { text: textToSpeak },
           voice,
           audioConfig: {
             audioEncoding: "MP3",
             speakingRate: profile === "infantil" || profile === "escolar" ? 0.8 : 0.9,
             pitch: resolvedGender === "CHILD" ? 2 : 0,
-            effectsProfileId: ["handset-class-device"], // otimiza para celular/tablet
+            effectsProfileId: ["handset-class-device"],
           },
         }),
       }
@@ -84,7 +109,6 @@ export async function POST(request) {
 
     const data = await res.json();
     if (!res.ok || data.error) {
-      // Fallback gracioso se a voz neural não existir na conta
       console.error("TTS neural falhou:", data.error?.message, "— tentando Standard");
       const fallbackVoice = {
         languageCode: voice.languageCode,
@@ -97,7 +121,7 @@ export async function POST(request) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            input: { text: text.slice(0, 500) },
+            input: { text: textToSpeak },
             voice: fallbackVoice,
             audioConfig: { audioEncoding: "MP3", speakingRate: 0.9, pitch: 0 },
           }),
