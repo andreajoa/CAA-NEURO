@@ -1,13 +1,14 @@
 import { auth } from "@clerk/nextjs/server";
-export const runtime = "nodejs";
-const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
+import { d1Query } from "../../../lib/d1";
 
-export async function GET(request) {
+export const runtime = "nodejs";
+
+export async function GET() {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
-    const db = getDB(request);
-    const { results } = await db.prepare("SELECT id, slug, title, description, category, cards FROM board_templates ORDER BY id").all();
-    return Response.json({ templates: results.map(t => ({ ...t, cards: JSON.parse(t.cards) })) });
+    const rows = await d1Query("SELECT id, slug, title, description, category, cards FROM board_templates ORDER BY id");
+    const templates = (rows || []).map(t => ({ ...t, cards: JSON.parse(t.cards) }));
+    return Response.json({ templates });
   } catch (e) { return Response.json({ error: e.message }, { status: 500 }); }
 }
