@@ -341,7 +341,7 @@ export function AccessibilityPanel({ diagnostico, setDiagnostico, config, overri
                         <span style={{fontSize:"28px"}}>🖼️</span>
                       </div>
                       <div style={{
-                        fontSize:`${14 * (overrides.largeFontScale ?? config.largeFontScale || 1)}px`,
+                        fontSize:`${14 * ((overrides.largeFontScale ?? config.largeFontScale) || 1)}px`,
                         fontWeight:"700", color:"#071b2c"
                       }}>{label}</div>
                     </div>
