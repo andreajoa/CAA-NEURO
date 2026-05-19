@@ -545,3 +545,76 @@ display:none;
     margin-bottom:8px;
   }
 }
+
+
+/* MOBILE DROPDOWN FILTERS */
+.caa-mobile-filters{
+  display:none;
+}
+
+@media(max-width:700px){
+  .caa-mobile-filters{
+    display:block;
+    margin-bottom:10px;
+  }
+
+  .caa-mobile-filters-inline{
+    margin-top:2px;
+    margin-bottom:10px;
+  }
+
+  .caa-mobile-filter{
+    background:#ffffff;
+    border:1px solid #dde6ec;
+    border-radius:18px;
+    padding:12px;
+    box-shadow:0 6px 20px rgba(15,23,42,.05);
+  }
+
+  .caa-mobile-filter label{
+    display:block;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#0f5132;
+    margin-bottom:8px;
+  }
+
+  .caa-mobile-filter select{
+    width:100%;
+    min-height:46px;
+    border:1px solid #d6dee6;
+    border-radius:14px;
+    background:#f8fafc;
+    color:#0f172a;
+    font-size:14px;
+    font-weight:700;
+    padding:0 14px;
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, #0f5132 50%),
+      linear-gradient(135deg, #0f5132 50%, transparent 50%);
+    background-position:
+      calc(100% - 20px) calc(50% - 3px),
+      calc(100% - 14px) calc(50% - 3px);
+    background-size:6px 6px, 6px 6px;
+    background-repeat:no-repeat;
+    padding-right:34px;
+  }
+
+  .caa-mobile-filter select:focus{
+    outline:none;
+    border-color:#0f8b5f;
+    box-shadow:0 0 0 4px rgba(15,139,95,.12);
+    background-color:white;
+  }
+
+  .caa-tabs,
+  .caa-levels,
+  .caa-category-row{
+    display:none !important;
+  }
+}

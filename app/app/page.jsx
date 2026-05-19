@@ -174,6 +174,7 @@ export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
   const [mobileTab, setMobileTab] = useState("prancha");
   const [showMobileTools, setShowMobileTools] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Aplicar tema escuro no <html>
   useEffect(() => {
@@ -198,6 +199,13 @@ export default function Home() {
   }, []);
   useEffect(() => { localStorage.setItem("caa-diagnostico", diagnostico); }, [diagnostico]);
   useEffect(() => { localStorage.setItem("caa-gender", ttsGender); }, [ttsGender]);
+  useEffect(() => {
+    function updateIsMobile() { setIsMobile(window.innerWidth <= 700); }
+    updateIsMobile();
+    window.addEventListener("resize", updateIsMobile);
+    return () => window.removeEventListener("resize", updateIsMobile);
+  }, []);
+
   const [shareUrl, setShareUrl] = useState(null);
   const [sharing, setSharing] = useState(false);
 
@@ -444,17 +452,39 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="caa-tabs">
-        {profiles.map(p => (
-          <button key={p.id} onClick={()=>setProfile(p.id)} className={profile===p.id?"active":""}>
-            <span>{p.icon}</span>{p.label}
-          </button>
-        ))}
-      </section>
+      {isMobile ? (
+        <section className="caa-mobile-filters">
+          <div className="caa-mobile-filter">
+            <label>Perfil</label>
+            <select value={profile} onChange={e=>setProfile(e.target.value)}>
+              {profiles.map(p => <option key={p.id} value={p.id}>{p.icon} {p.label}</option>)}
+            </select>
+          </div>
+        </section>
+      ) : (
+        <section className="caa-tabs">
+          {profiles.map(p => (
+            <button key={p.id} onClick={()=>setProfile(p.id)} className={profile===p.id?"active":""}>
+              <span>{p.icon}</span>{p.label}
+            </button>
+          ))}
+        </section>
+      )}
 
-      <section className="caa-levels">
-        {levels.map(l => <button key={l.id} onClick={()=>setLevel(l.id)} className={level===l.id?"active":""}>{l.label}</button>)}
-      </section>
+      {isMobile ? (
+        <section className="caa-mobile-filters">
+          <div className="caa-mobile-filter">
+            <label>Nível</label>
+            <select value={level} onChange={e=>setLevel(e.target.value)}>
+              {levels.map(l => <option key={l.id} value={l.id}>{l.label}</option>)}
+            </select>
+          </div>
+        </section>
+      ) : (
+        <section className="caa-levels">
+          {levels.map(l => <button key={l.id} onClick={()=>setLevel(l.id)} className={level===l.id?"active":""}>{l.label}</button>)}
+        </section>
+      )}
 
       <section className="caa-layout">
         <div>
@@ -555,12 +585,24 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="caa-category-row">
-            <button onClick={()=>setCategory("all")} className={category==="all"?"active":""}>Todos</button>
-            {categories.map(cat=>(
-              <button key={cat.id} onClick={()=>setCategory(cat.id)} className={category===cat.id?"active":""}>{cat.label}</button>
-            ))}
-          </section>
+          {isMobile ? (
+            <section className="caa-mobile-filters caa-mobile-filters-inline">
+              <div className="caa-mobile-filter">
+                <label>Categoria</label>
+                <select value={category} onChange={e=>setCategory(e.target.value)}>
+                  <option value="all">Todos</option>
+                  {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
+                </select>
+              </div>
+            </section>
+          ) : (
+            <section className="caa-category-row">
+              <button onClick={()=>setCategory("all")} className={category==="all"?"active":""}>Todos</button>
+              {categories.map(cat=>(
+                <button key={cat.id} onClick={()=>setCategory(cat.id)} className={category===cat.id?"active":""}>{cat.label}</button>
+              ))}
+            </section>
+          )}
 
           <section className="caa-board">
             {shownCards.map(card=>(
