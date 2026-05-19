@@ -365,7 +365,7 @@ display:none;
 .secondaryBig{background:white;color:#071b2c;border:1px solid #bdd0d8;padding:20px 40px}
 .trustRow{display:flex;gap:34px;color:#0a6b50;font-weight:800;margin-top:30px;margin-bottom:80px;flex-wrap:wrap}
 .heroVisual{position:relative;min-height:720px;overflow:hidden}
-.heroImage{position:absolute;inset:-80px -80px 0 0;background:linear-gradient(90deg,rgba(248,251,249,.05),rgba(248,251,249,.18)),url('/hero-caa.png');background-size:cover;background-position:60% 20%;border-bottom-left-radius:70px}
+.heroImage{position:absolute;inset:-80px -80px 0 0;background:linear-gradient(90deg,rgba(248,251,249,.05),rgba(248,251,249,.18)),url('/hero-caa.png');background-size:cover;background-position:50% 15%;border-bottom-left-radius:70px}
 .heroImage:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#f8fbf9 0%,rgba(248,251,249,.55) 24%,rgba(248,251,249,.08) 58%,rgba(0,70,55,.16) 100%)}
 .quoteCard{position:absolute;right:10px;top:230px;width:310px;background:rgba(0,55,48,.76);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.35);border-radius:24px;color:white;padding:30px;box-shadow:0 30px 70px rgba(0,0,0,.18)}
 .quoteCard strong{font-size:72px;color:#50e1a2;line-height:.6}
@@ -742,7 +742,7 @@ display:none;
   justify-content:center;
 }
 
-.heroImage{background-position:center center !important;background-size:cover !important}
+.heroImage{background-position:50% 15% !important;background-size:cover !important}
 .heroVisual{overflow:hidden}
 
 .testimonialsSection{padding:72px 48px;background:#f9fafb}
@@ -766,7 +766,7 @@ display:none;
 .testimonialsSection h2{font-size:26px}
 }
 
-.heroImage{background-position:center center !important;background-size:cover !important}
+.heroImage{background-position:50% 15% !important;background-size:cover !important}
 .heroVisual{overflow:hidden}
 
 .testimonialsSection{padding:72px 48px;background:#f9fafb}
