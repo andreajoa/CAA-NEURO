@@ -381,6 +381,7 @@ export default function Home() {
               <button onClick={()=>setPhrase([])}>Limpar</button>
               <button className="yellow" onClick={()=>setPhrase(p=>p.slice(0,-1))}>Desfazer</button>
               <button className="dark" onClick={addCard}>+ Novo card</button>
+              <button onClick={()=>window.location.href="/biblioteca"} style={{background:"#7c3aed",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>📚 Biblioteca</button>
               <button onClick={shareBoard} disabled={sharing} style={{background:"#6366f1",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>
                 {sharing ? "..." : "🔗 Compartilhar"}
               </button>
