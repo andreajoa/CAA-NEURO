@@ -139,10 +139,29 @@ export default function Home() {
     } catch { alert("Não foi possível salvar os cards."); }
   }
 
-  function speak(text) {
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "pt-BR"; u.rate = 0.88;
-    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  const [ttsLang, setTtsLang] = useState("pt-BR");
+  const [shareUrl, setShareUrl] = useState(null);
+  const [sharing, setSharing] = useState(false);
+
+  async function shareBoard() {
+    if (!cards.length) return alert("Adicione cards antes de compartilhar.");
+    setSharing(true);
+    try {
+      const res = await fetch("/api/share", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ profile, level, cards, title: "Prancha CAA" }) });
+      const data = await res.json();
+      if (data.url) { setShareUrl(data.url); navigator.clipboard?.writeText(data.url); }
+      else alert("Erro ao compartilhar.");
+    } catch { alert("Erro ao compartilhar."); }
+    setSharing(false);
+  }
+
+  async function speak(text) {
+    try {
+      const res = await fetch("/api/tts", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ text, lang: ttsLang }) });
+      const data = await res.json();
+      if (data.audio) { const a = new Audio(`data:audio/mp3;base64,${data.audio}`); a.play(); return; }
+    } catch {}
+    const u = new SpeechSynthesisUtterance(text); u.lang = ttsLang; u.rate = 0.88; speechSynthesis.cancel(); speechSynthesis.speak(u);
   }
 
   function selectCard(card) { setPhrase(p => [...p, card.label]); setEditing(card); speak(card.label); }
@@ -351,9 +370,27 @@ export default function Home() {
             </div>
             <div className="caa-buttons">
               <button className="green" onClick={()=>speak(phrase.join(" "))}>🔊 Falar frase</button>
+              <select value={ttsLang} onChange={e=>setTtsLang(e.target.value)} style={{padding:"6px 10px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer"}}>
+                <option value="pt-BR">🇧🇷 PT-BR</option>
+                <option value="pt-PT">🇵🇹 PT-PT</option>
+                <option value="en-US">🇺🇸 EN</option>
+                <option value="es-ES">🇪🇸 ES</option>
+                <option value="fr-FR">🇫🇷 FR</option>
+                <option value="de-DE">🇩🇪 DE</option>
+              </select>
               <button onClick={()=>setPhrase([])}>Limpar</button>
               <button className="yellow" onClick={()=>setPhrase(p=>p.slice(0,-1))}>Desfazer</button>
               <button className="dark" onClick={addCard}>+ Novo card</button>
+              <button onClick={shareBoard} disabled={sharing} style={{background:"#6366f1",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>
+                {sharing ? "..." : "🔗 Compartilhar"}
+              </button>
+              {shareUrl && (
+                <div style={{background:"#f0fdf4",border:"1px solid #00885f",borderRadius:"10px",padding:"10px 14px",fontSize:"13px",display:"flex",alignItems:"center",gap:"10px",flexWrap:"wrap",width:"100%",marginTop:"6px"}}>
+                  <span style={{color:"#065f46",fontWeight:"600"}}>✅ Link copiado!</span>
+                  <a href={shareUrl} target="_blank" rel="noopener noreferrer" style={{color:"#00885f",wordBreak:"break-all"}}>{shareUrl}</a>
+                  <button onClick={()=>setShareUrl(null)} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af",fontSize:"16px"}}>✕</button>
+                </div>
+              )}
             </div>
           </section>
 
