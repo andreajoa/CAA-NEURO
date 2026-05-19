@@ -83,40 +83,22 @@ export default function ModoPaciente() {
 
   async function speak(text) {
     try {
-      const res = await fetch("/api/tts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text, lang }),
-      });
+      const res = await fetch("/api/tts", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ text, lang }) });
       const data = await res.json();
-      if (data.audio) {
-        const audio = new Audio(`data:audio/mp3;base64,${data.audio}`);
-        audio.play();
-      }
+      if (data.audio) { const audio = new Audio(`data:audio/mp3;base64,${data.audio}`); audio.play(); return; }
+      // fallback: traduz no cliente antes de falar
+      const spoken = data.translatedText || text;
+      const u = new SpeechSynthesisUtterance(spoken);
+      const voices = speechSynthesis.getVoices();
+      const v = voices.find(v => v.lang === lang) || voices.find(v => v.lang.startsWith(lang.split("-")[0]));
+      if (v) u.voice = v;
+      u.lang = lang; speechSynthesis.cancel(); speechSynthesis.speak(u);
     } catch {
-      
-const u = new SpeechSynthesisUtterance(text);
-
-const voices=speechSynthesis.getVoices();
-
-const selectedVoice=
-voices.find(
-v=>v.lang===lang
-) ||
-voices.find(
-v=>v.lang.startsWith(
-lang.split("-")[0]
-)
-);
-
-if(selectedVoice){
-u.voice=selectedVoice;
-}
-
-      u.lang = lang;
-      speechSynthesis.speak(u);
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang; speechSynthesis.cancel(); speechSynthesis.speak(u);
     }
   }
+
 
   function selectCard(card) {
     setPhrase(p => [...p, card.label]);

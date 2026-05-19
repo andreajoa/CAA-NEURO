@@ -216,27 +216,19 @@ export default function Home() {
       const res = await fetch("/api/tts", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ text, lang: ttsLang, gender: ttsGender, profile }) });
       const data = await res.json();
       if (data.audio) { const a = new Audio(`data:audio/mp3;base64,${data.audio}`); a.play(); return; }
-    } catch {}
-    
-const u = new SpeechSynthesisUtterance(text);
-
-const voices=speechSynthesis.getVoices();
-
-const selectedVoice=
-voices.find(
-v=>v.lang===lang
-) ||
-voices.find(
-v=>v.lang.startsWith(
-lang.split("-")[0]
-)
-);
-
-if(selectedVoice){
-u.voice=selectedVoice;
-}
- u.lang = ttsLang; u.rate = ttsRate || 1; speechSynthesis.cancel(); speechSynthesis.speak(u);
+      // fallback: traduz no cliente antes de falar
+      const spoken = data.translatedText || text;
+      const u = new SpeechSynthesisUtterance(spoken);
+      const voices = speechSynthesis.getVoices();
+      const v = voices.find(v => v.lang === ttsLang) || voices.find(v => v.lang.startsWith(ttsLang.split("-")[0]));
+      if (v) u.voice = v;
+      u.lang = ttsLang; u.rate = ttsRate || 1; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    } catch {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = ttsLang; u.rate = ttsRate || 1; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    }
   }
+
 
   const selectCard = applyIntelliTouch(function selectCard(card) {
     setPhrase(p => {
