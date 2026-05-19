@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import PublicShell from "../../components/PublicShell";
 
 const ESPECIALIDADES = [
   { id: "all", label: "Todas" },
@@ -37,22 +38,10 @@ export default function Profissionais() {
   });
 
   return (
+    <PublicShell>
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui,sans-serif"}}>
-      {/* Header */}
-      <div style={{background:"#071b2c",color:"white",padding:"0"}}>
-        <div style={{maxWidth:"1200px",margin:"0 auto",padding:"16px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"12px"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"16px"}}>
-            <Link href="/" style={{fontWeight:"800",fontSize:"18px",color:"#4ec9a0",textDecoration:"none"}}>CAA Neuro</Link>
-            <span style={{color:"rgba(255,255,255,0.4)"}}>|</span>
-            <span style={{color:"rgba(255,255,255,0.7)",fontSize:"15px"}}>Diretório de Profissionais</span>
-          </div>
-          <div style={{display:"flex",gap:"10px"}}>
-            <Link href="/app" style={{background:"rgba(255,255,255,0.1)",color:"white",padding:"8px 16px",borderRadius:"8px",textDecoration:"none",fontSize:"13px"}}>← App</Link>
-            <Link href="/perfil" style={{background:"#00885f",color:"white",padding:"8px 16px",borderRadius:"8px",textDecoration:"none",fontSize:"13px",fontWeight:"700"}}>Cadastrar meu perfil</Link>
-          </div>
-        </div>
-      </div>
 
+      {/* Hero */}
       {/* Hero */}
       <div style={{background:"linear-gradient(135deg,#071b2c,#0d2d3e)",color:"white",padding:"48px 24px",textAlign:"center"}}>
         <h1 style={{fontSize:"32px",fontWeight:"800",margin:"0 0 12px",color:"#4ec9a0"}}>Encontre um Especialista em CAA</h1>
@@ -116,6 +105,7 @@ export default function Profissionais() {
         </div>
       </div>
     </div>
+    </PublicShell>
   );
 }
 

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import PublicShell from "../../components/PublicShell";
 
 export default function DepoimentosPage() {
   const [testimonials, setTestimonials] = useState([]);
@@ -62,21 +63,14 @@ export default function DepoimentosPage() {
   const lbl = { fontSize:"13px", fontWeight:"600", color:"#374151", display:"block", marginBottom:"6px" };
 
   return (
-    <div style={{ minHeight:"100vh", background:"#f9fafb", fontFamily:"system-ui,sans-serif" }}>
-      <div style={{ background:"white", borderBottom:"1px solid #e5e7eb", padding:"16px 32px", display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"12px" }}>
-        <Link href="/" style={{ fontWeight:"800", fontSize:"20px", color:"#00885f", textDecoration:"none" }}>CAA Neuro</Link>
-        <div style={{ display:"flex", gap:"12px", alignItems:"center" }}>
-          <Link href="/" style={{ color:"#374151", fontSize:"14px", textDecoration:"none" }}>← Página inicial</Link>
-          <Link href="/sign-up" style={{ background:"#00885f", color:"white", padding:"9px 20px", borderRadius:"8px", textDecoration:"none", fontSize:"14px", fontWeight:"600" }}>Começar grátis</Link>
-        </div>
-      </div>
+    <PublicShell>
+      <div style={{ minHeight:"100vh", background:"#f9fafb", fontFamily:"system-ui,sans-serif" }}>
+        <div style={{ maxWidth:"960px", margin:"0 auto", padding:"56px 24px" }}>
 
-      <div style={{ maxWidth:"960px", margin:"0 auto", padding:"56px 24px" }}>
-
-        <div style={{ textAlign:"center", marginBottom:"56px" }}>
-          <div style={{ display:"inline-block", background:"#f0fdf4", color:"#15803d", padding:"6px 18px", borderRadius:"999px", fontSize:"13px", fontWeight:"700", marginBottom:"20px", border:"1px solid #bbf7d0" }}>
-            Histórias reais
-          </div>
+          <div style={{ textAlign:"center", marginBottom:"56px" }}>
+            <div style={{ display:"inline-block", background:"#f0fdf4", color:"#15803d", padding:"6px 18px", borderRadius:"999px", fontSize:"13px", fontWeight:"700", marginBottom:"20px", border:"1px solid #bbf7d0" }}>
+              Histórias reais
+            </div>
           <h1 style={{ fontSize:"clamp(28px,5vw,44px)", fontWeight:"800", color:"#071b2c", margin:"0 0 16px", lineHeight:"1.15" }}>
             O que dizem os profissionais
           </h1>
@@ -209,5 +203,6 @@ export default function DepoimentosPage() {
         </div>
       </div>
     </div>
+    </PublicShell>
   );
 }
