@@ -80,16 +80,16 @@ check "Manifest PWA" "[ -f public/manifest.json ] || [ -f app/manifest.js ] || [
 echo ""
 echo "── FASE 8 · BIBLIOTECA ──────────────────────────────"
 info "Cards no banco (contagem approx)" "$(grep -r 'INSERT INTO cards\|seed' scripts/ db/ 2>/dev/null | wc -l | tr -d ' ') inserts encontrados em scripts"
-check "Script de seed de cards existe" "[ -f scripts/seed.js ] || [ -f scripts/seed-cards.js ] || [ -f db/seed.js ]"
+check "Script de seed de cards existe" "[ -f scripts/seed.js ] || [ -f scripts/seed-cards.js ] || [ -f db/seed.js ] || [ -f scripts/seed-cards.js ]"
 
 echo ""
 echo "── FASE 9 · TREINAMENTO ─────────────────────────────"
-check "Página de tutorial/onboarding" "[ -f 'app/tutorial/page.tsx' ] || [ -f 'app/onboarding/page.tsx' ] || [ -f 'app/como-funciona/page.tsx' ]"
+check "Página de tutorial/onboarding" "[ -f 'app/tutorial/page.tsx' ] || [ -f 'app/onboarding/page.tsx' ] || [ -f 'app/onboarding/page.jsx' ] || [ -f 'app/como-funciona/page.tsx' ]"
 
 echo ""
 echo "── FASE 10 · PROVA SOCIAL ───────────────────────────"
-check "Página de depoimentos" "[ -f 'app/depoimentos/page.tsx' ] || [ -f 'app/depoimentos/page.js' ]"
-check "Casos clínicos documentados" "[ -d docs/cases ] || [ -f docs/casos-clinicos.md ]"
+check "Página de depoimentos" "[ -f 'app/depoimentos/page.tsx' ] || [ -f 'app/depoimentos/page.js' ] || [ -f 'app/depoimentos/page.jsx' ]"
+check "Casos clínicos documentados" "[ -d docs/cases ] || [ -f docs/casos-clinicos.md ] || [ -f docs/casos-clinicos.md ]"
 
 echo ""
 echo "── INFRA GERAL ──────────────────────────────────────"
