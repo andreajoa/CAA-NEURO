@@ -444,13 +444,14 @@ export default function Home() {
       <PWABanner />
       <nav className="caa-desktop-shortcuts">
         <span className="caa-desktop-brand">CAA Neuro</span>
-        <a href="/app">🏠 Prancha</a>
-        <a href="/biblioteca">📚 Biblioteca</a>
-        <a href="/paciente">👤 Modo Paciente</a>
-        <a href="/atividades">🎮 Atividades</a>
-        <a href="/pacientes" className="highlight">✨ Relatório IA</a>
+        <a href="/app">🧩 Prancha</a>
         <a href="/pacientes">👥 Pacientes</a>
+        <a href="/agenda">📅 Agenda</a>
+        <a href="/pranchoteca">📋 Pranchoteca</a>
+        <a href="/atividades">🎯 Atividades</a>
+        <a href="/paciente">📲 Modo Paciente</a>
         <a href="/equipe">🤝 Equipe</a>
+        <a href="/perfil">👤 Perfil</a>
         <div className="caa-desktop-shortcuts-right">
           <a href="/planos" style={{background:"#00885f",color:"white",padding:"6px 14px",borderRadius:"8px",fontWeight:"700"}}>⭐ Planos</a>
           <a href="/suporte">❓ Ajuda</a>
