@@ -36,36 +36,7 @@ const categories = [
   { id: "emergencia", label: "Emergência" },
 ];
 
-const infantilEmergente = [
-  ["sim","Sim",img("sim"),"core"],["nao","Não",img("nao"),"core"],["me-da","Me dá",img("me-da"),"core"],
-  ["nao-quero","Não quero",img("nao-quero"),"core"],["mais","Mais",img("mais"),"core"],["acabou","Acabou",img("acabou"),"core"],
-  ["ajuda","Ajuda",img("ajuda"),"core"],["esperar","Esperar",img("esperar"),"acoes"],["agua","Água",img("agua"),"necessidades"],
-  ["comer","Comer",img("comer"),"necessidades"],["banheiro","Banheiro",img("banheiro"),"necessidades"],["dor","Dor",img("dor"),"saude"],
-  ["dormir","Dormir",img("dormir"),"necessidades"],["tomar-banho","Tomar banho",img("tomar-banho"),"acoes"],["remedio","Remédio",img("remedio"),"saude"],
-  ["feliz","Feliz",img("feliz"),"emocoes"],["triste","Triste",img("triste"),"emocoes"],["bravo","Bravo",img("bravo"),"emocoes"],
-  ["medo","Medo",img("medo"),"emocoes"],["cansado","Cansado",img("cansado"),"emocoes"],["brincar","Brincar",img("brincar"),"acoes"],
-  ["parar","Parar",img("parar"),"core"],["sair","Sair",img("sair"),"lugares"],["passear","Passear",img("passear"),"acoes"],
-  ["escola","Escola",img("escola"),"lugares"],
-].map(([id,label,image,cat]) => ({ id, label, image, cat }));
-
-const levelTemplates = {
-  inicial: ["Eu","Você","Quero","Não quero","Preciso","Sinto","Estou","Tenho","Gosto","Não gosto","Ir","Voltar","Casa","Escola","Banheiro","Comer","Beber","Dor","Ajuda","Mais","Parar","Esperar","Agora","Depois"],
-  frases: ["Eu quero água","Eu quero comer","Eu quero ir ao banheiro","Eu quero brincar","Eu quero descansar","Eu quero ir embora","Eu não quero","Eu não gostei","Eu preciso de ajuda","Eu preciso esperar","Eu estou com dor","Eu estou cansado","Eu estou feliz","Eu estou triste","Eu estou com medo","Eu estou bravo","Pode me ajudar?","Pode repetir?","Onde está?","Quero ficar sozinho","Quero ficar com você","Quero mais","Acabou","Obrigado"],
-  conversacao: ["Como você está?","Eu quero conversar","Eu preciso explicar","Não entendi","Pode falar devagar?","Quero escolher outra coisa","Estou desconfortável","Preciso de uma pausa","Quero ligar para alguém","Quero mudar de assunto","Isso é importante","Não foi isso que eu quis dizer","Quero participar","Tenho uma pergunta","Preciso de privacidade","Estou bem","Não estou bem","Obrigado pela ajuda","Quero tentar de novo","Terminamos por hoje"]
-};
-
-function makeEmpty(profile, level) {
-  const fallbackLabels = ["Sim","Não","Ajuda","Mais","Parar","Esperar","Água","Comer","Banheiro","Descansar","Feliz","Triste","Cansado","Ir","Voltar","Fazer","Casa","Escola","Dor","Remédio","Oi","Obrigado","Por favor","Emergência"];
-  const labels = levelTemplates[level]?.length ? levelTemplates[level] : fallbackLabels;
-  return labels.map((label, i) => ({
-    id: `${profile}-${level}-${i+1}`, label, image: "",
-    cat: i<6?"core":i<10?"necessidades":i<13?"emocoes":i<16?"acoes":i<18?"lugares":i<20?"saude":i<23?"social":"emergencia",
-    empty: true,
-  }));
-}
-
-function defaultBoard(profile, level) {
-  if (profile === "infantil" && level === "emergente") return infantilEmergente;
+// REMOVIDO: hardcoded infantilEmergente não é mais usado
   return makeEmpty(profile, level);
 }
 
@@ -101,7 +72,7 @@ export default function Home() {
     }
   }, []);
   const [showQuickFires, setShowQuickFires] = useState(false);
-  const [cards, setCards] = useState(defaultBoard("infantil", "emergente"));
+  const [cards, setCards] = useState([]); // Carrega de admin_defaults via useEffect
   const [phrase, setPhrase] = useState([]);
   const [editing, setEditing] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -160,10 +131,10 @@ export default function Home() {
         } else {
           // Tenta board padrão do admin para este perfil+nível
           try {
-            const ar = await fetch(`/api/admin/default-board?profile=${profile}&level=${level}`);
+            const ar = await fetch(`/api/admin/default-board?profile=${activeProfile}&level=${activeLevel}`);
             const ad = await ar.json();
-            base = (ar.ok && ad.cards?.length) ? ad.cards : defaultBoard(profile, level);
-          } catch { base = defaultBoard(profile, level); }
+            base = (ar.ok && ad.cards?.length) ? ad.cards : [];
+          } catch { base = []; }
         }
 
         // Para cards sem imagem, usa imagem local se existir
@@ -175,7 +146,7 @@ export default function Home() {
         });
 
         setCards(enriched);
-      } catch { setCards(defaultBoard(profile, level)); }
+      } catch { setCards([]); }
     }
     loadCards();
     setEditing(null); setPhrase([]); setCategory("all");
@@ -184,11 +155,23 @@ export default function Home() {
   async function persist(next) {
     setCards(next);
     try {
-      await fetch("/api/cards", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ profile, level, cards: next }) });
-      // Se for admin, salvar também como padrão global
+      // Verificar se é admin ANTES de salvar
       const isAdminUser = await fetch("/api/plano").then(r=>r.json()).then(d=>d.plano==="admin").catch(()=>false);
-      if (isAdminUser && profile === "infantil" && level === "emergente") {
-        await fetch("/api/admin/default-board", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ cards: next }) }).catch(()=>{});
+      
+      if (isAdminUser) {
+        // ADMIN: salva APENAS em admin_defaults (padrão global)
+        await fetch("/api/admin/default-board", { 
+          method:"POST", 
+          headers:{"Content-Type":"application/json"}, 
+          body: JSON.stringify({ cards: next, profile, level }) 
+        });
+      } else {
+        // USUÁRIO: salva APENAS em cards (tabela pessoal)
+        await fetch("/api/cards", { 
+          method:"POST", 
+          headers:{"Content-Type":"application/json"}, 
+          body: JSON.stringify({ profile, level, cards: next }) 
+        });
       }
     } catch { alert("Não foi possível salvar os cards."); }
   }
@@ -296,7 +279,21 @@ export default function Home() {
     persist([...cards, card]); setEditing(card); setEditMode(true);
   }
 
-  async function resetBoard() { const next = defaultBoard(profile, level); await persist(next); setEditing(null); setPhrase([]); }
+  async function resetBoard() {
+    try {
+      const ar = await fetch(`/api/admin/default-board?profile=${profile}&level=${level}`);
+      const ad = await ar.json();
+      const next = (ar.ok && ad.cards?.length) ? ad.cards : [];
+      await persist(next);
+    } catch { await persist([]); }
+    setEditing(null); setPhrase([]);
+  }&level=${level}`);
+      const ad = await ar.json();
+      const next = (ar.ok && ad.cards?.length) ? ad.cards : [];
+      await persist(next);
+    } catch { await persist([]); }
+    setEditing(null); setPhrase([]);
+  }
 
   async function createPatient() {
     const name = patientName.trim(); if (!name) return;
@@ -524,7 +521,6 @@ export default function Home() {
               <div style={{background:"#faf5ff",border:"1px solid #e9d5ff",borderRadius:"10px",padding:"10px",marginBottom:"8px"}}>
                 <div style={{fontSize:"12px",fontWeight:"700",color:"#7c3aed",marginBottom:"8px"}}>⚡ QuickFires — frases rápidas</div>
                 <div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
-                  {["Preciso de ajuda","Eu quero água","Eu quero comer","Preciso ir ao banheiro","Eu estou com dor","Pode repetir?","Não entendi","Eu quero parar","Estou cansado","Eu quero brincar","Obrigado","Por favor"].map((f,i) => (
                     <button key={i} onClick={()=>{speak(f);setPhrase(p=>[...p,...f.split(" ")]);}}
                       style={{background:"white",border:"1px solid #e9d5ff",color:"#374151",padding:"6px 12px",borderRadius:"20px",fontSize:"13px",cursor:"pointer",fontWeight:"600"}}>
                       {f}
