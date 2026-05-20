@@ -8,7 +8,7 @@ import Onboarding from "../components/Onboarding";
 import { UserButton } from "@clerk/nextjs";
 import PWABanner from "../components/PWABanner";
 
-const img = (name) => `/cards/level-1/${name}.png`;
+const img = (name) => `/cards/level-1/${name}.png?v=20260520-1705`;
 
 const profiles = [
   { id: "infantil", label: "Infantil", icon: "👶" },
@@ -137,7 +137,7 @@ export default function Home() {
         const LOCAL_IDS = ["sim","nao","me-da","nao-quero","mais","acabou","ajuda","esperar","agua","comer","banheiro","dor","dormir","remedio","tomar-banho","feliz","triste","bravo","medo","cansado","brincar","parar","sair","passear","escola"];
         const enriched = base.map((c) => {
           if (c.image) return c;
-          if (LOCAL_IDS.includes(c.id)) return { ...c, image: `/cards/level-1/${c.id}.png` };
+          if (LOCAL_IDS.includes(c.id)) return { ...c, image: `/cards/level-1/${c.id}.png?v=20260520-1705` };
           return c;
         });
 
@@ -267,7 +267,7 @@ export default function Home() {
 
   function downloadImage(card) {
     if (!card.image) return;
-    const a = document.createElement("a"); a.href = card.image; a.download = `${card.id}.png`; a.click();
+    const a = document.createElement("a"); a.href = card.image; a.download = `${card.id}.png?v=20260520-1705`; a.click();
   }
 
   function addCard() {

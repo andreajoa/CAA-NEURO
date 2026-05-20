@@ -13,24 +13,24 @@ export default function Atividades() {
   const router = useRouter();
 
   const FALLBACK = [
-    {id:"sim",label:"Sim",image:"/cards/level-1/sim.png",cat:"core"},
-    {id:"nao",label:"Não",image:"/cards/level-1/nao.png",cat:"core"},
-    {id:"ajuda",label:"Ajuda",image:"/cards/level-1/ajuda.png",cat:"core"},
-    {id:"mais",label:"Mais",image:"/cards/level-1/mais.png",cat:"core"},
-    {id:"agua",label:"Água",image:"/cards/level-1/agua.png",cat:"necessidades"},
-    {id:"comer",label:"Comer",image:"/cards/level-1/comer.png",cat:"necessidades"},
-    {id:"banheiro",label:"Banheiro",image:"/cards/level-1/banheiro.png",cat:"necessidades"},
-    {id:"dormir",label:"Dormir",image:"/cards/level-1/dormir.png",cat:"necessidades"},
-    {id:"feliz",label:"Feliz",image:"/cards/level-1/feliz.png",cat:"emocoes"},
-    {id:"triste",label:"Triste",image:"/cards/level-1/triste.png",cat:"emocoes"},
-    {id:"medo",label:"Medo",image:"/cards/level-1/medo.png",cat:"emocoes"},
-    {id:"bravo",label:"Bravo",image:"/cards/level-1/bravo.png",cat:"emocoes"},
-    {id:"brincar",label:"Brincar",image:"/cards/level-1/brincar.png",cat:"acoes"},
-    {id:"parar",label:"Parar",image:"/cards/level-1/parar.png",cat:"acoes"},
-    {id:"esperar",label:"Esperar",image:"/cards/level-1/esperar.png",cat:"acoes"},
-    {id:"dor",label:"Dor",image:"/cards/level-1/dor.png",cat:"saude"},
-    {id:"remedio",label:"Remédio",image:"/cards/level-1/remedio.png",cat:"saude"},
-    {id:"escola",label:"Escola",image:"/cards/level-1/escola.png",cat:"lugares"},
+    {id:"sim",label:"Sim",image:"/cards/level-1/sim.png?v=20260520-1705",cat:"core"},
+    {id:"nao",label:"Não",image:"/cards/level-1/nao.png?v=20260520-1705",cat:"core"},
+    {id:"ajuda",label:"Ajuda",image:"/cards/level-1/ajuda.png?v=20260520-1705",cat:"core"},
+    {id:"mais",label:"Mais",image:"/cards/level-1/mais.png?v=20260520-1705",cat:"core"},
+    {id:"agua",label:"Água",image:"/cards/level-1/agua.png?v=20260520-1705",cat:"necessidades"},
+    {id:"comer",label:"Comer",image:"/cards/level-1/comer.png?v=20260520-1705",cat:"necessidades"},
+    {id:"banheiro",label:"Banheiro",image:"/cards/level-1/banheiro.png?v=20260520-1705",cat:"necessidades"},
+    {id:"dormir",label:"Dormir",image:"/cards/level-1/dormir.png?v=20260520-1705",cat:"necessidades"},
+    {id:"feliz",label:"Feliz",image:"/cards/level-1/feliz.png?v=20260520-1705",cat:"emocoes"},
+    {id:"triste",label:"Triste",image:"/cards/level-1/triste.png?v=20260520-1705",cat:"emocoes"},
+    {id:"medo",label:"Medo",image:"/cards/level-1/medo.png?v=20260520-1705",cat:"emocoes"},
+    {id:"bravo",label:"Bravo",image:"/cards/level-1/bravo.png?v=20260520-1705",cat:"emocoes"},
+    {id:"brincar",label:"Brincar",image:"/cards/level-1/brincar.png?v=20260520-1705",cat:"acoes"},
+    {id:"parar",label:"Parar",image:"/cards/level-1/parar.png?v=20260520-1705",cat:"acoes"},
+    {id:"esperar",label:"Esperar",image:"/cards/level-1/esperar.png?v=20260520-1705",cat:"acoes"},
+    {id:"dor",label:"Dor",image:"/cards/level-1/dor.png?v=20260520-1705",cat:"saude"},
+    {id:"remedio",label:"Remédio",image:"/cards/level-1/remedio.png?v=20260520-1705",cat:"saude"},
+    {id:"escola",label:"Escola",image:"/cards/level-1/escola.png?v=20260520-1705",cat:"lugares"},
   ];
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function Atividades() {
         const raw = (d.cards || []).filter(c => c.image || c.image_url || c.label);
         const mapped = raw.map(c => ({
           ...c,
-          image: c.image || c.image_url || `/cards/level-1/${c.id}.png`,
+          image: c.image || c.image_url || `/cards/level-1/${c.id}.png?v=20260520-1705`,
           cat: c.cat || c.category || "core",
         }));
         setCards(mapped.length >= 4 ? mapped : FALLBACK);
