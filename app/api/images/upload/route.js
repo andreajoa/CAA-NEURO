@@ -54,7 +54,7 @@ export async function POST(req) {
       key,
       label,
       url: `/api/images/file?key=${encodeURIComponent(key)}`,
-      source: admin ? "platform" : "user",
+      source: "platform",
     });
   } catch (error) {
     console.error("R2 upload error:", error);
