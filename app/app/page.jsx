@@ -411,65 +411,10 @@ export default function Home() {
   return (
     <AppShell>
     <main className={`caa-page ${editMode ? "caa-editing" : ""}`}>
-      <section className="caa-clinic-panel">
-        <div>
-          <h2>Paciente / Usuário</h2>
-          <div className="caa-patient-row">
-            <input placeholder="Nome do paciente/usuário" value={patientName} onChange={e=>setPatientName(e.target.value)} />
-            <button onClick={createPatient}>Adicionar paciente</button>
-          </div>
-          <select value={activePatientId} onChange={e=>setActivePatientId(e.target.value)}>
-            <option value="">Sem paciente selecionado</option>
-            {patients.map(p => <option key={p.id} value={p.id}>{p.nome||p.name}</option>)}
-          </select>
-          {activePatientId && (
-            <div style={{marginTop:"8px",display:"flex",gap:"8px"}}>
-              <a href="/pacientes" style={{fontSize:"12px",color:"#2563eb",textDecoration:"underline"}}>Ver prontuário →</a>
-              <a href={`/api/report?patient_id=${activePatientId}`} target="_blank" style={{fontSize:"12px",color:"#16a34a",textDecoration:"underline"}}>Baixar PDF</a>
-            </div>
-          )}
-        </div>
-        <div>
-          <h2>Sessão</h2>
-          <textarea placeholder="Observações do atendimento..." value={sessionNote} onChange={e=>setSessionNote(e.target.value)} />
-          <div className="caa-clinic-actions">
-            <button onClick={saveSession}>Salvar sessão</button>
-            <button onClick={()=>setShowLibrary(!showLibrary)}>Biblioteca</button>
-            <button onClick={()=>window.print()}>Imprimir / PDF</button>
-          </div>
-        </div>
-      </section>
 
-      {showLibrary && (
-        <section className="caa-library">
-          <h2>Biblioteca rápida</h2>
-          <div className="caa-library-grid">
-            {libraryCards.map((item,i) => (
-              <button key={i} onClick={()=>addLibraryCard(item)}>
-                <strong>{item.label}</strong>
-                <small>{categories.find(c=>c.id===item.cat)?.label}</small>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
 
       <PWABanner />
-      <nav className="caa-desktop-shortcuts">
-        <span className="caa-desktop-brand">CAA Neuro</span>
-        <a href="/app">🧩 Prancha</a>
-        <a href="/pacientes">👥 Pacientes</a>
-        <a href="/agenda">📅 Agenda</a>
-        <a href="/pranchoteca">📋 Pranchoteca</a>
-        <a href="/atividades">🎯 Atividades</a>
-        <a href="/paciente">📲 Modo Paciente</a>
-        <a href="/equipe">🤝 Equipe</a>
-        <a href="/perfil">👤 Perfil</a>
-        <div className="caa-desktop-shortcuts-right">
-          <a href="/planos" style={{background:"#00885f",color:"white",padding:"6px 14px",borderRadius:"8px",fontWeight:"700"}}>⭐ Planos</a>
-          <a href="/suporte">❓ Ajuda</a>
-        </div>
-      </nav>
+
       <header className="caa-header">
         <div>
           <div className="caa-kicker">CAA Neuro</div>
@@ -692,43 +637,69 @@ export default function Home() {
         </aside>
 
         {editing && (
-          <div className="caa-mobile-overlay" onClick={()=>setEditing(null)}>
-            <div className="caa-mobile-editor" onClick={e=>e.stopPropagation()}>
-              <h2>Editor do card</h2>
-              <div className="caa-mobile-preview">
-                {editing.image ? <img src={editing.image} alt={editing.label} /> : <div className="caa-empty large">+</div>}
+          <div onClick={()=>setEditing(null)}
+            style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)",zIndex:500,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}}>
+            <div onClick={e=>e.stopPropagation()}
+              style={{background:"white",borderRadius:"20px",padding:"24px",width:"100%",maxWidth:"420px",maxHeight:"90vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
+
+              {/* Header */}
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"20px"}}>
+                <h2 style={{margin:0,fontSize:"18px",fontWeight:"800",color:"#071b2c"}}>Editar card</h2>
+                <button onClick={()=>setEditing(null)}
+                  style={{background:"#f3f4f6",border:"none",width:"32px",height:"32px",borderRadius:"50%",fontSize:"18px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
               </div>
-              <label>Nome do card</label>
-              <input value={editing.label} onChange={e=>setEditing({...editing,label:e.target.value})} />
-              <label>Categoria</label>
-              <select value={editing.cat} onChange={e=>setEditing({...editing,cat:e.target.value})}>
-                {categories.map(cat=><option key={cat.id} value={cat.id}>{cat.label}</option>)}
-              </select>
+
+              {/* Preview da imagem */}
+              <div style={{display:"flex",justifyContent:"center",marginBottom:"20px"}}>
+                <div style={{width:"100px",height:"100px",borderRadius:"16px",border:"2px dashed #e5e7eb",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",background:"#f9fafb",cursor:"pointer"}}
+                  onClick={()=>{setPickerTab("buscar");openImagePicker();}}>
+                  {editing.image
+                    ? <img src={editing.image} alt={editing.label} style={{width:"100%",height:"100%",objectFit:"contain"}} />
+                    : <span style={{fontSize:"32px",color:"#9ca3af"}}>🖼️</span>}
+                </div>
+              </div>
+
+              {/* Campos */}
+              <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
+                <div>
+                  <label style={{fontSize:"12px",fontWeight:"700",color:"#374151",display:"block",marginBottom:"5px"}}>Nome do card</label>
+                  <input value={editing.label}
+                    onChange={e=>setEditing({...editing,label:e.target.value})}
+                    style={{width:"100%",padding:"10px 12px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"14px",fontFamily:"inherit",boxSizing:"border-box"}} />
+                </div>
+                <div>
+                  <label style={{fontSize:"12px",fontWeight:"700",color:"#374151",display:"block",marginBottom:"5px"}}>Categoria</label>
+                  <select value={editing.cat}
+                    onChange={e=>setEditing({...editing,cat:e.target.value})}
+                    style={{width:"100%",padding:"10px 12px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"14px",background:"white"}}>
+                    {categories.map(cat=><option key={cat.id} value={cat.id}>{cat.label}</option>)}
+                  </select>
+                </div>
+              </div>
+
               <input ref={fileRef} type="file" accept="image/*" hidden onChange={e=>uploadImageToLibrary(e.target.files?.[0])} />
-              <button onClick={()=>{
-                setPickerTab("buscar");
-                openImagePicker();
-              }}>🔍 Trocar imagem</button>
-              <button onClick={()=>downloadImage(editing)}>Baixar imagem</button>
-              <button className="green" onClick={saveEditing}>Salvar alterações</button>
-              <button onClick={()=>setEditing(null)}>Cancelar</button>
+
+              {/* Ações */}
+              <div style={{display:"flex",flexDirection:"column",gap:"8px",marginTop:"20px"}}>
+                <button onClick={()=>{setPickerTab("buscar");openImagePicker();}}
+                  style={{width:"100%",padding:"11px",background:"#eff6ff",color:"#2563eb",border:"1px solid #bfdbfe",borderRadius:"10px",fontSize:"14px",fontWeight:"700",cursor:"pointer"}}>
+                  🔍 Trocar imagem
+                </button>
+                <button onClick={saveEditing}
+                  style={{width:"100%",padding:"11px",background:"#00885f",color:"white",border:"none",borderRadius:"10px",fontSize:"14px",fontWeight:"700",cursor:"pointer"}}>
+                  ✅ Salvar alterações
+                </button>
+                <button onClick={()=>setEditing(null)}
+                  style={{width:"100%",padding:"11px",background:"white",color:"#374151",border:"1px solid #e5e7eb",borderRadius:"10px",fontSize:"14px",cursor:"pointer"}}>
+                  Cancelar
+                </button>
+              </div>
             </div>
           </div>
         )}
       </section>
 
-      <section className="caa-sessions">
-        <h2>Histórico de sessões</h2>
-        {!sessions.length && <p>Nenhuma sessão salva ainda.</p>}
-        {sessions.map(session=>(
-          <article key={session.id}>
-            <strong>{session.patientName||session.paciente_nome||"Sem paciente"}</strong>
-            <span>{session.created_at ? new Date(session.created_at).toLocaleString("pt-BR") : ""}</span>
-            {session.evolucao_observada && <p><b>Evolução:</b> {session.evolucao_observada}</p>}
-            {session.notas && <p><b>Notas:</b> {session.notas}</p>}
-          </article>
-        ))}
-      </section>
+
 
       {/* Modal unificado: Buscar + Minhas imagens + Gerar com IA */}
       {imagePickerOpen && (
