@@ -38,7 +38,11 @@ export default function Atividades() {
       .then(r => r.json())
       .then(d => {
         const raw = (d.cards || []).filter(c => c.image || c.image_url || c.label);
-        const mapped = raw.map(c => ({...c, image: c.image || c.image_url || `/cards/level-1/${c.id}.png`}));
+        const mapped = raw.map(c => ({
+          ...c,
+          image: c.image || c.image_url || `/cards/level-1/${c.id}.png`,
+          cat: c.cat || c.category || "core",
+        }));
         setCards(mapped.length >= 4 ? mapped : FALLBACK);
         setLoading(false);
       })
