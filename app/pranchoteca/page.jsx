@@ -12,6 +12,7 @@ export default function PranchotecaPage() {
   const [search, setSearch] = useState("");
   const [importing, setImporting] = useState(null);
   const [imported, setImported] = useState(null);
+  const [preview, setPreview] = useState(null); // template sendo visualizado
 
   useEffect(() => {
     fetch("/api/templates").then(r=>r.json())
@@ -103,9 +104,10 @@ export default function PranchotecaPage() {
                     style={{ flex:1, padding:"10px", background: imported===t.id ? "#16a34a" : importing===t.id ? "#9ca3af" : "#00885f", color:"white", border:"none", borderRadius:"9px", fontWeight:"700", cursor: importing===t.id ? "wait" : "pointer", fontSize:"14px" }}>
                     {imported===t.id ? "✅ Importada!" : importing===t.id ? "Importando..." : "Importar prancha"}
                   </button>
-                  <Link href="/app" style={{ padding:"10px 14px", border:"1px solid #e5e7eb", borderRadius:"9px", color:"#374151", textDecoration:"none", fontSize:"13px", display:"flex", alignItems:"center" }}>
+                  <button onClick={() => setPreview(t)}
+                    style={{ padding:"10px 14px", border:"1px solid #e5e7eb", borderRadius:"9px", color:"#374151", background:"white", cursor:"pointer", fontSize:"13px", display:"flex", alignItems:"center", fontWeight:"600" }}>
                     Ver →
-                  </Link>
+                  </button>
                 </div>
               </div>
             ))}
