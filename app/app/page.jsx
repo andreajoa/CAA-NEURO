@@ -283,12 +283,6 @@ export default function Home() {
       await persist(next);
     } catch { await persist([]); }
     setEditing(null); setPhrase([]);
-  }&level=${level}`);
-      const ad = await ar.json();
-      const next = (ar.ok && ad.cards?.length) ? ad.cards : [];
-      await persist(next);
-    } catch { await persist([]); }
-    setEditing(null); setPhrase([]);
   }
 
   async function createPatient() {
