@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { S3Client, ListObjectsV2Command, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
+import { isAdmin } from "../../../../lib/admin";
 
 function getR2Client() {
   return new S3Client({
@@ -49,6 +50,31 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Imagens do admin (platform/) — visíveis para todos
+    const platformR2Result = await getR2Client().send(
+      new ListObjectsV2Command({
+        Bucket: process.env.R2_BUCKET_NAME,
+        Prefix: "platform/images/",
+      })
+    ).catch(() => ({ Contents: [] }));
+
+    const adminImages = await Promise.all((platformR2Result.Contents || []).map(async (item) => {
+      let label = "Imagem da plataforma";
+      try {
+        const head = await getR2Client().send(new HeadObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME,
+          Key: item.Key,
+        }));
+        if (head.Metadata?.label) label = decodeURIComponent(head.Metadata.label);
+      } catch {}
+      return {
+        id: item.Key,
+        label,
+        url: `/api/images/file?key=${encodeURIComponent(item.Key)}`,
+        source: "platform-admin",
+      };
+    }));
+
     const result = await getR2Client().send(
       new ListObjectsV2Command({
         Bucket: process.env.R2_BUCKET_NAME,
@@ -84,7 +110,7 @@ export async function GET() {
     }));
 
     return NextResponse.json({
-      platformImages,
+      platformImages: [...platformImages, ...adminImages],
       userImages,
     });
   } catch (error) {
