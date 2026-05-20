@@ -19,17 +19,15 @@ const platformImages = [
   { id: "me-da", label: "Me dá", url: "/cards/level-1/me-da.png", source: "platform" },
   { id: "nao-quero", label: "Não quero", url: "/cards/level-1/nao-quero.png", source: "platform" },
   { id: "mais", label: "Mais", url: "/cards/level-1/mais.png", source: "platform" },
-  { id: "acabou", label: "Acabou", url: "/cards/level-1/acabou.png", source: "platform" },
-  { id: "ajuda", label: "Ajuda", url: "/cards/level-1/ajuda.png", source: "platform" },
   { id: "agua", label: "Água", url: "/cards/level-1/agua.png", source: "platform" },
   { id: "comer", label: "Comer", url: "/cards/level-1/comer.png", source: "platform" },
   { id: "banheiro", label: "Banheiro", url: "/cards/level-1/banheiro.png", source: "platform" },
   { id: "dor", label: "Dor", url: "/cards/level-1/dor.png", source: "platform" },
   { id: "dormir", label: "Dormir", url: "/cards/level-1/dormir.png", source: "platform" },
-  { id: "tomar-banho", label: "Tomar banho", url: "/cards/level-1/tomar-banho.png", source: "platform" },
   { id: "remedio", label: "Remédio", url: "/cards/level-1/remedio.png", source: "platform" },
   { id: "feliz", label: "Feliz", url: "/cards/level-1/feliz.png", source: "platform" },
   { id: "triste", label: "Triste", url: "/cards/level-1/triste.png", source: "platform" },
+  { id: "tomar-banho", label: "Tomar banho", url: "/cards/level-1/tomar-banho.png", source: "platform" },
   { id: "bravo", label: "Bravo", url: "/cards/level-1/bravo.png", source: "platform" },
   { id: "medo", label: "Medo", url: "/cards/level-1/medo.png", source: "platform" },
   { id: "cansado", label: "Cansado", url: "/cards/level-1/cansado.png", source: "platform" },
@@ -38,6 +36,9 @@ const platformImages = [
   { id: "sair", label: "Sair", url: "/cards/level-1/sair.png", source: "platform" },
   { id: "passear", label: "Passear", url: "/cards/level-1/passear.png", source: "platform" },
   { id: "escola", label: "Escola", url: "/cards/level-1/escola.png", source: "platform" },
+  { id: "esperar", label: "Esperar", url: "/cards/level-1/esperar.png", source: "platform" },
+  { id: "acabou", label: "Acabou", url: "/cards/level-1/acabou.png", source: "platform" },
+  { id: "ajuda", label: "Ajuda", url: "/cards/level-1/ajuda.png", source: "platform" },
 ];
 
 export async function GET() {
