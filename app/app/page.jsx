@@ -90,11 +90,11 @@ export default function Home() {
   const fileRef = useRef(null);
 
   const libraryCards = [
-    { label: "Sim", cat: "core" },{ label: "Não", cat: "core" },{ label: "Quero", cat: "core" },
+    { label: "Sim", cat: "core" },{ label: "Não", cat: "core" },{ label: "Me dá", cat: "core" },
     { label: "Não quero", cat: "core" },{ label: "Ajuda", cat: "core" },{ label: "Mais", cat: "core" },
     { label: "Água", cat: "necessidades" },{ label: "Comer", cat: "necessidades" },{ label: "Banheiro", cat: "necessidades" },
     { label: "Feliz", cat: "emocoes" },{ label: "Triste", cat: "emocoes" },{ label: "Medo", cat: "emocoes" },
-    { label: "Dor", cat: "saude" },{ label: "Remédio", cat: "saude" },{ label: "Médico", cat: "saude" },
+    { label: "Dor", cat: "saude" },{ label: "Remédio", cat: "saude" },{ label: "Dormir", cat: "necessidades" },
     { label: "Oi", cat: "social" },{ label: "Obrigado", cat: "social" },{ label: "Por favor", cat: "social" },
     { label: "Emergência", cat: "emergencia" },{ label: "Socorro", cat: "emergencia" },{ label: "Ligar família", cat: "emergencia" }
   ];

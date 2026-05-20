@@ -1,0 +1,28 @@
+
+export const DEFAULT_CARDS = [
+{id:"sim",label:"Sim"},
+{id:"nao",label:"Não"},
+{id:"me-da",label:"Me dá"},
+{id:"nao-quero",label:"Não quero"},
+{id:"mais",label:"Mais"},
+{id:"acabou",label:"Acabou"},
+{id:"ajuda",label:"Ajuda"},
+{id:"esperar",label:"Esperar"},
+{id:"agua",label:"Água"},
+{id:"comer",label:"Comer"},
+{id:"banheiro",label:"Banheiro"},
+{id:"dor",label:"Dor"},
+{id:"dormir",label:"Dormir"},
+{id:"remedio",label:"Remédio"},
+{id:"tomar-banho",label:"Tomar banho"},
+{id:"feliz",label:"Feliz"},
+{id:"triste",label:"Triste"},
+{id:"bravo",label:"Bravo"},
+{id:"medo",label:"Medo"},
+{id:"cansado",label:"Cansado"},
+{id:"brincar",label:"Brincar"},
+{id:"parar",label:"Parar"},
+{id:"sair",label:"Sair"},
+{id:"passear",label:"Passear"},
+{id:"escola",label:"Escola"}
+];
