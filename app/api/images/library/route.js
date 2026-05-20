@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { S3Client, ListObjectsV2Command, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 
 function getR2Client() {
@@ -56,13 +56,26 @@ export async function GET() {
       })
     );
 
-    const userImages = (result.Contents || []).map((item) => ({
-      id: item.Key,
-      key: item.Key,
-      label: "Imagem enviada",
-      url: `/api/images/file?key=${encodeURIComponent(item.Key)}`,
-      source: "user",
-      updatedAt: item.LastModified,
+    const userImages = await Promise.all((result.Contents || []).map(async (item) => {
+      let label = "Imagem enviada";
+      try {
+        const head = await getR2Client().send(
+          new HeadObjectCommand({
+            Bucket: process.env.R2_BUCKET_NAME,
+            Key: item.Key,
+          })
+        );
+        label = head.Metadata?.label || label;
+      } catch {}
+
+      return {
+        id: item.Key,
+        key: item.Key,
+        label,
+        url: `/api/images/file?key=${encodeURIComponent(item.Key)}`,
+        source: "user",
+        updatedAt: item.LastModified,
+      };
     }));
 
     return NextResponse.json({

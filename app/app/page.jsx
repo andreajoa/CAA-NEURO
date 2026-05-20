@@ -376,22 +376,42 @@ export default function Home() {
 
   async function uploadImageToLibrary(file) {
     if (!file || !editing) return;
+
+    const label = window.prompt("Nome desta imagem no banco:", editing.label || "Imagem do card") || editing.label || "Imagem do card";
+
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("label", editing.label || "Imagem do card");
+    formData.append("label", label);
+
     setImageLibraryLoading(true);
     setImagePickerError("");
+
     try {
       const res = await fetch("/api/images/upload", { method:"POST", body: formData });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || `Erro ${res.status} ao enviar imagem`);
+
+      const newImage = {
+        id: data.key || data.id,
+        key: data.key,
+        label: data.label || label,
+        url: data.url,
+        source: "user"
+      };
+
+      setImageLibrary(prev => ({
+        platformImages: prev.platformImages || [],
+        userImages: [newImage, ...(prev.userImages || [])]
+      }));
+
       setEditing({ ...editing, image: data.url, empty: false });
-      setImagePickerOpen(false);
+      if (fileRef.current) fileRef.current.value = "";
     } catch (e) {
       console.error("Erro ao enviar imagem:", e);
       setImagePickerError(e.message || "Não foi possível enviar a imagem.");
+    } finally {
+      setImageLibraryLoading(false);
     }
-    finally { setImageLibraryLoading(false); }
   }
 
   async function generateImage() {
