@@ -1047,7 +1047,8 @@ display:none;
 /* Imagem com object-fit contain para não cortar pictogramas */
 .caa-image-frame img {
   object-fit: contain !important;
-  padding: 6px;
+  padding: 4px;
+  background: inherit;
 }
 
 /* Label com cor da categoria e fundo sutil */
@@ -1092,3 +1093,67 @@ display:none;
 [data-theme="dark"] .cat-saude     .caa-image-frame { background: linear-gradient(135deg, #251a35, #2d1a45); }
 [data-theme="dark"] .cat-social    .caa-image-frame { background: linear-gradient(135deg, #0d2d28, #0d3530); }
 [data-theme="dark"] .cat-emergencia .caa-image-frame { background: linear-gradient(135deg, #2d1a1a, #3d1a1a); }
+
+
+/* ═══════════════════════════════════════════
+   MOBILE FIX — corrige upgrade visual em telas pequenas
+   ═══════════════════════════════════════════ */
+@media(max-width:700px){
+  /* Resetar altura fixa — deixar conteúdo determinar altura */
+  .caa-card {
+    height: auto !important;
+    min-height: 160px !important;
+  }
+
+  /* Barra colorida no topo — reduzir no mobile */
+  .caa-card-inner::before {
+    height: 4px !important;
+    margin: -8px -8px 4px -8px !important;
+  }
+
+  /* Image frame — garantir que não estoura */
+  .caa-image-frame {
+    border-width: 3px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Imagem — sem padding no mobile (espaço já pequeno) */
+  .caa-image-frame img {
+    padding: 2px !important;
+    object-fit: contain !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Label menor no mobile */
+  .caa-label {
+    font-size: 12px !important;
+    min-height: 32px !important;
+    padding: 2px 4px !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Board — 2 colunas fixas, gap menor */
+  .caa-board {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+
+  /* Card inner — menos padding */
+  .caa-card-inner {
+    padding: 6px !important;
+  }
+
+  /* Card button — ocupar todo espaço */
+  .caa-card-button {
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+}
+
+@media(max-width:400px){
+  .caa-card { min-height: 140px !important; }
+  .caa-label { font-size: 11px !important; }
+  .caa-image-frame img { padding: 1px !important; }
+}

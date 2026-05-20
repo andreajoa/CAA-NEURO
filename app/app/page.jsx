@@ -623,7 +623,7 @@ export default function Home() {
             {shownCards.map(card=>(
               <article key={card.id} className={`caa-card cat-${card.cat} ${editing?.id===card.id?"active":""}`}>
                 <div className="caa-card-inner">
-                  <button className="caa-card-button" onClick={()=>selectCard(card)} style={{padding:a11yConfig.touchTolerance>0?`${a11yConfig.touchTolerance/4}px`:undefined}}>
+                  <button className="caa-card-button" onClick={()=>selectCard(card)}>
                     <div className="caa-image-frame" style={{filter:contrastFilter}}>
                       {card.image ? <img src={card.image} alt={card.label} /> : <div className="caa-empty">+</div>}
                     </div>
