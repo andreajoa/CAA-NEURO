@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 
 const NAV = [
-  { href:"/app",          icon:"🧩", label:"Prancha",      short:"Prancha"     },
+  { href:"/profissional", icon:"🏠", label:"Dashboard",    short:"Início"      },
+  { href:"/app",          icon:"🧩", label:"Prancha CAA",  short:"Prancha"     },
   { href:"/pacientes",    icon:"👥", label:"Pacientes",    short:"Pacientes"   },
   { href:"/agenda",       icon:"📅", label:"Agenda",       short:"Agenda"      },
   { href:"/pranchoteca",  icon:"📚", label:"Pranchoteca",  short:"Pranchas"    },
