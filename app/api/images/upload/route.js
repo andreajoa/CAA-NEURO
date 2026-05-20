@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
-import { isAdmin } from "../../../../lib/admin";
 import crypto from "crypto";
 
 function getR2Client() {
