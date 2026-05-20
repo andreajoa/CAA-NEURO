@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 const CATS = { all:"Todas", core:"Core / Comunicação", necessidades:"Necessidades Básicas", emocoes:"Emoções", saude:"Saúde", escola:"Escola / Educação", social:"Vida Social" };
@@ -34,17 +35,41 @@ export default function PranchotecaPage() {
   async function importar(template) {
     setImporting(template.id);
     try {
-      const cards = template.cards.map(c => ({ ...c, id: crypto.randomUUID() }));
+      const cards = template.cards.map(c => ({
+        ...c,
+        id: crypto.randomUUID(),
+        image: c.image || c.image_url || "",
+        cat: c.cat || c.category || "core",
+      }));
+
+      // Detectar perfil mais adequado pela categoria da prancha
+      const catMap = {
+        saude: "clinico", escola: "escolar", emocoes: "infantil",
+        necessidades: "adulto", core: "infantil", podd: "clinico",
+      };
+      const profile = catMap[template.category] || "infantil";
+      const level = "emergente";
+
+      // Salvar no banco com o perfil correto
       await fetch("/api/cards", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ profile:"personalizado", level:"emergente", cards })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile, level, cards }),
       });
-      await fetch(`/api/templates/${template.id}/download`, { method:"POST" }).catch(()=>{});
-      setImported(template.id);
-      setTimeout(() => setImported(null), 3000);
-    } catch {}
-    setImporting(null);
+
+      // Incrementar downloads
+      await fetch(`/api/templates`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: template.slug }),
+      }).catch(() => {});
+
+      // Redirecionar para /app com perfil e nível corretos
+      router.push(`/app?profile=${profile}&level=${level}&from=pranchoteca`);
+    } catch (e) {
+      console.error(e);
+      setImporting(null);
+    }
   }
 
   const shown = templates.filter(t =>

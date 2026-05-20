@@ -2,6 +2,7 @@
 import AppShell from "../components/AppShell";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import DwellButton from "../components/DwellButton";
 import { useAccessibility, AccessibilityPanel, DIAGNOSTICO_PROFILES } from "../components/AccessibilityEngine";
 import Onboarding from "../components/Onboarding";
@@ -16,7 +17,6 @@ const profiles = [
   { id: "idoso", label: "Idoso", icon: "👴" },
   { id: "escolar", label: "Escolar", icon: "🏫" },
   { id: "clinico", label: "Clínico", icon: "🩺" },
-  { id: "personalizado", label: "Personalizado", icon: "⭐" },
 ];
 
 const levels = [
@@ -71,8 +71,21 @@ function defaultBoard(profile, level) {
 }
 
 export default function Home() {
-  const [profile, setProfile] = useState("infantil");
-  const [level, setLevel] = useState("emergente");
+  const searchParams = useSearchParams();
+  const [profile, setProfile] = useState(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search).get("profile");
+      if (p) return p;
+    }
+    return "infantil";
+  });
+  const [level, setLevel] = useState(() => {
+    if (typeof window !== "undefined") {
+      const l = new URLSearchParams(window.location.search).get("level");
+      if (l) return l;
+    }
+    return "emergente";
+  });
   const [category, setCategory] = useState("all");
   const [patientName, setPatientName] = useState("");
   const [patients, setPatients] = useState([]);
@@ -81,6 +94,14 @@ export default function Home() {
   const [sessions, setSessions] = useState([]);
   const [showLibrary, setShowLibrary] = useState(false);
   const [nextSuggestions, setNextSuggestions] = useState([]);
+  const [fromPranchoteca, setFromPranchoteca] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const from = new URLSearchParams(window.location.search).get("from");
+      if (from === "pranchoteca") setFromPranchoteca(true);
+    }
+  }, []);
   const [showQuickFires, setShowQuickFires] = useState(false);
   const [cards, setCards] = useState(defaultBoard("infantil", "emergente"));
   const [phrase, setPhrase] = useState([]);
@@ -415,6 +436,12 @@ export default function Home() {
 
       <PWABanner />
 
+      {fromPranchoteca && (
+        <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:"12px",padding:"12px 16px",marginBottom:"12px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"12px",flexWrap:"wrap"}}>
+          <span style={{fontSize:"14px",color:"#15803d",fontWeight:"700"}}>✅ Prancha importada da Pranchoteca e carregada com sucesso!</span>
+          <button onClick={()=>setFromPranchoteca(false)} style={{background:"none",border:"none",color:"#6b7280",cursor:"pointer",fontSize:"18px",lineHeight:1}}>×</button>
+        </div>
+      )}
       <header className="caa-header">
         <div>
           <div className="caa-kicker">CAA Neuro</div>
@@ -432,6 +459,7 @@ export default function Home() {
         <div className="caa-top-actions">
           <button onClick={()=>setEditMode(!editMode)}>{editMode?"Sair da edição":"Editar prancha"}</button>
           <button onClick={resetBoard}>Resetar</button>
+          <a href="/pranchoteca" style={{fontSize:"13px",color:"#00885f",textDecoration:"none",border:"1px solid #00885f",padding:"7px 14px",borderRadius:"8px",fontWeight:"700",whiteSpace:"nowrap"}}>📋 Pranchoteca</a>
         </div>
       </header>
 
@@ -636,67 +664,7 @@ export default function Home() {
           )}
         </aside>
 
-        {editing && (
-          <div onClick={()=>setEditing(null)}
-            style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)",zIndex:500,display:"flex",alignItems:"center",justifyContent:"center",padding:"16px"}}>
-            <div onClick={e=>e.stopPropagation()}
-              style={{background:"white",borderRadius:"20px",padding:"24px",width:"100%",maxWidth:"420px",maxHeight:"90vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
-
-              {/* Header */}
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"20px"}}>
-                <h2 style={{margin:0,fontSize:"18px",fontWeight:"800",color:"#071b2c"}}>Editar card</h2>
-                <button onClick={()=>setEditing(null)}
-                  style={{background:"#f3f4f6",border:"none",width:"32px",height:"32px",borderRadius:"50%",fontSize:"18px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>×</button>
-              </div>
-
-              {/* Preview da imagem */}
-              <div style={{display:"flex",justifyContent:"center",marginBottom:"20px"}}>
-                <div style={{width:"100px",height:"100px",borderRadius:"16px",border:"2px dashed #e5e7eb",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",background:"#f9fafb",cursor:"pointer"}}
-                  onClick={()=>{setPickerTab("buscar");openImagePicker();}}>
-                  {editing.image
-                    ? <img src={editing.image} alt={editing.label} style={{width:"100%",height:"100%",objectFit:"contain"}} />
-                    : <span style={{fontSize:"32px",color:"#9ca3af"}}>🖼️</span>}
-                </div>
-              </div>
-
-              {/* Campos */}
-              <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
-                <div>
-                  <label style={{fontSize:"12px",fontWeight:"700",color:"#374151",display:"block",marginBottom:"5px"}}>Nome do card</label>
-                  <input value={editing.label}
-                    onChange={e=>setEditing({...editing,label:e.target.value})}
-                    style={{width:"100%",padding:"10px 12px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"14px",fontFamily:"inherit",boxSizing:"border-box"}} />
-                </div>
-                <div>
-                  <label style={{fontSize:"12px",fontWeight:"700",color:"#374151",display:"block",marginBottom:"5px"}}>Categoria</label>
-                  <select value={editing.cat}
-                    onChange={e=>setEditing({...editing,cat:e.target.value})}
-                    style={{width:"100%",padding:"10px 12px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"14px",background:"white"}}>
-                    {categories.map(cat=><option key={cat.id} value={cat.id}>{cat.label}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              <input ref={fileRef} type="file" accept="image/*" hidden onChange={e=>uploadImageToLibrary(e.target.files?.[0])} />
-
-              {/* Ações */}
-              <div style={{display:"flex",flexDirection:"column",gap:"8px",marginTop:"20px"}}>
-                <button onClick={()=>{setPickerTab("buscar");openImagePicker();}}
-                  style={{width:"100%",padding:"11px",background:"#eff6ff",color:"#2563eb",border:"1px solid #bfdbfe",borderRadius:"10px",fontSize:"14px",fontWeight:"700",cursor:"pointer"}}>
-                  🔍 Trocar imagem
-                </button>
-                <button onClick={saveEditing}
-                  style={{width:"100%",padding:"11px",background:"#00885f",color:"white",border:"none",borderRadius:"10px",fontSize:"14px",fontWeight:"700",cursor:"pointer"}}>
-                  ✅ Salvar alterações
-                </button>
-                <button onClick={()=>setEditing(null)}
-                  style={{width:"100%",padding:"11px",background:"white",color:"#374151",border:"1px solid #e5e7eb",borderRadius:"10px",fontSize:"14px",cursor:"pointer"}}>
-                  Cancelar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        
       </section>
 
 
