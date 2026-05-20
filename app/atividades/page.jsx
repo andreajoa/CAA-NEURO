@@ -336,20 +336,25 @@ function CompletarFrase({ cards, onBack }) {
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState(null);
   const [done, setDone] = useState(false);
+  const [options, setOptions] = useState([]);
 
   const frase = FRASES[idx];
-  const catCards = cards.filter(c => c && c.cat === frase.cat || !frase.cat);
-  const wrongPool = cards.filter(c => c.cat !== frase.cat);
-  const correct = shuffle(catCards)[0];
-  const wrongs = shuffle(wrongPool).slice(0, 3);
-  const [options] = useState(() => {
-    const opts = shuffle([correct, ...wrongs]).slice(0, 4);
-    return opts;
-  });
+
+  // Recalcula opções toda vez que idx ou cards mudam
+  useEffect(() => {
+    if (!cards?.length) return;
+    const catCards = cards.filter(c => c && c.cat === frase.cat);
+    const wrongPool = cards.filter(c => c && c.cat !== frase.cat);
+    const correct = shuffle(catCards)[0];
+    if (!correct) return;
+    const wrongs = shuffle(wrongPool).slice(0, 3);
+    setOptions(shuffle([correct, ...wrongs]).slice(0, 4));
+  }, [idx, cards]);
 
   function pick(card) {
-    if (feedback) return;
-    const isCorrect = card.cat === frase.cat || catCards.some(c => c.id === card.id);
+    if (feedback || !card) return;
+    // Correto se o cat do card bate com o cat da frase
+    const isCorrect = card.cat === frase.cat;
     setFeedback(isCorrect ? "correct" : "wrong");
     if (isCorrect) setScore(s => s + 1);
     setTimeout(() => {
@@ -395,13 +400,24 @@ function CompletarFrase({ cards, onBack }) {
 
 function Categorizar({ cards, onBack }) {
   const CATS = ["core","necessidades","emocoes","acoes"];
-  const pool = shuffle(cards.filter(c => CATS.includes(c.cat))).slice(0, 12);
-  const [queue, setQueue] = useState(pool);
-  const [current, setCurrent] = useState(pool[0]);
+  const [queue, setQueue] = useState([]);
+  const [current, setCurrent] = useState(null);
   const [queueIdx, setQueueIdx] = useState(0);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState(null);
   const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!cards?.length) return;
+    const pool = shuffle(cards.filter(c => c && CATS.includes(c.cat))).slice(0, 12);
+    if (!pool.length) return;
+    setQueue(pool);
+    setCurrent(pool[0]);
+    setQueueIdx(0);
+    setScore(0);
+    setFeedback(null);
+    setDone(false);
+  }, [cards]);
 
   const CAT_LABELS = { core:"⭐ Core", necessidades:"🍎 Necessidades", emocoes:"😊 Emoções", acoes:"🏃 Ações" };
   const CAT_COLORS = { core:"#2563eb", necessidades:"#059669", emocoes:"#d97706", acoes:"#7c3aed" };
@@ -418,7 +434,10 @@ function Categorizar({ cards, onBack }) {
     }, 1000);
   }
 
-  function restart() { const p = shuffle(pool); setQueue(p); setCurrent(p[0]); setQueueIdx(0); setScore(0); setFeedback(null); setDone(false); }
+  function restart() {
+    const p = shuffle(queue);
+    setQueue(p); setCurrent(p[0]); setQueueIdx(0); setScore(0); setFeedback(null); setDone(false);
+  }
 
   return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
