@@ -624,8 +624,10 @@ export default function Home() {
               <article key={card.id} className={`caa-card cat-${card.cat} ${editing?.id===card.id?"active":""}`}>
                 <div className="caa-card-inner">
                   <button className="caa-card-button" onClick={()=>selectCard(card)}>
-                    <div className="caa-image-frame" style={{filter:contrastFilter}}>
-                      {card.image ? <img src={card.image} alt={card.label} /> : <div className="caa-empty">+</div>}
+                    <div className={`caa-image-frame${card.image ? "" : " caa-no-image"}`} style={{filter:card.image?contrastFilter:"none"}}>
+                      {card.image
+                        ? <img src={card.image} alt={card.label} onError={e=>{e.target.style.display="none";e.target.parentElement.classList.add("caa-no-image");}}/>
+                        : <div className="caa-empty">🖼️</div>}
                     </div>
                     <div className="caa-label" style={{fontSize:`${20*fontScale}px`,textTransform:"uppercase"}}>{(card.label || "").toUpperCase()}</div>
                   </button>

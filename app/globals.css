@@ -1242,3 +1242,42 @@ display:none;
   .caa-label { font-size: 11px !important; min-height: 24px !important; }
   .caa-image-frame { min-height: 70px !important; }
 }
+
+/* ═══════════════════════════════════════════
+   CARD SEM IMAGEM — neutraliza fundo colorido
+   ═══════════════════════════════════════════ */
+.caa-no-image {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  border-style: dashed !important;
+}
+/* Categorias não afetam cards sem imagem */
+.cat-core .caa-no-image,
+.cat-necessidades .caa-no-image,
+.cat-emocoes .caa-no-image,
+.cat-acoes .caa-no-image,
+.cat-lugares .caa-no-image,
+.cat-saude .caa-no-image,
+.cat-social .caa-no-image,
+.cat-emergencia .caa-no-image {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+[data-theme="dark"] .caa-no-image {
+  background: #21262d !important;
+  border-color: #30363d !important;
+}
+
+/* Mobile — card sem imagem tem altura menor */
+@media(max-width:700px){
+  .caa-no-image {
+    min-height: 60px !important;
+    aspect-ratio: unset !important;
+    height: 60px !important;
+  }
+  .caa-no-image .caa-empty,
+  .caa-no-image > .caa-empty {
+    font-size: 22px !important;
+    min-height: 60px !important;
+  }
+}
