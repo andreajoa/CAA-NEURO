@@ -257,29 +257,64 @@ export default function AdminPage() {
         {/* RECEITA */}
         {activeTab === "receita" && <>
           <h2 style={{fontSize:"20px",fontWeight:"800",margin:"0 0 24px"}}>💰 Dashboard financeiro</h2>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:"20px",marginBottom:"32px"}}>
+
+          {/* Cards por plano */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"16px",marginBottom:"24px"}}>
             {[
-              ["MRR", `R$ ${t.mrr||0}`, "Receita mensal recorrente", "#f59e0b"],
-              ["ARR", `R$ ${t.arr||0}`, "Receita anual projetada", "#4ec9a0"],
-              ["Assinantes Pro", t.pro||0, "Usuários pagantes ativos", "#60a5fa"],
-              ["Ticket médio", "R$ 35", "Por assinante por mês", "#a78bfa"],
-              ["Taxa conversão", `${t.conversion_rate||0}%`, "Free → Pro", "#fb7185"],
+              { label:"Individual Pro", valor:35, qtd:t.pro||0, color:"#4ec9a0", desc:"1 profissional · 50 pacientes", icon:"👤" },
+              { label:"Clínica", valor:149, qtd:t.clinica||0, color:"#60a5fa", desc:"5 profissionais · 200 pacientes", icon:"🏥" },
+              { label:"Instituição", valor:399, qtd:t.instituicao||0, color:"#a78bfa", desc:"20 profissionais · ilimitados", icon:"🏛️" },
+            ].map(p => (
+              <div key={p.label} style={{background:"rgba(255,255,255,0.04)",borderRadius:"16px",border:`1px solid ${p.color}30`,padding:"24px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"12px"}}>
+                  <span style={{fontSize:"20px"}}>{p.icon}</span>
+                  <span style={{fontSize:"13px",fontWeight:"700",color:p.color}}>{p.label}</span>
+                </div>
+                <div style={{fontSize:"32px",fontWeight:"900",color:"white",marginBottom:"4px"}}>
+                  {p.qtd} <span style={{fontSize:"14px",color:"rgba(255,255,255,0.4)"}}>assinantes</span>
+                </div>
+                <div style={{fontSize:"22px",fontWeight:"700",color:p.color,marginBottom:"4px"}}>
+                  R$ {(p.qtd * p.valor).toLocaleString("pt-BR")}<span style={{fontSize:"12px",color:"rgba(255,255,255,0.3)"}}>/mês</span>
+                </div>
+                <div style={{fontSize:"11px",color:"rgba(255,255,255,0.3)",marginTop:"4px"}}>{p.desc}</div>
+                <div style={{marginTop:"12px",background:"rgba(255,255,255,0.05)",borderRadius:"8px",padding:"8px 12px",display:"flex",justifyContent:"space-between"}}>
+                  <span style={{fontSize:"11px",color:"rgba(255,255,255,0.4)"}}>Ticket</span>
+                  <span style={{fontSize:"11px",fontWeight:"700",color:p.color}}>R$ {p.valor}/mês</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Totais consolidados */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:"16px",marginBottom:"24px"}}>
+            {[
+              ["MRR Total", `R$ ${((t.pro||0)*35 + (t.clinica||0)*149 + (t.instituicao||0)*399).toLocaleString("pt-BR")}`, "Receita mensal recorrente", "#f59e0b"],
+              ["ARR Total", `R$ ${(((t.pro||0)*35 + (t.clinica||0)*149 + (t.instituicao||0)*399)*12).toLocaleString("pt-BR")}`, "Receita anual projetada", "#4ec9a0"],
+              ["Total assinantes", (t.pro||0)+(t.clinica||0)+(t.instituicao||0), "Pagantes ativos", "#60a5fa"],
+              ["Taxa conversão", `${t.conversion_rate||0}%`, "Free → qualquer plano", "#fb7185"],
               ["Usuários free", t.free||0, "Potencial de conversão", "rgba(255,255,255,0.4)"],
             ].map(([label,value,sub,color]) => (
-              <div key={label as string} style={{background:"rgba(255,255,255,0.04)",borderRadius:"16px",border:"1px solid rgba(255,255,255,0.08)",padding:"24px"}}>
-                <div style={{fontSize:"12px",color:"rgba(255,255,255,0.4)",fontWeight:"600",marginBottom:"8px",textTransform:"uppercase",letterSpacing:"0.05em"}}>{label}</div>
-                <div style={{fontSize:"32px",fontWeight:"900",color: color as string,marginBottom:"4px"}}>{value}</div>
+              <div key={label as string} style={{background:"rgba(255,255,255,0.04)",borderRadius:"14px",border:"1px solid rgba(255,255,255,0.08)",padding:"20px"}}>
+                <div style={{fontSize:"11px",color:"rgba(255,255,255,0.4)",fontWeight:"600",marginBottom:"8px",textTransform:"uppercase",letterSpacing:"0.05em"}}>{label}</div>
+                <div style={{fontSize:"28px",fontWeight:"900",color: color as string,marginBottom:"4px"}}>{value}</div>
                 <div style={{fontSize:"12px",color:"rgba(255,255,255,0.3)"}}>{sub}</div>
               </div>
             ))}
           </div>
+
+          {/* Projeção */}
           <div style={{background:"rgba(245,158,11,0.08)",borderRadius:"16px",border:"1px solid rgba(245,158,11,0.2)",padding:"24px"}}>
             <h3 style={{fontSize:"14px",fontWeight:"700",color:"#f59e0b",margin:"0 0 16px"}}>📈 Projeção de crescimento</h3>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:"16px"}}>
-              {[10,50,100,500].map(n => (
-                <div key={n} style={{textAlign:"center",padding:"16px",background:"rgba(255,255,255,0.04)",borderRadius:"12px"}}>
-                  <div style={{fontSize:"12px",color:"rgba(255,255,255,0.4)",marginBottom:"8px"}}>{n} assinantes Pro</div>
-                  <div style={{fontSize:"22px",fontWeight:"900",color:"#f59e0b"}}>R$ {(n*35).toLocaleString("pt-BR")}</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:"12px"}}>
+              {[
+                {n:10, label:"10 Individual", val:10*35},
+                {n:50, label:"50 Individual", val:50*35},
+                {n:10, label:"10 Clínicas", val:10*149},
+                {n:5,  label:"5 Instituições", val:5*399},
+              ].map(p => (
+                <div key={p.label} style={{textAlign:"center",padding:"16px",background:"rgba(255,255,255,0.04)",borderRadius:"12px"}}>
+                  <div style={{fontSize:"12px",color:"rgba(255,255,255,0.4)",marginBottom:"8px"}}>{p.label}</div>
+                  <div style={{fontSize:"22px",fontWeight:"900",color:"#f59e0b"}}>R$ {p.val.toLocaleString("pt-BR")}</div>
                   <div style={{fontSize:"11px",color:"rgba(255,255,255,0.3)",marginTop:"4px"}}>por mês</div>
                 </div>
               ))}
