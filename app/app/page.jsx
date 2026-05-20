@@ -129,9 +129,17 @@ export default function Home() {
       try {
         const res = await fetch(`/api/cards?profile=${profile}&level=${level}`);
         const data = await res.json();
-        let base = (res.ok && data.cards?.length)
-          ? data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "", cat: c.category }))
-          : defaultBoard(profile, level);
+        let base;
+        if (res.ok && data.cards?.length) {
+          base = data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "", cat: c.category }));
+        } else {
+          // Tenta board padrão do admin
+          try {
+            const ar = await fetch("/api/admin/default-board");
+            const ad = await ar.json();
+            base = (ar.ok && ad.cards?.length) ? ad.cards : defaultBoard(profile, level);
+          } catch { base = defaultBoard(profile, level); }
+        }
 
         // Para cards sem imagem, usa imagem local se existir
         const LOCAL_IDS = ["sim","nao","me-da","nao-quero","mais","acabou","ajuda","esperar","agua","comer","banheiro","dor","dormir","tomar-banho","remedio","feliz","triste","bravo","medo","cansado","brincar","parar","sair","passear","escola"];
