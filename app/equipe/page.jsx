@@ -14,7 +14,7 @@ export default function Equipe() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/org").then(r => r.json()).then(d => {
+    fetch("/api/org/minha").then(r => r.json()).then(d => {
       if (d.org) { setOrg(d.org); setMembers(d.members || []); }
       setLoading(false);
     }).catch(() => setLoading(false));
