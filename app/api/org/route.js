@@ -24,11 +24,11 @@ export async function GET(request) {
         stats.sessions += s?.c || 0;
       }
 
-      return Response.json({ org, members: members.results, stats });
+      return Response.json({ org, members, stats });
     }
 
     const orgs = await d1Query("SELECT * FROM organizations ORDER BY created_at DESC") || [];
-    return Response.json({ organizations: orgs.results });
+    return Response.json({ organizations: orgs });
   } catch (e) { return Response.json({ error: e.message }, { status: 500 }); }
 }
 
