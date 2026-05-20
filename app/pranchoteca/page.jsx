@@ -1,5 +1,4 @@
 "use client";
-import AppShell from "../components/AppShell";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
@@ -54,7 +53,7 @@ export default function PranchotecaPage() {
   );
 
   return (
-    <AppShell>
+    <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui,sans-serif"}}>
 
 
       <div style={{ maxWidth:"1000px", margin:"0 auto", padding:"32px 24px" }}>
@@ -114,6 +113,73 @@ export default function PranchotecaPage() {
           </div>
         )}
       </div>
-  </AppShell>
+
+      {preview && (
+        <div onClick={() => setPreview(null)}
+          style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.6)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center", padding:"16px" }}>
+          <div onClick={e => e.stopPropagation()}
+            style={{ background:"white", borderRadius:"20px", maxWidth:"720px", width:"100%", maxHeight:"90vh", overflowY:"auto", boxShadow:"0 20px 60px rgba(0,0,0,0.3)" }}>
+            <div style={{ padding:"24px 28px", borderBottom:"1px solid #e5e7eb", display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:"16px", position:"sticky", top:0, background:"white", borderRadius:"20px 20px 0 0", zIndex:1 }}>
+              <div style={{ flex:1 }}>
+                <h2 style={{ fontSize:"20px", fontWeight:"800", color:"#071b2c", margin:"0 0 4px" }}>{preview.title}</h2>
+                <p style={{ fontSize:"13px", color:"#6b7280", margin:0 }}>
+                  {preview.cards?.length} cards
+                  {preview.autor && " · " + preview.autor}
+                  {preview.autor_profissao && " · " + preview.autor_profissao}
+                </p>
+                {preview.description && <p style={{ fontSize:"13px", color:"#374151", margin:"8px 0 0", lineHeight:"1.6" }}>{preview.description}</p>}
+              </div>
+              <button onClick={() => setPreview(null)}
+                style={{ background:"#f3f4f6", border:"none", width:"36px", height:"36px", borderRadius:"50%", fontSize:"20px", cursor:"pointer", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                x
+              </button>
+            </div>
+            <div style={{ padding:"24px 28px" }}>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(96px, 1fr))", gap:"10px", marginBottom:"24px" }}>
+                {(preview.cards || []).map((c, i) => (
+                  <div key={i} style={{ background:"#f9fafb", border:"1px solid #e5e7eb", borderRadius:"10px", padding:"10px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:"6px", textAlign:"center" }}>
+                    <ModalCardImg card={c} />
+                    <span style={{ fontSize:"11px", fontWeight:"700", color:"#071b2c", lineHeight:"1.3", wordBreak:"break-word" }}>{c.label}</span>
+                    {c.cat && <span style={{ fontSize:"9px", color:"#9ca3af", textTransform:"uppercase" }}>{c.cat}</span>}
+                  </div>
+                ))}
+              </div>
+              <div style={{ display:"flex", gap:"12px" }}>
+                <button onClick={() => { importar(preview); setPreview(null); }} disabled={!!importing}
+                  style={{ flex:2, padding:"13px", background:"#00885f", color:"white", border:"none", borderRadius:"10px", fontWeight:"700", fontSize:"15px", cursor:"pointer" }}>
+                  Importar esta prancha
+                </button>
+                <button onClick={() => setPreview(null)}
+                  style={{ flex:1, padding:"13px", border:"1px solid #e5e7eb", background:"white", borderRadius:"10px", fontSize:"14px", cursor:"pointer", color:"#374151" }}>
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
+}
+
+function ModalCardImg({ card }) {
+  const [src, setSrc] = useState(
+    card.image || (!card.id?.startsWith("podd") && !card.id?.startsWith("transito") ? "/cards/level-1/" + card.id + ".png" : null)
+  );
+  const [tried, setTried] = useState(false);
+
+  useEffect(() => {
+    if (!src && !tried) {
+      setTried(true);
+      fetch("/api/images/search?q=" + encodeURIComponent(card.label || card.id))
+        .then(r => r.json())
+        .then(d => { const url = d.results?.[0]?.url; if (url) setSrc(url); })
+        .catch(() => {});
+    }
+  }, [card, src, tried]);
+
+  if (!src) return (
+    <div style={{ width:"52px", height:"52px", background:"#e5e7eb", borderRadius:"8px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"22px" }}>?</div>
+  );
+  return <img src={src} alt={card.label} style={{ width:"52px", height:"52px", objectFit:"contain" }} onError={() => setSrc(null)} />;
 }
