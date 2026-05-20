@@ -141,9 +141,13 @@ function Congratulations({ score, total, onRestart, onBack }) {
 }
 
 function Associacao({ cards, onBack }) {
-  const pool = shuffle(cards.filter(c => c.image)).slice(0, 8);
-  const [items] = useState(pool);
-  const [options] = useState(shuffle([...pool]));
+  const [items, setItems] = useState([]);
+  const [options, setOptions] = useState([]);
+  useEffect(() => {
+    const pool = shuffle((cards || []).filter(c => c && c.image && c.label)).slice(0, 8);
+    setItems(pool);
+    setOptions(shuffle([...pool]));
+  }, []);
   const [answers, setAnswers] = useState({});
   const [score, setScore] = useState(0);
   const [done, setDone] = useState(false);
@@ -176,7 +180,7 @@ function Associacao({ cards, onBack }) {
         <div>
           <p style={{fontWeight:"700",color:"#374151",marginBottom:"12px",fontSize:"14px",textTransform:"uppercase",letterSpacing:"0.05em"}}>Imagens</p>
           <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
-            {items.map(card => (
+            {(items || []).filter(Boolean).map(card => (
               <button key={card.id} onClick={() => setSelected(selected?.id===card.id ? null : card)}
                 disabled={!!answers[card.id]}
                 style={{background: answers[card.id]==="correct"?"#f0fdf4":answers[card.id]==="wrong"?"#fef2f2":selected?.id===card.id?"#eff6ff":"white",
@@ -191,7 +195,7 @@ function Associacao({ cards, onBack }) {
         <div>
           <p style={{fontWeight:"700",color:"#374151",marginBottom:"12px",fontSize:"14px",textTransform:"uppercase",letterSpacing:"0.05em"}}>Palavras</p>
           <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
-            {options.map(card => (
+            {(options || []).filter(Boolean).map(card => (
               <button key={card.id} onClick={() => selected && pick(card)}
                 style={{background:selected?"#eff6ff":"white",border:"2px solid #e5e7eb",borderRadius:"12px",padding:"14px 16px",cursor:selected?"pointer":"default",fontWeight:"700",fontSize:"15px",color:"#071b2c",textAlign:"left"}}>
                 {card.label}
@@ -206,7 +210,7 @@ function Associacao({ cards, onBack }) {
 }
 
 function Pareamento({ cards, onBack }) {
-  const pool = shuffle(cards.filter(c => c.image)).slice(0, 6);
+  const pool = shuffle(cards.filter(c => c && c.image && c.label)).slice(0, 6);
   const [pairs] = useState(() => shuffle([...pool, ...pool].map((c,i) => ({ ...c, uid: `${c.id}-${i}` }))));
   const [flipped, setFlipped] = useState([]);
   const [matched, setMatched] = useState([]);
@@ -262,7 +266,7 @@ function Pareamento({ cards, onBack }) {
 }
 
 function Sequencia({ cards, onBack }) {
-  const pool = shuffle(cards.filter(c => c.image)).slice(0, 5);
+  const pool = shuffle(cards.filter(c => c && c.image && c.label)).slice(0, 5);
   const [correct] = useState(pool);
   const [current, setCurrent] = useState(() => shuffle(pool));
   const [selected, setSelected] = useState([]);
@@ -334,7 +338,7 @@ function CompletarFrase({ cards, onBack }) {
   const [done, setDone] = useState(false);
 
   const frase = FRASES[idx];
-  const catCards = cards.filter(c => c.cat === frase.cat || !frase.cat);
+  const catCards = cards.filter(c => c && c.cat === frase.cat || !frase.cat);
   const wrongPool = cards.filter(c => c.cat !== frase.cat);
   const correct = shuffle(catCards)[0];
   const wrongs = shuffle(wrongPool).slice(0, 3);
@@ -370,7 +374,7 @@ function CompletarFrase({ cards, onBack }) {
               <div style={{fontSize:"13px",color:"#9ca3af"}}>Escolha um card de: {frase.hint}</div>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
-              {options.map(card => (
+              {(options || []).filter(Boolean).map(card => (
                 <button key={card.id} onClick={() => pick(card)}
                   style={{background:feedback&&card.cat===frase.cat?"#f0fdf4":feedback&&card.cat!==frase.cat?"#fef2f2":"white",
                     border:`2px solid ${feedback&&card.cat===frase.cat?"#16a34a":feedback&&card.cat!==frase.cat?"#dc2626":"#e5e7eb"}`,
