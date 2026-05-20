@@ -511,6 +511,7 @@ export default function Home() {
               <div style={{background:"#faf5ff",border:"1px solid #e9d5ff",borderRadius:"10px",padding:"10px",marginBottom:"8px"}}>
                 <div style={{fontSize:"12px",fontWeight:"700",color:"#7c3aed",marginBottom:"8px"}}>⚡ QuickFires — frases rápidas</div>
                 <div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
+                  {quickFirePhrases.map((f, i) => (
                     <button key={i} onClick={()=>{speak(f);setPhrase(p=>[...p,...f.split(" ")]);}}
                       style={{background:"white",border:"1px solid #e9d5ff",color:"#374151",padding:"6px 12px",borderRadius:"20px",fontSize:"13px",cursor:"pointer",fontWeight:"600"}}>
                       {f}
