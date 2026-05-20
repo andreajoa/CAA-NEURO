@@ -1,8 +1,7 @@
 "use client";
 import AppShell from "../components/AppShell";
 
-import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState, Suspense } from "react";
 import DwellButton from "../components/DwellButton";
 import { useAccessibility, AccessibilityPanel, DIAGNOSTICO_PROFILES } from "../components/AccessibilityEngine";
 import Onboarding from "../components/Onboarding";
@@ -71,7 +70,6 @@ function defaultBoard(profile, level) {
 }
 
 export default function Home() {
-  const searchParams = useSearchParams();
   const [profile, setProfile] = useState(() => {
     if (typeof window !== "undefined") {
       const p = new URLSearchParams(window.location.search).get("profile");
