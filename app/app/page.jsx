@@ -452,6 +452,7 @@ export default function Home() {
         <a href="/pacientes">👥 Pacientes</a>
         <a href="/equipe">🤝 Equipe</a>
         <div className="caa-desktop-shortcuts-right">
+          <a href="/planos" style={{background:"#00885f",color:"white",padding:"6px 14px",borderRadius:"8px",fontWeight:"700"}}>⭐ Planos</a>
           <a href="/suporte">❓ Ajuda</a>
         </div>
       </nav>

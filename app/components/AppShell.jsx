@@ -12,6 +12,7 @@ const NAV = [
   { href:"/atividades",   icon:"🎯", label:"Atividades",   short:"Atividades"  },
   { href:"/paciente",     icon:"📲", label:"Modo Paciente",short:"Paciente"    },
   { href:"/perfil",       icon:"👤", label:"Perfil",       short:"Perfil"      },
+  { href:"/planos",       icon:"⭐", label:"Planos",       short:"Planos"      },
 ];
 
 export default function AppShell({ children }) {
