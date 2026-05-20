@@ -24,7 +24,8 @@ export async function POST(req) {
 
     const formData = await req.formData();
     const file = formData.get("file");
-    const label = formData.get("label") || "Imagem";
+    const label = String(formData.get("label") || "Imagem").trim() || "Imagem";
+    const safeLabel = encodeURIComponent(label).slice(0, 700);
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -42,8 +43,8 @@ export async function POST(req) {
         Body: buffer,
         ContentType: file.type || "image/png",
         Metadata: {
-          label: String(label),
-          userId,
+          label: safeLabel,
+          userId: String(userId),
         },
       })
     );
@@ -56,6 +57,6 @@ export async function POST(req) {
     });
   } catch (error) {
     console.error("R2 upload error:", error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Upload failed" }, { status: 500 });
   }
 }

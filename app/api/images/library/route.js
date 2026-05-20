@@ -65,7 +65,12 @@ export async function GET() {
             Key: item.Key,
           })
         );
-        label = head.Metadata?.label || label;
+        const rawLabel = head.Metadata?.label || label;
+        try {
+          label = decodeURIComponent(rawLabel);
+        } catch {
+          label = rawLabel;
+        }
       } catch {}
 
       return {
