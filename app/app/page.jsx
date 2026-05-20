@@ -370,7 +370,22 @@ export default function Home() {
 
   function chooseImage(url, label) {
     if (!editing) return;
-    setEditing({ ...editing, image: url, empty: false });
+
+    const updated = {
+      ...editing,
+      image: url,
+      empty: false
+    };
+
+    setEditing(updated);
+
+    // atualiza imediatamente a prancha
+    setCards(prev =>
+      prev.map(card =>
+        card.id === updated.id ? updated : card
+      )
+    );
+
     setImagePickerOpen(false);
   }
 
