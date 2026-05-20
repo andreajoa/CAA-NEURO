@@ -36,10 +36,6 @@ const categories = [
   { id: "emergencia", label: "Emergência" },
 ];
 
-// REMOVIDO: hardcoded infantilEmergente não é mais usado
-  return makeEmpty(profile, level);
-}
-
 export default function Home() {
   const [profile, setProfile] = useState(() => {
     if (typeof window !== "undefined") {
