@@ -450,6 +450,7 @@ export default function Home() {
         <a href="/atividades">🎮 Atividades</a>
         <a href="/pacientes" className="highlight">✨ Relatório IA</a>
         <a href="/pacientes">👥 Pacientes</a>
+        <a href="/equipe">🤝 Equipe</a>
         <div className="caa-desktop-shortcuts-right">
           <a href="/suporte">❓ Ajuda</a>
         </div>
