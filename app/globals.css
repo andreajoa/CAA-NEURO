@@ -1159,3 +1159,86 @@ display:none;
   .caa-label { font-size: 11px !important; }
   .caa-image-frame img { padding: 1px !important; }
 }
+
+@media(max-width:700px){
+  /* Card — altura automática no mobile */
+  .caa-card {
+    height: auto !important;
+    min-height: 150px !important;
+  }
+
+  /* Desativar barra colorida no topo no mobile — causa problemas de layout */
+  .caa-card-inner::before {
+    display: none !important;
+  }
+
+  /* Card inner — sem overflow hidden no mobile */
+  .caa-card-inner {
+    padding: 6px !important;
+    overflow: visible !important;
+  }
+
+  /* Image frame — tamanho fixo no mobile para não colapsar */
+  .caa-image-frame {
+    border-width: 3px !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    aspect-ratio: 1/1 !important;
+    min-height: 80px !important;
+    overflow: hidden !important;
+    display: block !important;
+  }
+
+  /* Imagem — cover, sem padding */
+  .caa-image-frame img {
+    padding: 0 !important;
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+  }
+
+  /* Placeholder sem imagem */
+  .caa-empty {
+    font-size: 28px !important;
+    min-height: 80px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Label — fora do frame, abaixo */
+  .caa-label {
+    font-size: 12px !important;
+    min-height: 28px !important;
+    padding: 4px 4px 2px !important;
+    line-height: 1.2 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    background: none !important;
+  }
+
+  /* Board — 2 colunas, gap menor */
+  .caa-board {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+
+  /* Card button — flex column, sem quebrar */
+  .caa-card-button {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    flex: 1 !important;
+    gap: 0 !important;
+  }
+}
+
+@media(max-width:400px){
+  .caa-card { min-height: 130px !important; }
+  .caa-label { font-size: 11px !important; min-height: 24px !important; }
+  .caa-image-frame { min-height: 70px !important; }
+}
