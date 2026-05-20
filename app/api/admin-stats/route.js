@@ -14,7 +14,7 @@ export async function GET() {
     if (admin) {
       // Dados globais da plataforma inteira
       const [
-        totalUsers, totalPro, totalFree,
+        totalUsers, totalPro, totalFree, totalClinica, totalInstituicao,
         totalPatients, totalSessions, totalCards,
         avgDuration, newUsersWeek, newUsersMonth,
         sessionsPerDay, usersPerDay, recentSessions,
@@ -23,6 +23,8 @@ export async function GET() {
         d1Query("SELECT COUNT(*) as total FROM users"),
         d1Query("SELECT COUNT(*) as total FROM users WHERE plano='pro'"),
         d1Query("SELECT COUNT(*) as total FROM users WHERE plano='gratuito' OR plano IS NULL"),
+        d1Query("SELECT COUNT(*) as total FROM users WHERE plano='clinica'"),
+        d1Query("SELECT COUNT(*) as total FROM users WHERE plano='instituicao'"),
         d1Query("SELECT COUNT(*) as total FROM patients"),
         d1Query("SELECT COUNT(*) as total FROM sessions"),
         d1Query("SELECT COUNT(*) as total FROM cards"),
