@@ -64,8 +64,8 @@ export default function PranchotecaPage() {
         body: JSON.stringify({ slug: template.slug }),
       }).catch(() => {});
 
-      // Redirecionar para /app com perfil e nível corretos
-      router.push(`/app?profile=${profile}&level=${level}&from=pranchoteca`);
+      // Redirecionar para /app com perfil e nível corretos (hard redirect garante que useState lê a URL correta)
+      window.location.href = `/app?profile=${profile}&level=${level}&from=pranchoteca`;
     } catch (e) {
       console.error(e);
       setImporting(null);

@@ -146,7 +146,13 @@ export default function Home() {
   useEffect(() => {
     async function loadCards() {
       try {
-        const res = await fetch(`/api/cards?profile=${profile}&level=${level}`);
+        // Garantir que usa o profile/level da URL se vier da pranchoteca
+        const urlParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+        const activeProfile = urlParams?.get("profile") || profile;
+        const activeLevel = urlParams?.get("level") || level;
+        if (urlParams?.get("profile") && urlParams.get("profile") !== profile) setProfile(urlParams.get("profile"));
+        if (urlParams?.get("level") && urlParams.get("level") !== level) setLevel(urlParams.get("level"));
+        const res = await fetch(`/api/cards?profile=${activeProfile}&level=${activeLevel}`);
         const data = await res.json();
         let base;
         if (res.ok && data.cards?.length) {
