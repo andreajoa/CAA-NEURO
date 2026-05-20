@@ -160,6 +160,11 @@ export default function Home() {
     setCards(next);
     try {
       await fetch("/api/cards", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ profile, level, cards: next }) });
+      // Se for admin, salvar também como padrão global
+      const isAdminUser = await fetch("/api/plano").then(r=>r.json()).then(d=>d.plano==="admin").catch(()=>false);
+      if (isAdminUser && profile === "infantil" && level === "emergente") {
+        await fetch("/api/admin/default-board", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ cards: next }) }).catch(()=>{});
+      }
     } catch { alert("Não foi possível salvar os cards."); }
   }
 
