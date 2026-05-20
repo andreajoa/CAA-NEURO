@@ -30,7 +30,10 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const key = searchParams.get("key");
 
-    if (!key || !key.startsWith(`users/${userId}/images/`)) {
+    const isUserImage = key && key.startsWith(`users/${userId}/images/`);
+    const isPlatformImage = key && key.startsWith("platform/images/");
+
+    if (!isUserImage && !isPlatformImage) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
