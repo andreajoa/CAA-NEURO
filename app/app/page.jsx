@@ -133,9 +133,9 @@ export default function Home() {
         if (res.ok && data.cards?.length) {
           base = data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "", cat: c.category }));
         } else {
-          // Tenta board padrão do admin
+          // Tenta board padrão do admin para este perfil+nível
           try {
-            const ar = await fetch("/api/admin/default-board");
+            const ar = await fetch(`/api/admin/default-board?profile=${profile}&level=${level}`);
             const ad = await ar.json();
             base = (ar.ok && ad.cards?.length) ? ad.cards : defaultBoard(profile, level);
           } catch { base = defaultBoard(profile, level); }
