@@ -58,6 +58,7 @@ export default function PranchotecaPage() {
 
       <div style={{ maxWidth:"1000px", margin:"0 auto", padding:"32px 24px" }}>
         <div style={{ marginBottom:"32px" }}>
+          <Link href="/app" style={{ display:"inline-flex", alignItems:"center", gap:"6px", color:"#00885f", fontWeight:"600", fontSize:"14px", textDecoration:"none", marginBottom:"16px" }}>← Voltar à prancha</Link>
           <h1 style={{ fontSize:"28px", fontWeight:"800", color:"#071b2c", margin:"0 0 8px" }}>Pranchoteca</h1>
           <p style={{ color:"#6b7280", margin:"0 0 20px" }}>Pranchas prontas criadas por especialistas. Importe com um clique e personalize para seu paciente.</p>
           <div style={{ display:"flex", gap:"10px", flexWrap:"wrap", alignItems:"center" }}>
