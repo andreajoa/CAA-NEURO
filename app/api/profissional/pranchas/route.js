@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import crypto from "crypto";
 import { d1Query } from "../../../../lib/d1";
 
 export const runtime = "nodejs";
