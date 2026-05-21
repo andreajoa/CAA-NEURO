@@ -70,7 +70,7 @@ export async function GET() {
       return {
         id: item.Key,
         label,
-        url: `/api/images/file?key=${encodeURIComponent(item.Key)}`,
+        url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${item.Key}`,
         source: "platform-admin",
       };
     }));
@@ -103,7 +103,7 @@ export async function GET() {
         id: item.Key,
         key: item.Key,
         label,
-        url: `/api/images/file?key=${encodeURIComponent(item.Key)}`,
+        url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${item.Key}`,
         source: "user",
         updatedAt: item.LastModified,
       };

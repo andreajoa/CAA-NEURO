@@ -61,7 +61,7 @@ export async function POST(req) {
       id,
       key,
       label,
-      url: `/api/images/file?key=${encodeURIComponent(key)}`,
+      url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${key}`,
       source: "platform",
     });
   } catch (error) {
