@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 function CardPreviewImg({ card }) {
   const [src, setSrc] = useState(
     card.image ||
-    (card.id && !card.id.startsWith("podd") ? `/cards/level-1/${card.id}.png` : null)
+    (card.id && !card.id.startsWith("podd") ? `/cards/level-1/${card.id}.webp?v=20260521-optimized` : null)
   );
   const [tried, setTried] = useState(false);
 

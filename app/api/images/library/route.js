@@ -3,6 +3,15 @@ import { S3Client, ListObjectsV2Command, HeadObjectCommand } from "@aws-sdk/clie
 import { NextResponse } from "next/server";
 import { isAdmin } from "../../../../lib/admin";
 
+
+function imageUrlForKey(key) {
+  const base = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+  if (base && base.startsWith("http")) {
+    return `${base.replace(/\/$/, "")}/${key}`;
+  }
+  return imageUrlForKey(key);
+}
+
 function getR2Client() {
   return new S3Client({
     region: "auto",
@@ -70,7 +79,7 @@ export async function GET() {
       return {
         id: item.Key,
         label,
-        url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${item.Key}`,
+        url: imageUrlForKey(item.Key),
         source: "platform-admin",
       };
     }));
@@ -103,7 +112,7 @@ export async function GET() {
         id: item.Key,
         key: item.Key,
         label,
-        url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${item.Key}`,
+        url: imageUrlForKey(item.Key),
         source: "user",
         updatedAt: item.LastModified,
       };

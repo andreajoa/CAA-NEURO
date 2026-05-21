@@ -4,6 +4,15 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import sharp from "sharp";
 
+
+function imageUrlForKey(key) {
+  const base = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+  if (base && base.startsWith("http")) {
+    return `${base.replace(/\/$/, "")}/${key}`;
+  }
+  return imageUrlForKey(key);
+}
+
 function getR2Client() {
   return new S3Client({
     region: "auto",
@@ -61,7 +70,7 @@ export async function POST(req) {
       id,
       key,
       label,
-      url: `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${key}`,
+      url: imageUrlForKey(key),
       source: "platform",
     });
   } catch (error) {

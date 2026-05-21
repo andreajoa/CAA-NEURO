@@ -95,6 +95,15 @@ async function searchSymbotalk(q) {
 
 import { S3Client, ListObjectsV2Command, HeadObjectCommand } from "@aws-sdk/client-s3";
 
+
+function imageUrlForKey(key) {
+  const base = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+  if (base && base.startsWith("http")) {
+    return `${base.replace(/\/$/, "")}/${key}`;
+  }
+  return imageUrlForKey(key);
+}
+
 function getR2Client() {
   return new S3Client({
     region: "auto",
@@ -127,7 +136,7 @@ async function searchUserImages(userId, q) {
         matches.push({
           id: item.Key,
           label,
-          url: `/api/images/file?key=${encodeURIComponent(item.Key)}`,
+          url: imageUrlForKey(item.Key),
           source: "Minhas imagens",
           source_color: "#db2777",
         });
@@ -158,7 +167,7 @@ async function searchPlatformAdminImages(q) {
         matches.push({
           id: item.Key,
           label,
-          url: `/api/images/file?key=${encodeURIComponent(item.Key)}`,
+          url: imageUrlForKey(item.Key),
           source: "Banco da plataforma",
           source_color: "#0891b2",
         });

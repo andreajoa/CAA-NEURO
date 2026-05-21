@@ -190,7 +190,7 @@ export default function PranchotecaPage() {
 
 function ModalCardImg({ card }) {
   const [src, setSrc] = useState(
-    card.image || (!card.id?.startsWith("podd") && !card.id?.startsWith("transito") ? "/cards/level-1/" + card.id + ".png" : null)
+    card.image || (!card.id?.startsWith("podd") && !card.id?.startsWith("transito") ? "/cards/level-1/" + card.id + ".webp?v=20260521-optimized" : null)
   );
   const [tried, setTried] = useState(false);
 
