@@ -122,7 +122,40 @@ export default function Home() {
         const res = await fetch(`/api/cards?profile=${activeProfile}&level=${activeLevel}`);
         const data = await res.json();
         let base;
-        if (res.ok && data.cards?.length) {
+        const forcedDefaults = {
+          "infantil_inicial": [
+            {id:"agua",label:"Água",cat:"necessidades"},
+            {id:"banheiro",label:"Banheiro",cat:"necessidades"},
+            {id:"dormir",label:"Dormir",cat:"necessidades"},
+            {id:"tomar-banho",label:"Banho",cat:"necessidades"},
+            {id:"lanche",label:"Lanche",cat:"necessidades"}
+          ],
+          "infantil_frases": [
+            {id:"feliz",label:"Feliz",cat:"emocoes"},
+            {id:"triste",label:"Triste",cat:"emocoes"},
+            {id:"bravo",label:"Bravo",cat:"emocoes"},
+            {id:"medo",label:"Medo",cat:"emocoes"},
+            {id:"cansado",label:"Cansado",cat:"emocoes"}
+          ],
+          "infantil_conversacao": [
+            {id:"escola",label:"Escola",cat:"rotina"},
+            {id:"passear",label:"Passear",cat:"rotina"},
+            {id:"brincar",label:"Brincar",cat:"rotina"},
+            {id:"sair",label:"Sair",cat:"rotina"},
+            {id:"casa",label:"Casa",cat:"rotina"}
+          ],
+          "infantil_acoes": [
+            {id:"parar",label:"Parar",cat:"acoes"},
+            {id:"acabou",label:"Acabou",cat:"acoes"},
+            {id:"mais",label:"Mais",cat:"acoes"},
+            {id:"remedio",label:"Remédio",cat:"acoes"},
+            {id:"dor",label:"Dor",cat:"acoes"}
+          ]
+        };
+        const forcedKey = `${activeProfile}_${activeLevel}`;
+        if (forcedDefaults[forcedKey]) {
+          base = forcedDefaults[forcedKey];
+        } else if (res.ok && data.cards?.length) {
           base = data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "", cat: c.category }));
         } else {
           // Tenta board padrão do admin para este perfil+nível
