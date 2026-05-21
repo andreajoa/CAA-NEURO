@@ -18,10 +18,11 @@ const profiles = [
 ];
 
 const levels = [
-  { id: "emergente", label: "Emergente" },
-  { id: "inicial", label: "Inicial" },
-  { id: "frases", label: "Frases funcionais" },
-  { id: "conversacao", label: "Conversação" },
+  { id: "emergente", label: "Comunicação Essencial" },
+  { id: "inicial", label: "Necessidades" },
+  { id: "frases", label: "Emoções" },
+  { id: "conversacao", label: "Rotina" },
+  { id: "acoes", label: "Ações" },
 ];
 
 const categories = [
