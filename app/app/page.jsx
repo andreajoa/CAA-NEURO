@@ -15,7 +15,6 @@ const profiles = [
   { id: "adulto", label: "Adulto", icon: "🧑" },
   { id: "idoso", label: "Idoso", icon: "👴" },
   { id: "escolar", label: "Escolar", icon: "🏫" },
-  { id: "clinico", label: "Clínico", icon: "🩺" },
 ];
 
 const levels = [

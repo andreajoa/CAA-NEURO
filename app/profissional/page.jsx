@@ -17,7 +17,8 @@ export default function ProfissionalPage() {
   const nome = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "Profissional";
 
   const acessos = [
-    { href:"/app",          icon:"🧩", label:"Prancha CAA",        desc:"Abrir prancha de comunicação",     cor:"#00885f" },
+    { href:"/profissional/pranchas", icon:"🧠", label:"Pranchas Terapêuticas", desc:"Crie pranchas personalizadas por paciente", cor:"#00885f" },
+    { href:"/app",          icon:"🧩", label:"Prancha CAA",        desc:"Abrir prancha de comunicação padrão",     cor:"#059669" },
     { href:"/pacientes",    icon:"👥", label:"Pacientes",           desc:"Prontuários e histórico clínico",  cor:"#2563eb" },
     { href:"/agenda",       icon:"📅", label:"Agenda",              desc:"Agendamentos e sessões",           cor:"#7c3aed" },
     { href:"/pranchoteca",  icon:"📚", label:"Pranchoteca",         desc:"Pranchas prontas por especialistas", cor:"#d97706" },
@@ -44,7 +45,7 @@ export default function ProfissionalPage() {
             Olá, {nome} 👋
           </h1>
           <p style={{ color:"#6b7280", margin:0, fontSize:"15px" }}>
-            Bem-vindo ao painel profissional do CAA Neuro.
+            Área criada para profissionais montarem pranchas, acompanharem pacientes e compartilharem recursos terapêuticos.
             {!isPago && <span style={{ marginLeft:"8px", background:"#fef9c3", color:"#854d0e", padding:"2px 10px", borderRadius:"20px", fontSize:"13px", fontWeight:"700" }}>Plano Gratuito</span>}
             {isPago && <span style={{ marginLeft:"8px", background:"#f0fdf4", color:"#166534", padding:"2px 10px", borderRadius:"20px", fontSize:"13px", fontWeight:"700" }}>✅ Plano {plano}</span>}
           </p>
