@@ -473,11 +473,48 @@ const OLD_LOCAL_IDS=[
 "passear","escola",
 "casa","lanche"
 ];
-        const enriched = base.map((c) => {
-          if (c.image) return c;
-          if (LOCAL_IDS.includes(c.id)) return { ...c, image: `/cards/level-1/${c.id}.webp?v=20260521-optimized` };
-          return c;
-        });
+        
+const IMAGE_ALIASES={
+"cansado-a":"cansado",
+"nao-quero-a":"nao-quero",
+
+"ansioso":"cansado",
+"desconfortavel":"cansado",
+"nao-toque":"nao",
+"fale-devagar-a":"ajuda",
+"fale-baixo":"ajuda",
+"privacidade-a":"nao-quero",
+"me-acalmar":"cansado",
+"respeite-tempo":"esperar",
+
+"dor-a":"dor",
+"remedio-a":"remedio",
+"banheiro-a":"banheiro"
+};
+
+const enriched = base.map((c)=>{
+
+if(c.image) return c;
+
+const alias=IMAGE_ALIASES[c.id];
+
+if(alias){
+return {
+...c,
+image:`/cards/level-1/${alias}.webp?v=20260521-optimized`
+};
+}
+
+if(LOCAL_IDS.includes(c.id)){
+return {
+...c,
+image:`/cards/level-1/${c.id}.webp?v=20260521-optimized`
+};
+}
+
+return c;
+
+});
 
         setCards(enriched);
       } catch { setCards([]); }
