@@ -158,7 +158,7 @@ export default function Home() {
             ? data.cards.map(c => ({ id: c.id, image: c.image_url || c.image || "" }))
             : [];
           base = forcedDefaults[forcedKey].map(def => {
-            const match = saved.find(s => s.id === def.id);
+            const match = saved.find(s => s.id === def.id) || saved.find(s => s.label?.toLowerCase() === def.label?.toLowerCase());
             return match?.image ? { ...def, image: match.image } : def;
           });
         } else if (res.ok && data.cards?.length) {
