@@ -446,6 +446,31 @@ export default function Home() {
 "bravo","medo","cansado",
 "brincar","parar","sair",
 "passear","escola",
+"casa","lanche",
+"professora",
+"colega",
+"repetir",
+"escrever",
+"pintar",
+"ler",
+"copiar",
+"recortar",
+"colar",
+"entrada",
+"recreio",
+"brincadeiras",
+"saida"
+];
+
+const OLD_LOCAL_IDS=[
+"sim","nao","me-da","nao-quero",
+"mais","acabou","ajuda","esperar",
+"agua","comer","banheiro",
+"dor","dormir","remedio",
+"tomar-banho","feliz","triste",
+"bravo","medo","cansado",
+"brincar","parar","sair",
+"passear","escola",
 "casa","lanche"
 ];
         const enriched = base.map((c) => {

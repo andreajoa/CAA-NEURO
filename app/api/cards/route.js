@@ -11,12 +11,27 @@ export async function GET(req) {
   const level = searchParams.get("level") || "emergente";
   const boardKey = `${profile}-${level}`;
 
-  const cards = await d1Query(
-    "SELECT * FROM cards WHERE user_id = ? AND card_key = ? ORDER BY COALESCE(position_index, 9999), created_at ASC",
+  let cards = await d1Query(
+    "SELECT * FROM cards WHERE user_id = ? AND card_key = ? ORDER BY COALESCE(position_index,9999),created_at ASC",
     [userId, boardKey]
   );
 
-  return NextResponse.json({ cards });
+  // Se usuário não tiver nada, herda padrão global admin
+  if(!cards.length){
+
+    const adminKey=boardKey.replace("-","_");
+
+    const defaults=await d1Query(
+      "SELECT cards FROM admin_defaults WHERE key=? LIMIT 1",
+      [adminKey]
+    );
+
+    if(defaults?.length){
+      cards=JSON.parse(defaults[0].cards||"[]");
+    }
+  }
+
+  return NextResponse.json({cards});
 }
 
 export async function POST(req) {
