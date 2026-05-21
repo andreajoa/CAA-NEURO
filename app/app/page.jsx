@@ -11,7 +11,7 @@ import PWABanner from "../components/PWABanner";
 const img = (name) => `/cards/level-1/${name}.png?v=20260520-1705`;
 
 const profiles = [
-  { id: "infantil", label: "Infantil", icon: "👶" },
+  { id: "infantil", label: "Criança", icon: "👶" },
   { id: "adulto", label: "Adulto", icon: "🧑" },
   { id: "idoso", label: "Idoso", icon: "👴" },
   { id: "escolar", label: "Escolar", icon: "🏫" },
@@ -569,7 +569,7 @@ export default function Home() {
                 <option value="NEUTRAL">🔊 Voz</option>
                 <option value="FEMALE">👩 Feminina</option>
                 <option value="MALE">👨 Masculina</option>
-                <option value="CHILD">🧒 Infantil</option>
+                <option value="CHILD">🧒 Criança</option>
               </select>
               <button onClick={()=>setShowMobileTools(v=>!v)} style={{background:showMobileTools?"#071b2c":"#f3f4f6",color:showMobileTools?"#4ec9a0":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
                 {showMobileTools ? "Menos opções" : "Mais opções"}
