@@ -164,6 +164,42 @@ export default function Home() {
             {id:"mais",label:"Mais",cat:"acoes"},
             {id:"remedio",label:"Remédio",cat:"acoes"},
             {id:"dor",label:"Dor",cat:"acoes"}
+          ],
+          "escolar_emergente": [
+            {id:"professora",label:"Professora",cat:"escola"},
+            {id:"colega",label:"Colega",cat:"escola"},
+            {id:"caderno",label:"Caderno",cat:"escola"},
+            {id:"lapis",label:"Lápis",cat:"escola"},
+            {id:"mochila",label:"Mochila",cat:"escola"}
+          ],
+          "escolar_inicial": [
+            {id:"ajuda",label:"Ajuda",cat:"pedidos"},
+            {id:"repetir",label:"Repetir",cat:"pedidos"},
+            {id:"esperar",label:"Esperar",cat:"pedidos"},
+            {id:"banheiro",label:"Banheiro",cat:"pedidos"},
+            {id:"agua",label:"Água",cat:"pedidos"}
+          ],
+          "escolar_frases": [
+            {id:"pintar",label:"Pintar",cat:"atividades"},
+            {id:"recortar",label:"Recortar",cat:"atividades"},
+            {id:"colar",label:"Colar",cat:"atividades"},
+            {id:"escrever",label:"Escrever",cat:"atividades"},
+            {id:"ler",label:"Ler",cat:"atividades"},
+            {id:"copiar",label:"Copiar",cat:"atividades"}
+          ],
+          "escolar_conversacao": [
+            {id:"entrada",label:"Entrada",cat:"rotina"},
+            {id:"lanche",label:"Lanche",cat:"rotina"},
+            {id:"recreio",label:"Recreio",cat:"rotina"},
+            {id:"brincadeiras",label:"Brincadeiras",cat:"rotina"},
+            {id:"saida",label:"Saída",cat:"rotina"}
+          ],
+          "escolar_acoes": [
+            {id:"nao",label:"Não",cat:"sentimentos"},
+            {id:"cansado",label:"Cansado",cat:"sentimentos"},
+            {id:"dor",label:"Dor",cat:"sentimentos"},
+            {id:"medo",label:"Medo",cat:"sentimentos"},
+            {id:"ajuda2",label:"Ajuda",cat:"sentimentos"}
           ]
         };
         const forcedKey = `${activeProfile}_${activeLevel}`;
