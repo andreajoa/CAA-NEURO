@@ -615,25 +615,34 @@ export default function Home() {
     finally { setSearchLoading(false); }
   }
 
-  function chooseImage(url, label) {
-    if (!editing) return;
+  async function chooseImage(url, label) {
+    if (!editing || !url) return;
+
+    const finalUrl = url.includes("/api/images/file")
+      ? `${url}${url.includes("?") ? "&" : "?"}v=${Date.now()}`
+      : url;
 
     const updated = {
       ...editing,
-      image: url,
+      image: finalUrl,
+      image_url: finalUrl,
       empty: false
     };
 
     setEditing(updated);
 
-    // atualiza imediatamente a prancha
-    setCards(prev =>
-      prev.map(card =>
-        card.id === updated.id ? updated : card
-      )
+    const nextCards = cards.map(card =>
+      card.id === updated.id ? updated : card
     );
 
+    setCards(nextCards);
     setImagePickerOpen(false);
+
+    try {
+      await persist(nextCards);
+    } catch (e) {
+      console.error("Erro ao salvar imagem no card:", e);
+    }
   }
 
   async function uploadImageToLibrary(file) {
@@ -666,7 +675,17 @@ export default function Home() {
         userImages: [newImage, ...(prev.userImages || [])]
       }));
 
-      setEditing({ ...editing, image: data.url, empty: false });
+      const finalUrl = data.url.includes("/api/images/file")
+        ? `${data.url}${data.url.includes("?") ? "&" : "?"}v=${Date.now()}`
+        : data.url;
+
+      const updated = { ...editing, image: finalUrl, image_url: finalUrl, empty: false };
+      setEditing(updated);
+
+      const nextCards = cards.map(card => card.id === updated.id ? updated : card);
+      setCards(nextCards);
+      await persist(nextCards);
+
       if (fileRef.current) fileRef.current.value = "";
     } catch (e) {
       console.error("Erro ao enviar imagem:", e);
