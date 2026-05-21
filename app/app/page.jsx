@@ -15,6 +15,7 @@ const profiles = [
   { id: "adulto", label: "Adulto", icon: "🧑" },
   { id: "idoso", label: "Idoso", icon: "👴" },
   { id: "escolar", label: "Na Escola", icon: "🏫" },
+  { id: "idoso", label: "Idoso", icon: "👴" },
 ];
 
 const levels = [
@@ -35,8 +36,18 @@ const levelsByProfile = {
   ],
 };
 
+const levelsByProfileIdoso = {
+  idoso: [
+    { id: "emergente", label: "Comunicação Essencial" },
+    { id: "inicial", label: "Pessoas Importantes" },
+    { id: "frases", label: "Minha Rotina" },
+    { id: "conversacao", label: "Como Estou Me Sentindo" },
+    { id: "acoes", label: "Preciso de Ajuda" },
+  ],
+};
+
 function getLevels(profile) {
-  return levelsByProfile[profile] || levels;
+  return levelsByProfile[profile] || levelsByProfileIdoso[profile] || levels;
 }
 
 const categories = [
@@ -200,6 +211,66 @@ export default function Home() {
             {id:"dor",label:"Dor",cat:"sentimentos"},
             {id:"medo",label:"Medo",cat:"sentimentos"},
             {id:"ajuda2",label:"Ajuda",cat:"sentimentos"}
+          ],
+          "idoso_emergente": [
+            {id:"ola",label:"Olá",cat:"comunicacao"},
+            {id:"quero-conversar",label:"Quero conversar",cat:"comunicacao"},
+            {id:"eu-entendi",label:"Eu entendi",cat:"comunicacao"},
+            {id:"nao-entendi",label:"Não entendi",cat:"comunicacao"},
+            {id:"pode-repetir",label:"Pode repetir?",cat:"comunicacao"},
+            {id:"fale-devagar",label:"Fale mais devagar",cat:"comunicacao"},
+            {id:"preciso-ajuda",label:"Preciso de ajuda",cat:"comunicacao"},
+            {id:"quero-descansar",label:"Quero descansar",cat:"comunicacao"},
+            {id:"quero-ir-casa",label:"Quero ir para casa",cat:"comunicacao"},
+            {id:"preciso-momento",label:"Preciso de um momento",cat:"comunicacao"}
+          ],
+          "idoso_inicial": [
+            {id:"ver-filhos",label:"Quero ver meus filhos",cat:"pessoas"},
+            {id:"ver-netos",label:"Quero ver meus netos",cat:"pessoas"},
+            {id:"falar-familia",label:"Quero falar com minha família",cat:"pessoas"},
+            {id:"saudade",label:"Estou com saudade",cat:"pessoas"},
+            {id:"quero-companhia",label:"Quero companhia",cat:"pessoas"},
+            {id:"quero-conversar2",label:"Quero conversar",cat:"pessoas"}
+          ],
+          "idoso_frases": [
+            {id:"tomar-cafe",label:"Quero tomar café",cat:"rotina"},
+            {id:"quero-comer",label:"Quero comer",cat:"rotina"},
+            {id:"quero-agua",label:"Quero água",cat:"rotina"},
+            {id:"ir-banheiro",label:"Quero ir ao banheiro",cat:"rotina"},
+            {id:"tomar-banho",label:"Quero tomar banho",cat:"rotina"},
+            {id:"com-frio",label:"Estou com frio",cat:"rotina"},
+            {id:"com-calor",label:"Estou com calor",cat:"rotina"},
+            {id:"ouvir-musica",label:"Quero ouvir música",cat:"rotina"},
+            {id:"assistir-tv",label:"Quero assistir televisão",cat:"rotina"},
+            {id:"quero-dormir",label:"Quero dormir",cat:"rotina"}
+          ],
+          "idoso_conversacao": [
+            {id:"preocupado",label:"Estou preocupado",cat:"sentimentos"},
+            {id:"cansado2",label:"Estou cansado",cat:"sentimentos"},
+            {id:"com-medo",label:"Estou com medo",cat:"sentimentos"},
+            {id:"sozinho",label:"Estou me sentindo sozinho",cat:"sentimentos"},
+            {id:"triste2",label:"Estou triste",cat:"sentimentos"},
+            {id:"quero-abraco",label:"Quero um abraço",cat:"sentimentos"},
+            {id:"gosto-companhia",label:"Gosto quando você fica comigo",cat:"sentimentos"},
+            {id:"nao-apresse",label:"Não me apresse",cat:"sentimentos"},
+            {id:"privacidade",label:"Quero privacidade",cat:"sentimentos"},
+            {id:"espere",label:"Espere um pouco",cat:"sentimentos"},
+            {id:"nao-quero",label:"Não quero isso",cat:"sentimentos"},
+            {id:"quero-escolher",label:"Quero escolher",cat:"sentimentos"},
+            {id:"respeito",label:"Me trate com respeito",cat:"sentimentos"},
+            {id:"ainda-sou-eu",label:"Ainda sou eu",cat:"sentimentos"}
+          ],
+          "idoso_acoes": [
+            {id:"com-dor",label:"Estou com dor",cat:"ajuda"},
+            {id:"passando-mal",label:"Estou passando mal",cat:"ajuda"},
+            {id:"falta-ar",label:"Estou com falta de ar",cat:"ajuda"},
+            {id:"cabeca-doi",label:"Minha cabeça dói",cat:"ajuda"},
+            {id:"remedio",label:"Preciso do meu remédio",cat:"ajuda"},
+            {id:"chame-medico",label:"Chame o médico",cat:"ajuda"},
+            {id:"chame-familia",label:"Chame minha família",cat:"ajuda"},
+            {id:"ajuda-agora",label:"Preciso de ajuda agora",cat:"ajuda"},
+            {id:"tonto",label:"Estou tonto",cat:"ajuda"},
+            {id:"urgente",label:"Isso é urgente",cat:"ajuda"}
           ]
         };
         const forcedKey = `${activeProfile}_${activeLevel}`;
