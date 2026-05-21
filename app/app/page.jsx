@@ -155,7 +155,7 @@ export default function Home() {
         const forcedKey = `${activeProfile}_${activeLevel}`;
         if (forcedDefaults[forcedKey]) {
           const saved = (res.ok && data.cards?.length)
-            ? data.cards.map(c => ({ id: c.id, image: c.image_url || c.image || "" }))
+            ? data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "" }))
             : [];
           base = forcedDefaults[forcedKey].map(def => {
             const match = saved.find(s => s.id === def.id) || saved.find(s => s.label?.toLowerCase() === def.label?.toLowerCase());
