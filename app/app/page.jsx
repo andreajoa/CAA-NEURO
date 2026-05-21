@@ -34,9 +34,6 @@ const levelsByProfile = {
     { id: "conversacao", label: "Rotina" },
     { id: "acoes", label: "Sentimentos" },
   ],
-};
-
-const levelsByProfileIdoso = {
   idoso: [
     { id: "emergente", label: "Comunicação Essencial" },
     { id: "inicial", label: "Pessoas Importantes" },
@@ -47,7 +44,7 @@ const levelsByProfileIdoso = {
 };
 
 function getLevels(profile) {
-  return levelsByProfile[profile] || levelsByProfileIdoso[profile] || levels;
+  return levelsByProfile[profile] || levels;
 }
 
 const categories = [
