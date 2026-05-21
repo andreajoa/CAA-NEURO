@@ -492,23 +492,17 @@ const IMAGE_ALIASES={
 "banheiro-a":"banheiro"
 };
 
+
 const enriched = base.map((c)=>{
 
 if(c.image) return c;
 
-const alias=IMAGE_ALIASES[c.id];
+const imgId = IMAGE_ALIASES[c.id] || c.id;
 
-if(alias){
+if(LOCAL_IDS.includes(imgId)){
 return {
 ...c,
-image:`/cards/level-1/${alias}.webp?v=20260521-optimized`
-};
-}
-
-if(LOCAL_IDS.includes(c.id)){
-return {
-...c,
-image:`/cards/level-1/${c.id}.webp?v=20260521-optimized`
+image:`/cards/level-1/${imgId}.webp?v=20260521-optimized`
 };
 }
 
@@ -516,7 +510,8 @@ return c;
 
 });
 
-        setCards(enriched);
+setCards(enriched);
+
       } catch { setCards([]); }
     }
     loadCards();
