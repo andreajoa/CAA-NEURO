@@ -133,6 +133,42 @@ export default function Home() {
           } catch { base = []; }
         }
 
+        // Fallback local para níveis sem admin_defaults
+        if (!base?.length) {
+          const localDefaults = {
+            "infantil_inicial": [
+              {id:"agua",label:"Água",cat:"necessidades"},
+              {id:"banheiro",label:"Banheiro",cat:"necessidades"},
+              {id:"dormir",label:"Dormir",cat:"necessidades"},
+              {id:"tomar-banho",label:"Banho",cat:"necessidades"},
+              {id:"lanche",label:"Lanche",cat:"necessidades"}
+            ],
+            "infantil_frases": [
+              {id:"feliz",label:"Feliz",cat:"emocoes"},
+              {id:"triste",label:"Triste",cat:"emocoes"},
+              {id:"bravo",label:"Bravo",cat:"emocoes"},
+              {id:"medo",label:"Medo",cat:"emocoes"},
+              {id:"cansado",label:"Cansado",cat:"emocoes"}
+            ],
+            "infantil_conversacao": [
+              {id:"escola",label:"Escola",cat:"rotina"},
+              {id:"passear",label:"Passear",cat:"rotina"},
+              {id:"brincar",label:"Brincar",cat:"rotina"},
+              {id:"sair",label:"Sair",cat:"rotina"},
+              {id:"casa",label:"Casa",cat:"rotina"}
+            ],
+            "infantil_acoes": [
+              {id:"parar",label:"Parar",cat:"acoes"},
+              {id:"acabou",label:"Acabou",cat:"acoes"},
+              {id:"mais",label:"Mais",cat:"acoes"},
+              {id:"remedio",label:"Remédio",cat:"acoes"},
+              {id:"dor",label:"Dor",cat:"acoes"}
+            ]
+          };
+          const localKey = `${activeProfile}_${activeLevel}`;
+          if (localDefaults[localKey]) base = localDefaults[localKey];
+        }
+
         // Para cards sem imagem, usa imagem local se existir
         const LOCAL_IDS = [
 "sim","nao","me-da","nao-quero",
