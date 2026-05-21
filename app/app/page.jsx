@@ -154,7 +154,13 @@ export default function Home() {
         };
         const forcedKey = `${activeProfile}_${activeLevel}`;
         if (forcedDefaults[forcedKey]) {
-          base = forcedDefaults[forcedKey];
+          const saved = (res.ok && data.cards?.length)
+            ? data.cards.map(c => ({ id: c.id, image: c.image_url || c.image || "" }))
+            : [];
+          base = forcedDefaults[forcedKey].map(def => {
+            const match = saved.find(s => s.id === def.id);
+            return match?.image ? { ...def, image: match.image } : def;
+          });
         } else if (res.ok && data.cards?.length) {
           base = data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "", cat: c.category }));
         } else {
