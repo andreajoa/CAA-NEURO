@@ -40,6 +40,13 @@ const levelsByProfile = {
     { id: "conversacao", label: "Como Estou Me Sentindo" },
     { id: "acoes", label: "Preciso de Ajuda" },
   ],
+  adulto: [
+    { id: "emergente", label: "Comunicação Essencial" },
+    { id: "inicial", label: "Vida Social" },
+    { id: "frases", label: "Minha Rotina" },
+    { id: "conversacao", label: "Como Estou Me Sentindo" },
+    { id: "acoes", label: "Preciso de Ajuda" },
+  ],
 };
 
 function getLevels(profile) {
@@ -267,6 +274,66 @@ export default function Home() {
             {id:"ajuda-agora",label:"Preciso de ajuda agora",cat:"ajuda"},
             {id:"tonto",label:"Estou tonto",cat:"ajuda"},
             {id:"urgente",label:"Isso é urgente",cat:"ajuda"}
+          ],
+          "adulto_emergente": [
+            {id:"ola-adulto",label:"Olá",cat:"comunicacao"},
+            {id:"quero-conversar-a",label:"Quero conversar",cat:"comunicacao"},
+            {id:"eu-entendi-a",label:"Eu entendi",cat:"comunicacao"},
+            {id:"nao-entendi-a",label:"Não entendi",cat:"comunicacao"},
+            {id:"pode-repetir-a",label:"Pode repetir?",cat:"comunicacao"},
+            {id:"mais-tempo-a",label:"Preciso de mais tempo",cat:"comunicacao"},
+            {id:"sim-a",label:"Sim",cat:"comunicacao"},
+            {id:"nao-a",label:"Não",cat:"comunicacao"},
+            {id:"quero-escolher-a",label:"Quero escolher",cat:"comunicacao"},
+            {id:"importante-a",label:"Tenho algo importante para dizer",cat:"comunicacao"}
+          ],
+          "adulto_inicial": [
+            {id:"quero-sair",label:"Quero sair",cat:"social"},
+            {id:"quero-companhia-a",label:"Quero companhia",cat:"social"},
+            {id:"ficar-sozinho",label:"Quero ficar sozinho",cat:"social"},
+            {id:"gosto-voce",label:"Gosto de você",cat:"social"},
+            {id:"conversar-voce",label:"Quero conversar com você",cat:"social"},
+            {id:"mandar-mensagem",label:"Quero mandar mensagem",cat:"social"},
+            {id:"ligar-alguem",label:"Quero ligar para alguém",cat:"social"},
+            {id:"estou-feliz-a",label:"Estou feliz",cat:"social"},
+            {id:"estou-triste-a",label:"Estou triste",cat:"social"},
+            {id:"quero-ir-embora",label:"Quero ir embora",cat:"social"}
+          ],
+          "adulto_frases": [
+            {id:"quero-estudar",label:"Quero estudar",cat:"rotina"},
+            {id:"quero-trabalhar",label:"Quero trabalhar",cat:"rotina"},
+            {id:"ajuda-isso",label:"Preciso de ajuda com isso",cat:"rotina"},
+            {id:"fazer-sozinho",label:"Quero fazer sozinho",cat:"rotina"},
+            {id:"explicar-novo",label:"Pode explicar de novo?",cat:"rotina"},
+            {id:"mais-tempo-r",label:"Preciso de mais tempo",cat:"rotina"},
+            {id:"quero-participar",label:"Quero participar",cat:"rotina"},
+            {id:"tenho-duvida",label:"Tenho uma dúvida",cat:"rotina"},
+            {id:"terminei",label:"Terminei",cat:"rotina"},
+            {id:"preciso-pausa",label:"Preciso de uma pausa",cat:"rotina"}
+          ],
+          "adulto_conversacao": [
+            {id:"ansioso",label:"Estou ansioso",cat:"sentimentos"},
+            {id:"cansado-a",label:"Estou cansado",cat:"sentimentos"},
+            {id:"desconfortavel",label:"Estou desconfortável",cat:"sentimentos"},
+            {id:"nao-quero-a",label:"Não quero isso",cat:"sentimentos"},
+            {id:"nao-toque",label:"Não toque em mim",cat:"sentimentos"},
+            {id:"fale-devagar-a",label:"Fale mais devagar",cat:"sentimentos"},
+            {id:"fale-baixo",label:"Fale mais baixo",cat:"sentimentos"},
+            {id:"privacidade-a",label:"Quero privacidade",cat:"sentimentos"},
+            {id:"me-acalmar",label:"Preciso me acalmar",cat:"sentimentos"},
+            {id:"respeite-tempo",label:"Respeite meu tempo",cat:"sentimentos"}
+          ],
+          "adulto_acoes": [
+            {id:"dor-a",label:"Estou com dor",cat:"ajuda"},
+            {id:"passando-mal-a",label:"Estou passando mal",cat:"ajuda"},
+            {id:"falta-ar-a",label:"Estou com falta de ar",cat:"ajuda"},
+            {id:"remedio-a",label:"Preciso do meu remédio",cat:"ajuda"},
+            {id:"banheiro-a",label:"Preciso ir ao banheiro",cat:"ajuda"},
+            {id:"chame-medico-a",label:"Chame um médico",cat:"ajuda"},
+            {id:"chame-familia-a",label:"Chame minha família",cat:"ajuda"},
+            {id:"urgente-a",label:"Isso é urgente",cat:"ajuda"},
+            {id:"ajuda-agora-a",label:"Preciso de ajuda agora",cat:"ajuda"},
+            {id:"lugar-seguro",label:"Leve-me para um lugar seguro",cat:"ajuda"}
           ]
         };
         const forcedKey = `${activeProfile}_${activeLevel}`;
