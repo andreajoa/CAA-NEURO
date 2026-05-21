@@ -154,11 +154,19 @@ export default function Home() {
         };
         const forcedKey = `${activeProfile}_${activeLevel}`;
         if (forcedDefaults[forcedKey]) {
-          const saved = (res.ok && data.cards?.length)
-            ? data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "" }))
-            : [];
+          // Tenta pegar imagens salvas pelo admin em admin_defaults
+          let savedForMerge = [];
+          try {
+            const ar2 = await fetch(`/api/admin/default-board?profile=${activeProfile}&level=${activeLevel}`);
+            const ad2 = await ar2.json();
+            if (ar2.ok && ad2.cards?.length) savedForMerge = ad2.cards;
+          } catch {}
+          // Fallback: tabela cards do usuário
+          if (!savedForMerge.length && res.ok && data.cards?.length) {
+            savedForMerge = data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "" }));
+          }
           base = forcedDefaults[forcedKey].map(def => {
-            const match = saved.find(s => s.id === def.id) || saved.find(s => s.label?.toLowerCase() === def.label?.toLowerCase());
+            const match = savedForMerge.find(s => s.id === def.id) || savedForMerge.find(s => s.label?.toLowerCase() === def.label?.toLowerCase());
             return match?.image ? { ...def, image: match.image } : def;
           });
         } else if (res.ok && data.cards?.length) {
