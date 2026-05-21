@@ -134,7 +134,17 @@ export default function Home() {
         }
 
         // Para cards sem imagem, usa imagem local se existir
-        const LOCAL_IDS = ["sim","nao","me-da","nao-quero","mais","acabou","ajuda","esperar","agua","comer","banheiro","dor","dormir","remedio","tomar-banho","feliz","triste","bravo","medo","cansado","brincar","parar","sair","passear","escola"];
+        const LOCAL_IDS = [
+"sim","nao","me-da","nao-quero",
+"mais","acabou","ajuda","esperar",
+"agua","comer","banheiro",
+"dor","dormir","remedio",
+"tomar-banho","feliz","triste",
+"bravo","medo","cansado",
+"brincar","parar","sair",
+"passear","escola",
+"casa","lanche"
+];
         const enriched = base.map((c) => {
           if (c.image) return c;
           if (LOCAL_IDS.includes(c.id)) return { ...c, image: `/cards/level-1/${c.id}.png?v=20260520-1705` };
