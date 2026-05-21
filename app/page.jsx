@@ -27,26 +27,27 @@ export default function LandingPage() {
 
       <section className="heroLanding">
         <div className="heroText">
-          <div className="badge">✦ Plataforma gratuita</div>
-          <h1>Transforme comunicação em <span>conexão e autonomia.</span></h1>
-          <p>CAA Neuro é a plataforma completa para criação de pranchas de Comunicação Alternativa e Aumentativa, acompanhamento de evolução e organização de atendimentos.</p>
+          <div className="badge">✦ Comunicação alternativa gratuita • Voz em vários idiomas • IA integrada</div>
+          <h1>Toda pessoa merece ser <span>compreendida.</span></h1>
+          <p>Comunicação Alternativa gratuita com pranchas inteligentes, voz em vários idiomas, tradução automática, imagens personalizadas, pacientes, relatórios e recursos adaptados para cada necessidade.</p>
 
           <div className="painGrid">
-            <div><Users /> <b>Para profissionais</b><small>Agilize atendimentos e personalize de verdade.</small></div>
-            <div><Heart /> <b>Para seus pacientes</b><small>Mais autonomia, expressão e qualidade de vida.</small></div>
-            <div><BarChart3 /> <b>Para resultados reais</b><small>Acompanhe evolução por níveis e relatórios.</small></div>
-            <div><Grid2X2 /> <b>100% gratuito</b><small>Comece agora, sem cartão de crédito.</small></div>
+            <div><Users /> <b>Pranchas personalizadas</b><small>Crie experiências únicas para cada paciente.</small></div>
+            <div><MessageCircle /> <b>Traduz e fala</b><small>Toque no card e escute em vários idiomas.</small></div>
+            <div><Brain /> <b>IA integrada</b><small>Crie pictogramas exclusivos quando precisar.</small></div>
+            <div><FileText /> <b>Compartilhe ou imprima</b><small>PDF profissional e links compartilháveis.</small></div>
           </div>
 
           <div className="heroActions">
             <Link href="/sign-up" className="primaryBig">Começar gratuitamente agora →</Link>
-            <Link href="/sign-in" className="secondaryBig">Ver como funciona ▶</Link>
+            <Link href="/como-funciona" className="secondaryBig">Ver como funciona ▶</Link>
           </div>
 
           <div className="trustRow">
             <span>✓ Sem cartão de crédito</span>
-            <span>✓ Acesso imediato</span>
-            <span>✓ Sempre gratuito</span>
+            <span>✓ Funciona no celular, tablet e computador</span>
+            <span>✓ Voz em vários idiomas</span>
+            <span>✓ Dados protegidos (LGPD)</span>
           </div>
         </div>
 
@@ -67,20 +68,23 @@ export default function LandingPage() {
         <div><Brain /> Psicólogos</div>
         <div><GraduationCap /> Neuropsicopedagogos</div>
         <div><Users /> Educadores</div>
+        <div><Heart /> Famílias</div>
+        <div><CalendarCheck /> Clínicas</div>
+        <div><FileText /> Hospitais</div>
       </section>
 
       <section className="featuresLanding">
         <div className="featuresIntro">
           <h2>Tudo que você precisa <span>em um só lugar</span></h2>
-          <p>Recursos completos, simples de usar e feitos para transformar atendimentos e vidas.</p>
+          <p>Pranchas, voz, tradução, IA, pacientes, sessões, relatórios, PDF e compartilhamento em uma plataforma gratuita.</p>
         </div>
         {[
-          ["Pacientes", "Gerencie seus pacientes e acompanhe cada etapa.", Users],
-          ["Sessões", "Registre sessões, anotações e evolução.", CalendarCheck],
-          ["Biblioteca Inteligente", "Imagens organizadas por categorias e temas.", BookOpen],
-          ["Níveis de Comunicação", "Atividades por níveis de dificuldade.", BarChart3],
-          ["Personalização", "Crie pranchas únicas para cada necessidade.", Pencil],
-          ["Relatórios", "Histórico completo e evolução registrada.", FileText],
+          ["Pranchas Inteligentes", "Perfis para criança, adulto, idoso e escolar.", Grid2X2],
+          ["Traduz e Fala", "Toque em qualquer card e escute em vários idiomas.", MessageCircle],
+          ["Banco de Imagens", "Milhares de imagens, upload próprio e biblioteca organizada.", BookOpen],
+          ["IA Personalizada", "Crie pictogramas exclusivos quando não encontrar a imagem ideal.", Brain],
+          ["Pacientes e Sessões", "Histórico clínico, evolução e acompanhamento profissional.", Users],
+          ["PDF e Compartilhamento", "Compartilhe por link, envie ao paciente ou imprima.", FileText],
         ].map(([title, text, Icon]) => (
           <div className="featureCard" key={title}>
             <Icon />
@@ -95,10 +99,10 @@ export default function LandingPage() {
       <section className="bottomCta">
         <div className="brainBadge"><Brain /></div>
         <div><strong>3.000+</strong><span>imagens na biblioteca</span></div>
-        <div><strong>Níveis</strong><span>de dificuldade</span></div>
-        <div><strong>100%</strong><span>gratuito para sempre</span></div>
-        <div><strong>Acesso</strong><span>em qualquer lugar</span></div>
-        <div><strong>+ Profissionais</strong><span>transformando vidas</span></div>
+        <div><strong>6 idiomas</strong><span>tradução e voz</span></div>
+        <div><strong>IA</strong><span>pictogramas exclusivos</span></div>
+        <div><strong>PDF</strong><span>impressão e relatórios</span></div>
+        <div><strong>100%</strong><span>gratuito para começar</span></div>
         <div className="ctaBox">
           <b>Pronto para transformar a comunicação?</b>
           <Link href="/sign-up">Começar gratuitamente agora →</Link>
@@ -110,7 +114,7 @@ export default function LandingPage() {
           <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:40,marginBottom:40}}>
             <div>
               <div style={{fontSize:22,fontWeight:700,color:"#4ec9a0",marginBottom:8}}>CAA Neuro</div>
-              <p style={{color:"rgba(255,255,255,0.55)",fontSize:14,lineHeight:1.7,maxWidth:280}}>Plataforma de Comunicação Aumentativa e Alternativa para profissionais da saúde e educação.</p>
+              <p style={{color:"rgba(255,255,255,0.55)",fontSize:14,lineHeight:1.7,maxWidth:280}}>Plataforma completa para comunicação funcional, acompanhamento clínico, acessibilidade e recursos terapêuticos.</p>
               <p style={{color:"rgba(255,255,255,0.4)",fontSize:13,marginTop:16}}>Responsável técnica:<br/><strong style={{color:"#4ec9a0"}}>Margareth Almeida</strong><br/><span style={{fontSize:12}}>Fonoaudióloga · CRFa</span></p>
             </div>
             <div>
