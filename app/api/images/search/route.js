@@ -93,6 +93,81 @@ async function searchSymbotalk(q) {
   } catch { return []; }
 }
 
+import { S3Client, ListObjectsV2Command, HeadObjectCommand } from "@aws-sdk/client-s3";
+
+function getR2Client() {
+  return new S3Client({
+    region: "auto",
+    endpoint: process.env.R2_ENDPOINT,
+    credentials: {
+      accessKeyId: process.env.R2_ACCESS_KEY_ID,
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    },
+  });
+}
+
+async function searchUserImages(userId, q) {
+  try {
+    const result = await getR2Client().send(new ListObjectsV2Command({
+      Bucket: process.env.R2_BUCKET_NAME,
+      Prefix: `users/${userId}/images/`,
+    }));
+    const items = result.Contents || [];
+    const matches = [];
+    for (const item of items) {
+      let label = "";
+      try {
+        const head = await getR2Client().send(new HeadObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME,
+          Key: item.Key,
+        }));
+        label = head.Metadata?.label ? decodeURIComponent(head.Metadata.label) : "";
+      } catch {}
+      if (label.toLowerCase().includes(q.toLowerCase())) {
+        matches.push({
+          id: item.Key,
+          label,
+          url: `/api/images/file?key=${encodeURIComponent(item.Key)}`,
+          source: "Minhas imagens",
+          source_color: "#db2777",
+        });
+      }
+    }
+    return matches;
+  } catch { return []; }
+}
+
+async function searchPlatformAdminImages(q) {
+  try {
+    const result = await getR2Client().send(new ListObjectsV2Command({
+      Bucket: process.env.R2_BUCKET_NAME,
+      Prefix: "platform/images/",
+    }));
+    const items = result.Contents || [];
+    const matches = [];
+    for (const item of items) {
+      let label = "";
+      try {
+        const head = await getR2Client().send(new HeadObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME,
+          Key: item.Key,
+        }));
+        label = head.Metadata?.label ? decodeURIComponent(head.Metadata.label) : "";
+      } catch {}
+      if (label.toLowerCase().includes(q.toLowerCase())) {
+        matches.push({
+          id: item.Key,
+          label,
+          url: `/api/images/file?key=${encodeURIComponent(item.Key)}`,
+          source: "Banco da plataforma",
+          source_color: "#0891b2",
+        });
+      }
+    }
+    return matches;
+  } catch { return []; }
+}
+
 export async function GET(request) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -103,6 +178,13 @@ export async function GET(request) {
 
   try {
     let results = [];
+
+    // Busca imagens do próprio usuário e do banco da plataforma PRIMEIRO
+    const [userImgs, platformAdminImgs] = await Promise.all([
+      searchUserImages(userId, q),
+      searchPlatformAdminImages(q),
+    ]);
+    results = [...userImgs, ...platformAdminImgs];
 
     if (source === "all" || source === "arasaac") {
       const arasaac = await searchArasaac(q);
