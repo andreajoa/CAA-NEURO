@@ -566,7 +566,7 @@ export default function Home() {
           <div className="caa-kicker">CAA Neuro</div>
           <div className="appTopBar">
             <div className="appTopBar">
-              <h1>Prancha profissional de comunicação</h1>
+              <h1>Prancha de Comunicação Acessível</h1>
               <div className="appLogout" style={{display:"flex",alignItems:"center",gap:"10px"}}>
                 <a href="/profissional" style={{fontSize:"12px",color:"#6b7280",textDecoration:"none",border:"1px solid #e5e7eb",padding:"6px 12px",borderRadius:"8px",background:"white",whiteSpace:"nowrap"}}>Painel →</a>
                 <UserButton appearance={{elements:{avatarBox:{width:"44px",height:"44px"}}}} afterSignOutUrl="/" />
