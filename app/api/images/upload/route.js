@@ -10,7 +10,7 @@ function imageUrlForKey(key) {
   if (base && base.startsWith("http")) {
     return `${base.replace(/\/$/, "")}/${key}`;
   }
-  return imageUrlForKey(key);
+  return `/api/images/file?key=${encodeURIComponent(key)}`;
 }
 
 function getR2Client() {
