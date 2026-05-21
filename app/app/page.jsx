@@ -8,7 +8,7 @@ import Onboarding from "../components/Onboarding";
 import { UserButton } from "@clerk/nextjs";
 import PWABanner from "../components/PWABanner";
 
-const img = (name) => `/cards/level-1/${name}.png?v=20260520-1705`;
+const img = (name) => `/cards/level-1/${name}.webp?v=20260521-optimized`;
 
 const profiles = [
   { id: "infantil", label: "Criança", icon: "👶" },
@@ -450,7 +450,7 @@ export default function Home() {
 ];
         const enriched = base.map((c) => {
           if (c.image) return c;
-          if (LOCAL_IDS.includes(c.id)) return { ...c, image: `/cards/level-1/${c.id}.png?v=20260520-1705` };
+          if (LOCAL_IDS.includes(c.id)) return { ...c, image: `/cards/level-1/${c.id}.webp?v=20260521-optimized` };
           return c;
         });
 
@@ -580,7 +580,7 @@ export default function Home() {
 
   function downloadImage(card) {
     if (!card.image) return;
-    const a = document.createElement("a"); a.href = card.image; a.download = `${card.id}.png?v=20260520-1705`; a.click();
+    const a = document.createElement("a"); a.href = card.image; a.download = `${card.id}.webp?v=20260521-optimized`; a.click();
   }
 
   function addCard() {
