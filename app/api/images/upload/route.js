@@ -50,7 +50,7 @@ export async function POST(req) {
       .toBuffer();
 
     // Todas as imagens ficam otimizadas em WebP e disponíveis para todos os usuários
-    const key = `platform/images/${id}.webp`;
+    const key = `users/${userId}/images/${id}.webp`;
 
     await getR2Client().send(
       new PutObjectCommand({

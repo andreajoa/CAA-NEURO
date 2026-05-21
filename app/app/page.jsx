@@ -640,7 +640,7 @@ export default function Home() {
       const res = await fetch("/api/images/library");
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || `Erro ${res.status} ao carregar biblioteca`);
-      setImageLibrary({ platformImages: data.platformImages || [], userImages: data.userImages || [] });
+      setImageLibrary({images:data.images||[]});
     } catch (e) {
       console.error("Erro ao abrir banco de imagens:", e);
       setImagePickerError(e.message || "Não foi possível carregar o banco de imagens.");
@@ -684,9 +684,7 @@ export default function Home() {
   async function chooseImage(url, label) {
     if (!editing || !url) return;
 
-    const finalUrl = url.includes("/api/images/file")
-      ? `${url}${url.includes("?") ? "&" : "?"}v=${Date.now()}`
-      : url;
+    const finalUrl=url;
 
     const updated = {
       ...editing,
@@ -741,9 +739,7 @@ export default function Home() {
         userImages: [newImage, ...(prev.userImages || [])]
       }));
 
-      const finalUrl = data.url.includes("/api/images/file")
-        ? `${data.url}${data.url.includes("?") ? "&" : "?"}v=${Date.now()}`
-        : data.url;
+      const finalUrl=data.url;
 
       const updated = { ...editing, image: finalUrl, image_url: finalUrl, empty: false };
       setEditing(updated);
@@ -1120,11 +1116,11 @@ export default function Home() {
                   </button>
                 </div>
                 {imageLibraryLoading && <p style={{textAlign:"center",color:"#6b7280",fontSize:"13px"}}>Carregando...</p>}
-                {!!imageLibrary.userImages.length && (
+                {!!imageLibrary.images?.length && (
                   <>
                     <p style={{fontSize:"12px",fontWeight:"600",color:"#374151",marginBottom:"8px"}}>Suas imagens enviadas</p>
                     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(90px,1fr))",gap:"8px",marginBottom:"16px"}}>
-                      {imageLibrary.userImages.map(image=>(
+                      {imageLibrary.images.map(image=>(
                         <button key={image.id} onClick={()=>chooseImage(image.url, image.label)}
                           style={{background:"white",border:"1px solid #e5e7eb",borderRadius:"10px",padding:"8px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:"4px"}}
                         >
@@ -1135,7 +1131,7 @@ export default function Home() {
                     </div>
                   </>
                 )}
-                {!!imageLibrary.platformImages.length && (
+                {false && (
                   <>
                     <p style={{fontSize:"12px",fontWeight:"600",color:"#374151",marginBottom:"8px"}}>Banco da plataforma</p>
                     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(90px,1fr))",gap:"8px"}}>
