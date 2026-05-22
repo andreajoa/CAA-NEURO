@@ -21,20 +21,11 @@ async function streamToBuffer(stream) {
 
 export async function GET(req) {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const { searchParams } = new URL(req.url);
     const key = searchParams.get("key");
 
-    const isUserImage = key && key.startsWith(`users/${userId}/images/`);
-    const isPlatformImage = key && key.startsWith("platform/images/");
-
-    if (!isUserImage && !isPlatformImage) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if(!key){
+      return NextResponse.json({error:"Missing key"},{status:400});
     }
 
     const result = await getR2Client().send(

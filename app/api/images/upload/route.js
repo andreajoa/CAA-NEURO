@@ -61,7 +61,7 @@ export async function POST(req) {
         Metadata: {
           label: safeLabel,
           userId: String(userId),
-          source: "platform",
+          source: "user",
         },
       })
     );
@@ -71,7 +71,7 @@ export async function POST(req) {
       key,
       label,
       url: imageUrlForKey(key),
-      source: "platform",
+      source: "user",
     });
   } catch (error) {
     console.error("R2 upload error:", error);
