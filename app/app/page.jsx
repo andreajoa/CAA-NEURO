@@ -510,7 +510,35 @@ return c;
 
 });
 
+
+
+// ===== AUTO IMAGE FIX =====
+const IMAGE_BY_LABEL = {
+"estou ansioso":"/cards/level-1/cansado.webp?v=20260521-optimized",
+"estou cansado":"/cards/level-1/cansado.webp?v=20260521-optimized",
+"estou desconfortável":"/cards/level-1/cansado.webp?v=20260521-optimized",
+"não quero isso":"/cards/level-1/nao-quero.webp?v=20260521-optimized",
+"não toque em mim":"/cards/level-1/nao.webp?v=20260521-optimized",
+"fale mais devagar":"/cards/level-1/ajuda.webp?v=20260521-optimized",
+"fale mais baixo":"/cards/level-1/ajuda.webp?v=20260521-optimized",
+"quero privacidade":"/cards/level-1/nao-quero.webp?v=20260521-optimized",
+"preciso me acalmar":"/cards/level-1/cansado.webp?v=20260521-optimized",
+"respeite meu tempo":"/cards/level-1/esperar.webp?v=20260521-optimized"
+};
+
+for(const c of enriched){
+ if(!c.image && !c.image_url){
+   const key=(c.label||"").toLowerCase().trim();
+   if(IMAGE_BY_LABEL[key]){
+      c.image=IMAGE_BY_LABEL[key];
+      c.image_url=IMAGE_BY_LABEL[key];
+   }
+ }
+}
+// ===== END AUTO IMAGE FIX =====
+
 setCards(enriched);
+
 
       } catch { setCards([]); }
     }
