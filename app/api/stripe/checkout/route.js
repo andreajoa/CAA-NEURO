@@ -26,7 +26,7 @@ export async function POST(request) {
 
     if (embedded) {
       const session = await stripe.checkout.sessions.create({
-        ui_mode: "embedded",
+        ui_mode: "embedded_page",
         mode: "subscription",
         payment_method_types: ["card"],
         line_items: [{ price: priceId, quantity: 1 }],
@@ -52,6 +52,6 @@ export async function POST(request) {
     });
     return Response.json({ url: session.url });
   } catch (e) {
-    return Response.json({ error: e.message }, { status: 500 });
+    console.error("STRIPE CHECKOUT ERROR:", e.message, e.stack); return Response.json({ error: e.message, detail: e.type || e.code || "" }, { status: 500 });
   }
 }
