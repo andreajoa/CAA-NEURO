@@ -131,7 +131,7 @@ export default function Planos() {
               </h2>
               <button onClick={fecharCheckout} style={{background:"#f3f4f6",border:"none",borderRadius:"8px",padding:"8px 16px",cursor:"pointer",fontSize:"13px",color:"#374151"}}>✕ Cancelar</button>
             </div>
-            <div id="stripe-checkout-container" />
+            <div ref={containerRef} id="stripe-checkout-container" />
           </div>
         )}
 
