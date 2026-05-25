@@ -68,7 +68,7 @@ export default function Planos() {
       if (d.clientSecret) {
         setCheckoutPlano(planoId);
         setClientSecret(d.clientSecret);
-        setTimeout(() => containerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+        setTimeout(() => document.getElementById('checkout-wrapper')?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
       } else if (d.url) {
         window.location.href = d.url;
       } else {
@@ -124,14 +124,14 @@ export default function Planos() {
         </div>
 
         {clientSecret && (
-          <div ref={containerRef} style={{marginTop:"48px",background:"white",borderRadius:"20px",border:"2px solid #e5e7eb",padding:"32px",boxShadow:"0 8px 32px rgba(0,0,0,0.08)"}}>
+          <div id="checkout-wrapper" style={{marginTop:"48px",background:"white",borderRadius:"20px",border:"2px solid #e5e7eb",padding:"32px",boxShadow:"0 8px 32px rgba(0,0,0,0.08)"}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"24px"}}>
               <h2 style={{fontSize:"20px",fontWeight:"800",color:"#071b2c",margin:0}}>
                 Finalizar assinatura — {PLANOS.find(p=>p.id===checkoutPlano)?.nome}
               </h2>
               <button onClick={fecharCheckout} style={{background:"#f3f4f6",border:"none",borderRadius:"8px",padding:"8px 16px",cursor:"pointer",fontSize:"13px",color:"#374151"}}>✕ Cancelar</button>
             </div>
-            <div ref={containerRef} id="stripe-checkout-container" />
+            <div ref={containerRef} id="stripe-checkout-container" style={{minHeight:"400px"}} />
           </div>
         )}
 
