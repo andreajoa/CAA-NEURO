@@ -48,12 +48,17 @@ export default function Planos() {
 
   useEffect(() => {
     if (!clientSecret || !stripeLoaded || !containerRef.current) return;
-    const stripe = (window as any).Stripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+    const stripeKey = (window as any).__STRIPE_KEY__ || process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+    const stripe = (window as any).Stripe(stripeKey);
     if (checkoutRef.current) { checkoutRef.current.destroy(); checkoutRef.current = null; }
-    const checkout = stripe.initEmbeddedCheckout({ clientSecret });
-    checkoutRef.current = checkout;
-    checkout.mount(containerRef.current);
-    return () => { checkout.destroy(); checkoutRef.current = null; };
+    let active = true;
+    (async () => {
+      const checkout = await stripe.initEmbeddedCheckout({ clientSecret });
+      if (!active || !containerRef.current) { checkout.destroy(); return; }
+      checkoutRef.current = checkout;
+      checkout.mount(containerRef.current);
+    })();
+    return () => { active = false; if (checkoutRef.current) { checkoutRef.current.destroy(); checkoutRef.current = null; } };
   }, [clientSecret, stripeLoaded]);
 
   async function assinar(planoId: string) {
