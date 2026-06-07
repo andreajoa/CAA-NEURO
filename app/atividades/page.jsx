@@ -311,59 +311,210 @@ function Pareamento({ cards, onBack }) {
 }
 
 function Sequencia({ cards, onBack }) {
-  const pool = shuffle(cards.filter(c => c && c.image && c.label)).slice(0, 5);
-  const [correct] = useState(pool);
-  const [current, setCurrent] = useState(() => shuffle(pool));
-  const [selected, setSelected] = useState([]);
-  const [done, setDone] = useState(false);
-  const [score, setScore] = useState(0);
+  // Pool fixo embaralhado — a "ordem correta" e definida antes do jogo comecar
+  const [pool]    = useState(() => shuffle(cards.filter(c => c && c.image && c.label)).slice(0, 5));
+  const [correct] = useState(() => {
+    // Ordem correta = pool ordenado alfabeticamente pelo label (deterministico e ensinavel)
+    return [...pool].sort((a, b) => a.label.localeCompare(b.label, "pt"));
+  });
+  const [bank,    setBank]    = useState(() => shuffle([...pool]));
+  const [sequence,setSequence]= useState([]);
+  const [phase,   setPhase]   = useState("intro"); // intro | playing | result
+  const [score,   setScore]   = useState(0);
+  const [wrongIdx,setWrongIdx]= useState(null);
 
-  function pick(card) {
-    if (selected.find(s => s.id === card.id)) return;
-    const next = [...selected, card];
-    setSelected(next);
+  function startGame() { setPhase("playing"); }
+
+  function addCard(card) {
+    if (sequence.find(s => s.id === card.id)) return;
+    const next = [...sequence, card];
+    setSequence(next);
+    setBank(prev => prev.filter(c => c.id !== card.id));
     if (next.length === correct.length) {
-      const correct2 = next.every((c, i) => c.id === correct[i].id);
-      setScore(correct2 ? correct.length : Math.floor(correct.length / 2));
-      setDone(true);
+      const hits = next.filter((c, i) => c.id === correct[i].id).length;
+      setScore(hits);
+      setPhase("result");
     }
   }
 
-  function restart() { setCurrent(shuffle(pool)); setSelected([]); setDone(false); setScore(0); }
+  function removeCard(idx) {
+    const card = sequence[idx];
+    setSequence(prev => prev.filter((_, i) => i !== idx));
+    setBank(prev => shuffle([...prev, card]));
+  }
 
-  return (
+  function restart() {
+    setBank(shuffle([...pool]));
+    setSequence([]);
+    setScore(0);
+    setPhase("playing");
+    setWrongIdx(null);
+  }
+
+  // --- TELA INTRO ---
+  if (phase === "intro") return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
-      <GameHeader title="📖 Sequência" score={score} total={correct.length} onBack={onBack} onRestart={restart} />
-      {done
-        ? <Congratulations score={score} total={correct.length} onRestart={restart} onBack={onBack} />
-        : <div style={{maxWidth:"600px",margin:"24px auto",padding:"0 24px"}}>
-            <p style={{textAlign:"center",color:"#6b7280",marginBottom:"24px"}}>Toque nos cards na ordem correta da história</p>
-            <div style={{display:"flex",gap:"8px",justifyContent:"center",marginBottom:"24px",flexWrap:"wrap"}}>
-              {selected.map((c, i) => (
-                <div key={c.id} style={{background:"white",border:"2px solid #C76B4A",borderRadius:"10px",padding:"8px",textAlign:"center",minWidth:"80px"}}>
-                  <div style={{fontSize:"12px",color:"#C76B4A",fontWeight:"700",marginBottom:"4px"}}>{i+1}</div>
-                  {c.image && <img src={c.image} alt={c.label} style={{width:"48px",height:"48px",objectFit:"contain"}} />}
-                  <div style={{fontSize:"11px",color:"#374151",fontWeight:"600",marginTop:"4px"}}>{c.label}</div>
-                </div>
-              ))}
-              {Array(correct.length - selected.length).fill(0).map((_,i) => (
-                <div key={i} style={{background:"#f9fafb",border:"2px dashed #e5e7eb",borderRadius:"10px",padding:"8px",minWidth:"80px",height:"96px"}} />
-              ))}
+      <div style={{background:"#1B2D5B",color:"white",padding:"12px 20px",display:"flex",alignItems:"center",gap:"12px"}}>
+        <button onClick={onBack} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"white",padding:"8px 14px",borderRadius:"8px",cursor:"pointer",fontSize:"13px"}}>← Voltar</button>
+        <div style={{fontWeight:"700",fontSize:"16px"}}>📖 Sequência</div>
+      </div>
+      <div style={{maxWidth:"520px",margin:"60px auto",padding:"0 24px",textAlign:"center"}}>
+        <div style={{fontSize:"64px",marginBottom:"16px"}}>📖</div>
+        <h2 style={{fontSize:"24px",fontWeight:"800",color:"#1B2D5B",margin:"0 0 16px"}}>Como funciona?</h2>
+        <div style={{background:"white",borderRadius:"16px",padding:"28px",boxShadow:"0 2px 12px rgba(0,0,0,0.06)",textAlign:"left",marginBottom:"28px"}}>
+          <div style={{display:"flex",flexDirection:"column",gap:"16px"}}>
+            <div style={{display:"flex",gap:"14px",alignItems:"flex-start"}}>
+              <div style={{background:"#C76B4A",color:"white",borderRadius:"50%",width:"32px",height:"32px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"800",fontSize:"15px",flexShrink:0}}>1</div>
+              <div>
+                <div style={{fontWeight:"700",color:"#1B2D5B",marginBottom:"4px"}}>Veja os cards disponíveis</div>
+                <div style={{color:"#6b7280",fontSize:"14px"}}>Os cards aparecem embaralhados na parte de baixo da tela.</div>
+              </div>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(100px,1fr))",gap:"12px"}}>
-              {current.map(card => {
-                const used = selected.find(s => s.id === card.id);
+            <div style={{display:"flex",gap:"14px",alignItems:"flex-start"}}>
+              <div style={{background:"#C76B4A",color:"white",borderRadius:"50%",width:"32px",height:"32px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"800",fontSize:"15px",flexShrink:0}}>2</div>
+              <div>
+                <div style={{fontWeight:"700",color:"#1B2D5B",marginBottom:"4px"}}>Toque para colocar na sequência</div>
+                <div style={{color:"#6b7280",fontSize:"14px"}}>Toque num card para adicioná-lo à sua sequência, na ordem que achar correta.</div>
+              </div>
+            </div>
+            <div style={{display:"flex",gap:"14px",alignItems:"flex-start"}}>
+              <div style={{background:"#C76B4A",color:"white",borderRadius:"50%",width:"32px",height:"32px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"800",fontSize:"15px",flexShrink:0}}>3</div>
+              <div>
+                <div style={{fontWeight:"700",color:"#1B2D5B",marginBottom:"4px"}}>Pode remover e trocar</div>
+                <div style={{color:"#6b7280",fontSize:"14px"}}>Toque em ✕ num card da sequência para removê-lo e tentar outra posição.</div>
+              </div>
+            </div>
+            <div style={{display:"flex",gap:"14px",alignItems:"flex-start"}}>
+              <div style={{background:"#C76B4A",color:"white",borderRadius:"50%",width:"32px",height:"32px",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"800",fontSize:"15px",flexShrink:0}}>4</div>
+              <div>
+                <div style={{fontWeight:"700",color:"#1B2D5B",marginBottom:"4px"}}>Complete todos os espaços</div>
+                <div style={{color:"#6b7280",fontSize:"14px"}}>Quando todos os cards estiverem na sequência, o resultado aparece automaticamente.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button onClick={startGame}
+          style={{background:"#C76B4A",color:"white",border:"none",padding:"14px 40px",borderRadius:"12px",fontWeight:"800",fontSize:"16px",cursor:"pointer",boxShadow:"0 4px 14px rgba(199,107,74,0.35)"}}>
+          Começar 🚀
+        </button>
+      </div>
+    </div>
+  );
+
+  // --- TELA RESULTADO ---
+  if (phase === "result") {
+    const pct = Math.round((score / correct.length) * 100);
+    return (
+      <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
+        <div style={{background:"#1B2D5B",color:"white",padding:"12px 20px",display:"flex",alignItems:"center",gap:"12px"}}>
+          <button onClick={onBack} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"white",padding:"8px 14px",borderRadius:"8px",cursor:"pointer",fontSize:"13px"}}>← Voltar</button>
+          <div style={{fontWeight:"700",fontSize:"16px"}}>📖 Sequência</div>
+        </div>
+        <div style={{maxWidth:"600px",margin:"40px auto",padding:"0 24px",textAlign:"center"}}>
+          <div style={{fontSize:"56px",marginBottom:"12px"}}>{pct===100?"🏆":pct>=60?"⭐":"💪"}</div>
+          <h2 style={{fontSize:"24px",fontWeight:"800",color:"#1B2D5B",margin:"0 0 6px"}}>
+            {pct===100?"Perfeito!":pct>=60?"Muito bem!":"Continue praticando!"}
+          </h2>
+          <p style={{color:"#6b7280",margin:"0 0 28px"}}>{score} de {correct.length} na posição certa</p>
+
+          <div style={{marginBottom:"28px"}}>
+            <p style={{fontWeight:"700",color:"#374151",marginBottom:"12px",fontSize:"13px",textTransform:"uppercase",letterSpacing:"0.05em"}}>Sua sequência</p>
+            <div style={{display:"flex",gap:"8px",justifyContent:"center",flexWrap:"wrap"}}>
+              {sequence.map((c, i) => {
+                const ok = c.id === correct[i].id;
                 return (
-                  <button key={card.id} onClick={() => !used && pick(card)} disabled={!!used}
-                    style={{background:used?"#f9fafb":"white",border:`2px solid ${used?"#e5e7eb":"#e5e7eb"}`,borderRadius:"12px",padding:"12px 8px",cursor:used?"default":"pointer",opacity:used?0.4:1,textAlign:"center"}}>
-                    {card.image && <img src={card.image} alt={card.label} style={{width:"56px",height:"56px",objectFit:"contain"}} />}
-                    <div style={{fontSize:"12px",fontWeight:"700",color:"#1B2D5B",marginTop:"6px"}}>{card.label}</div>
-                  </button>
+                  <div key={c.id} style={{background:ok?"#f0fdf4":"#fef2f2",border:`2px solid ${ok?"#16a34a":"#dc2626"}`,borderRadius:"10px",padding:"8px",textAlign:"center",minWidth:"80px"}}>
+                    <div style={{fontSize:"11px",fontWeight:"700",color:ok?"#16a34a":"#dc2626",marginBottom:"4px"}}>{ok?"✅":"❌"} Pos. {i+1}</div>
+                    <img src={c.image} alt={c.label} style={{width:"44px",height:"44px",objectFit:"contain"}} />
+                    <div style={{fontSize:"11px",color:"#374151",fontWeight:"600",marginTop:"4px"}}>{c.label}</div>
+                  </div>
                 );
               })}
             </div>
           </div>
-      }
+
+          {pct < 100 && (
+            <div style={{marginBottom:"28px"}}>
+              <p style={{fontWeight:"700",color:"#374151",marginBottom:"12px",fontSize:"13px",textTransform:"uppercase",letterSpacing:"0.05em"}}>Ordem correta era</p>
+              <div style={{display:"flex",gap:"8px",justifyContent:"center",flexWrap:"wrap"}}>
+                {correct.map((c, i) => (
+                  <div key={c.id} style={{background:"white",border:"2px solid #1B2D5B",borderRadius:"10px",padding:"8px",textAlign:"center",minWidth:"80px"}}>
+                    <div style={{fontSize:"11px",fontWeight:"700",color:"#1B2D5B",marginBottom:"4px"}}>{i+1}º</div>
+                    <img src={c.image} alt={c.label} style={{width:"44px",height:"44px",objectFit:"contain"}} />
+                    <div style={{fontSize:"11px",color:"#374151",fontWeight:"600",marginTop:"4px"}}>{c.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{display:"flex",gap:"12px",justifyContent:"center"}}>
+            <button onClick={restart} style={{background:"#C76B4A",color:"white",border:"none",padding:"12px 28px",borderRadius:"10px",fontWeight:"700",cursor:"pointer",fontSize:"15px"}}>🔄 Tentar novamente</button>
+            <button onClick={onBack} style={{background:"white",color:"#374151",border:"1px solid #e5e7eb",padding:"12px 24px",borderRadius:"10px",cursor:"pointer",fontSize:"15px"}}>← Outras atividades</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- TELA DE JOGO ---
+  return (
+    <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
+      <div style={{background:"#1B2D5B",color:"white",padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"12px",flexWrap:"wrap"}}>
+        <button onClick={onBack} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"white",padding:"8px 14px",borderRadius:"8px",cursor:"pointer",fontSize:"13px"}}>← Voltar</button>
+        <div style={{fontWeight:"700",fontSize:"16px"}}>📖 Sequência</div>
+        <div style={{display:"flex",gap:"10px",alignItems:"center"}}>
+          <span style={{background:"rgba(255,255,255,0.1)",padding:"6px 14px",borderRadius:"20px",fontSize:"13px"}}>
+            {sequence.length}/{correct.length} colocados
+          </span>
+          <button onClick={restart} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"white",padding:"8px 14px",borderRadius:"8px",cursor:"pointer",fontSize:"13px"}}>🔄</button>
+        </div>
+      </div>
+
+      <div style={{maxWidth:"700px",margin:"0 auto",padding:"24px"}}>
+
+        {/* ZONA DA SEQUENCIA */}
+        <div style={{marginBottom:"28px"}}>
+          <p style={{fontWeight:"700",color:"#374151",marginBottom:"10px",fontSize:"13px",textTransform:"uppercase",letterSpacing:"0.05em",textAlign:"center"}}>
+            Sua sequência — toque em ✕ para remover
+          </p>
+          <div style={{display:"flex",gap:"8px",justifyContent:"center",flexWrap:"wrap",minHeight:"110px",background:"white",borderRadius:"16px",border:"2px dashed #e5e7eb",padding:"12px",alignItems:"center"}}>
+            {sequence.length === 0 && (
+              <p style={{color:"#9ca3af",fontSize:"14px",margin:0}}>Toque nos cards abaixo para montar a sequência</p>
+            )}
+            {sequence.map((c, i) => (
+              <div key={c.id} style={{background:"#FFF5F2",border:"2px solid #C76B4A",borderRadius:"10px",padding:"8px",textAlign:"center",minWidth:"76px",position:"relative"}}>
+                <button onClick={() => removeCard(i)}
+                  style={{position:"absolute",top:"-8px",right:"-8px",background:"#dc2626",border:"none",color:"white",borderRadius:"50%",width:"20px",height:"20px",fontSize:"11px",cursor:"pointer",fontWeight:"800",display:"flex",alignItems:"center",justifyContent:"center",padding:0}}>✕</button>
+                <div style={{fontSize:"11px",color:"#C76B4A",fontWeight:"700",marginBottom:"4px"}}>{i+1}º</div>
+                <img src={c.image} alt={c.label} style={{width:"44px",height:"44px",objectFit:"contain"}} />
+                <div style={{fontSize:"11px",color:"#1B2D5B",fontWeight:"600",marginTop:"4px"}}>{c.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* BANCO DE CARDS */}
+        <div>
+          <p style={{fontWeight:"700",color:"#374151",marginBottom:"10px",fontSize:"13px",textTransform:"uppercase",letterSpacing:"0.05em",textAlign:"center"}}>
+            Cards disponíveis — toque para adicionar
+          </p>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))",gap:"12px"}}>
+            {bank.map(card => (
+              <button key={card.id} onClick={() => addCard(card)}
+                style={{background:"white",border:"2px solid #e5e7eb",borderRadius:"12px",padding:"12px 8px",cursor:"pointer",textAlign:"center",transition:"all 0.15s"}}>
+                <img src={card.image} alt={card.label} style={{width:"56px",height:"56px",objectFit:"contain"}} />
+                <div style={{fontSize:"12px",fontWeight:"700",color:"#1B2D5B",marginTop:"6px"}}>{card.label}</div>
+              </button>
+            ))}
+            {bank.length === 0 && (
+              <div style={{gridColumn:"1/-1",textAlign:"center",color:"#9ca3af",fontSize:"14px",padding:"20px 0"}}>
+                Todos os cards foram colocados! Confira sua sequência acima.
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
