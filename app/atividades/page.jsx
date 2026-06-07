@@ -145,65 +145,75 @@ function Congratulations({ score, total, onRestart, onBack }) {
 }
 
 function Associacao({ cards, onBack }) {
-  // items = lista fixa de cards (imagens, ordem fixa)
-  // wordSlots = array de posicoes das palavras — embaralhadas mas sempre tamanho == items
-  // Cada "linha i" mostra items[i] (imagem) + wordSlots[i] (palavra)
-  // Quando a palavra da linha i e clicada e o selected e items[i], checa id match
-  const [items,     setItems]     = useState([]);
-  const [wordSlots, setWordSlots] = useState([]); // array de {id,label} embaralhado, mesmo length de items
-  const [selected,  setSelected]  = useState(null); // id da imagem selecionada
-  const [matched,   setMatched]   = useState({}); // {imageId: true} quando par correto
-  const [wrongFlash,setWrongFlash]= useState(null); // id da palavra com flash vermelho
-  const [score,     setScore]     = useState(0);
-  const [done,      setDone]      = useState(false);
+  // ARQUITETURA SIMPLES E INFALIVEL:
+  // - items: array fixo de cards (imagens, lado esquerdo, ordem fixa)
+  // - words: array de palavras embaralhadas (lado direito, lista independente)
+  // - matched: Set de ids ja acertados
+  // - selectedImg: id da imagem selecionada no momento
+  // Regra unica: clica imagem -> clica palavra -> se ids iguais = acerto
+
+  const [items,       setItems]       = useState([]); // cards com imagem+label, deduplicados
+  const [words,       setWords]       = useState([]); // [{id,label}] embaralhados
+  const [matched,     setMatched]     = useState(new Set()); // ids acertados
+  const [selectedImg, setSelectedImg] = useState(null); // id da imagem selecionada
+  const [wrongWord,   setWrongWord]   = useState(null); // id da palavra com flash erro
+  const [score,       setScore]       = useState(0);
+  const [done,        setDone]        = useState(false);
 
   function init() {
-    // Garante ids unicos — deduplica por id
-    const unique = [];
+    // 1. Deduplica por id
     const seen = new Set();
+    const unique = [];
     for (const c of (cards || [])) {
-      if (c && c.image && c.label && !seen.has(c.id)) {
-        seen.add(c.id);
-        unique.push(c);
+      if (c && c.image && c.label && c.id && !seen.has(String(c.id))) {
+        seen.add(String(c.id));
+        unique.push({ ...c, id: String(c.id) });
       }
     }
-    const pool = shuffle(unique).slice(0, 6); // max 6 pares para caber bem na tela
+    // 2. Pega ate 6 cards aleatorios
+    const pool = shuffle(unique).slice(0, 6);
+    // 3. Imagens em ordem fixa, palavras embaralhadas separadamente
+    const shuffledWords = shuffle(pool.map(c => ({ id: c.id, label: c.label })));
     setItems(pool);
-    // Embaralha apenas as palavras (slots), imagens ficam na ordem do pool
-    setWordSlots(shuffle(pool.map(c => ({ id: c.id, label: c.label }))));
-    setSelected(null);
-    setMatched({});
-    setWrongFlash(null);
+    setWords(shuffledWords);
+    setMatched(new Set());
+    setSelectedImg(null);
+    setWrongWord(null);
     setScore(0);
     setDone(false);
   }
 
   useEffect(() => { init(); }, []);
 
-  function pickImage(imgId) {
-    if (matched[imgId]) return; // ja acertou, ignora
-    setSelected(prev => prev === imgId ? null : imgId);
-    setWrongFlash(null);
+  function handleImageClick(imgId) {
+    if (matched.has(imgId)) return; // ja acertou, ignora
+    setSelectedImg(prev => prev === imgId ? null : imgId);
+    setWrongWord(null);
   }
 
-  function pickWord(wordId, slotIdx) {
-    if (!selected) return;
-    if (matched[selected]) return;
-    const isCorrect = selected === wordId;
-    if (isCorrect) {
-      const newMatched = { ...matched, [selected]: true };
+  function handleWordClick(wordId) {
+    if (!selectedImg) return;           // nenhuma imagem selecionada
+    if (matched.has(wordId)) return;    // palavra ja usada
+
+    if (selectedImg === wordId) {
+      // ✅ ACERTO — ids batem
+      const newMatched = new Set(matched);
+      newMatched.add(wordId);
       setMatched(newMatched);
       setScore(s => s + 1);
-      setSelected(null);
-      if (Object.keys(newMatched).length === items.length) {
+      setSelectedImg(null);
+      setWrongWord(null);
+      if (newMatched.size === items.length) {
         setTimeout(() => setDone(true), 400);
       }
     } else {
-      // Flash vermelho na palavra errada
-      setWrongFlash(slotIdx);
-      setTimeout(() => setWrongFlash(null), 700);
+      // ❌ ERRO — flash vermelho na palavra, imagem continua selecionada
+      setWrongWord(wordId);
+      setTimeout(() => setWrongWord(null), 700);
     }
   }
+
+  const selectedLabel = selectedImg ? (items.find(c => c.id === selectedImg)?.label ?? "") : "";
 
   if (done) return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
@@ -212,85 +222,110 @@ function Associacao({ cards, onBack }) {
     </div>
   );
 
-  // Descobre o label da imagem selecionada para mostrar na dica
-  const selectedLabel = selected ? (items.find(c => c.id === selected)?.label || "") : "";
-
   return (
-    <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
+    <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui",paddingBottom:"40px"}}>
       <GameHeader title="🔗 Associação" score={score} total={items.length} onBack={onBack} onRestart={init} />
 
-      {/* Dica */}
-      <p style={{textAlign:"center",color: selected ? "#C76B4A" : "#9ca3af",fontSize:"14px",margin:"16px 0 4px",fontWeight: selected?"700":"400",transition:"color 0.2s"}}>
-        {selected ? `👆 Toque na palavra correta para "${selectedLabel}"` : "Toque em uma imagem para selecionar"}
+      {/* Instrucao */}
+      <p style={{
+        textAlign:"center", margin:"14px 0 10px",
+        fontSize:"14px", fontWeight: selectedImg ? "700" : "400",
+        color: selectedImg ? "#C76B4A" : "#9ca3af",
+        transition:"color 0.2s, font-weight 0.2s"
+      }}>
+        {selectedImg
+          ? `👆 Toque na palavra correta para "${selectedLabel}"`
+          : "Toque em uma imagem para selecionar"}
       </p>
 
-      {/* Cabecalhos */}
-      <div style={{maxWidth:"680px",margin:"0 auto",padding:"0 16px"}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"6px",padding:"0 4px"}}>
-          <p style={{fontWeight:"700",color:"#374151",fontSize:"12px",textTransform:"uppercase",letterSpacing:"0.06em",margin:0,textAlign:"center"}}>Imagem</p>
-          <p style={{fontWeight:"700",color:"#374151",fontSize:"12px",textTransform:"uppercase",letterSpacing:"0.06em",margin:0,textAlign:"center"}}>Palavra</p>
-        </div>
+      <div style={{maxWidth:"660px",margin:"0 auto",padding:"0 16px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px",alignItems:"start"}}>
 
-        {/* LINHAS — cada linha = imagem (esq) + palavra embaralhada (dir) */}
-        <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
-          {items.map((card, i) => {
-            const isMatched  = !!matched[card.id];
-            const isSel      = selected === card.id;
-            const wordOpt    = wordSlots[i]; // palavra que ocupa esse slot (embaralhada)
-            const wordMatched = wordOpt ? !!matched[wordOpt.id] : false;
-            const isWrong    = wrongFlash === i;
-
-            return (
-              <div key={card.id} style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",alignItems:"stretch"}}>
-
-                {/* IMAGEM */}
+        {/* COLUNA ESQUERDA — IMAGENS (ordem fixa) */}
+        <div>
+          <p style={{fontWeight:"700",color:"#374151",fontSize:"12px",textTransform:"uppercase",letterSpacing:"0.06em",margin:"0 0 8px",textAlign:"center"}}>
+            🖼️ Imagem
+          </p>
+          <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+            {items.map(card => {
+              const isMatched = matched.has(card.id);
+              const isSel     = selectedImg === card.id;
+              return (
                 <button
-                  onClick={() => pickImage(card.id)}
+                  key={card.id}
+                  onClick={() => handleImageClick(card.id)}
                   disabled={isMatched}
                   style={{
                     background: isMatched ? "#f0fdf4" : isSel ? "#FFF5F2" : "white",
                     border: `2px solid ${isMatched ? "#16a34a" : isSel ? "#C76B4A" : "#e5e7eb"}`,
-                    borderRadius:"12px", padding:"10px 12px",
-                    display:"flex", alignItems:"center", gap:"10px",
+                    borderRadius:"12px",
+                    padding:"10px 12px",
+                    display:"flex",
+                    alignItems:"center",
+                    gap:"10px",
                     cursor: isMatched ? "default" : "pointer",
-                    transition:"all 0.2s", textAlign:"left", minHeight:"68px"
+                    transition:"all 0.2s",
+                    minHeight:"70px",
+                    boxShadow: isSel ? "0 0 0 3px rgba(199,107,74,0.2)" : "none"
                   }}>
-                  <img src={card.image} alt={card.label}
-                    style={{width:"46px",height:"46px",objectFit:"contain",borderRadius:"8px",flexShrink:0}} />
-                  <span style={{fontSize:"18px"}}>
+                  <img
+                    src={card.image}
+                    alt={card.label}
+                    style={{width:"46px",height:"46px",objectFit:"contain",borderRadius:"8px",flexShrink:0}}
+                    onError={e => { e.target.style.display="none"; }}
+                  />
+                  <span style={{fontSize:"20px"}}>
                     {isMatched ? "✅" : isSel ? "👆" : ""}
                   </span>
                 </button>
-
-                {/* PALAVRA (slot embaralhado) */}
-                {wordOpt ? (
-                  <button
-                    onClick={() => !wordMatched && pickWord(wordOpt.id, i)}
-                    disabled={wordMatched}
-                    style={{
-                      background: wordMatched ? "#f0fdf4" : isWrong ? "#fef2f2" : selected && !wordMatched ? "#FFF5F2" : "white",
-                      border: `2px solid ${wordMatched ? "#16a34a" : isWrong ? "#dc2626" : selected && !wordMatched ? "#C76B4A" : "#e5e7eb"}`,
-                      borderRadius:"12px", padding:"10px 16px",
-                      cursor: wordMatched ? "default" : selected ? "pointer" : "default",
-                      fontWeight:"700", fontSize:"15px",
-                      color: wordMatched ? "#16a34a" : isWrong ? "#dc2626" : "#1B2D5B",
-                      textAlign:"center", transition:"all 0.15s",
-                      display:"flex", alignItems:"center", justifyContent:"center", gap:"6px",
-                      minHeight:"68px"
-                    }}>
-                    {wordMatched ? "✅ " : isWrong ? "❌ " : ""}{wordOpt.label}
-                  </button>
-                ) : (
-                  <div style={{borderRadius:"12px",border:"2px dashed #e5e7eb",minHeight:"68px"}} />
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
+
+        {/* COLUNA DIREITA — PALAVRAS (embaralhadas, lista independente) */}
+        <div>
+          <p style={{fontWeight:"700",color:"#374151",fontSize:"12px",textTransform:"uppercase",letterSpacing:"0.06em",margin:"0 0 8px",textAlign:"center"}}>
+            🔤 Palavra
+          </p>
+          <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+            {words.map(word => {
+              const isMatched = matched.has(word.id);
+              const isWrong   = wrongWord === word.id;
+              const isActive  = !!selectedImg && !isMatched;
+              return (
+                <button
+                  key={word.id}
+                  onClick={() => handleWordClick(word.id)}
+                  disabled={isMatched}
+                  style={{
+                    background: isMatched ? "#f0fdf4" : isWrong ? "#fef2f2" : isActive ? "#FFF5F2" : "white",
+                    border: `2px solid ${isMatched ? "#16a34a" : isWrong ? "#dc2626" : isActive ? "#C76B4A" : "#e5e7eb"}`,
+                    borderRadius:"12px",
+                    padding:"10px 14px",
+                    cursor: isMatched ? "default" : isActive ? "pointer" : "default",
+                    fontWeight:"700",
+                    fontSize:"15px",
+                    color: isMatched ? "#16a34a" : isWrong ? "#dc2626" : "#1B2D5B",
+                    textAlign:"center",
+                    transition:"all 0.15s",
+                    minHeight:"70px",
+                    display:"flex",
+                    alignItems:"center",
+                    justifyContent:"center",
+                    gap:"6px"
+                  }}>
+                  {isMatched ? "✅ " : isWrong ? "❌ " : ""}{word.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
     </div>
   );
 }
+
 
 function Pareamento({ cards, onBack }) {
   const pool = shuffle(cards.filter(c => c && c.image && c.label)).slice(0, 6);
