@@ -779,33 +779,34 @@ function CompletarFrase({ cards, onBack }) {
     });
   }, [cardMap]);
 
-  // Embaralha e pega ate 6 frases por rodada
-  const [rodada] = useState(() => shuffle([...frasesDisponiveis.length > 0 ? frasesDisponiveis : []]).slice(0, 6));
+  // Rodada como useMemo — reativo ao cardMap (corrige bug do lazy useState)
+  const rodada = React.useMemo(() => {
+    if (frasesDisponiveis.length === 0) return [];
+    return shuffle([...frasesDisponiveis]).slice(0, 6);
+  }, [frasesDisponiveis.length]);
 
   const [idx,      setIdx]      = useState(0);
   const [score,    setScore]    = useState(0);
-  const [feedback, setFeedback] = useState(null); // null | "correct" | "wrong"
-  const [escolha,  setEscolha]  = useState(null); // card que o usuario clicou
+  const [feedback, setFeedback] = useState(null);
+  const [escolha,  setEscolha]  = useState(null);
   const [done,     setDone]     = useState(false);
   const [options,  setOptions]  = useState([]);
 
   const frase = rodada[idx] || null;
 
+  // Monta as opcoes sempre que a frase mudar — garantido apos cardMap populado
   useEffect(() => {
-    if (!frase) return;
-    const correta   = cardMap[frase.correta];
+    if (!frase || !cardMap) return;
+    const correta = cardMap[frase.correta];
     if (!correta) return;
-    // Pega EXATAMENTE os distratores definidos — sem aleatorios
     const distratorCards = frase.distratores
       .map(d => cardMap[d])
       .filter(Boolean)
       .slice(0, 3);
-    // Se nao tem distratores suficientes, a frase nao deveria ter aparecido
-    // mas por segurança filtra da propria lista de frases
     setOptions(shuffle([correta, ...distratorCards]));
     setFeedback(null);
     setEscolha(null);
-  }, [idx, frase]);
+  }, [idx, frase, rodada]);
 
   function pick(card) {
     if (feedback || !card || !frase) return;
