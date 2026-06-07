@@ -894,12 +894,12 @@ display:none;
 .publicFooter h3 {
   font-size: 22px;
   font-weight: 700;
-  color: #E8B4A8;
+  color: #C76B4A;
   margin-bottom: 8px;
 }
 
 .publicFooter h4 {
-  color: rgba(255,255,255,0.4);
+  color: #C76B4A;
   font-size: 12px;
   font-weight: 700;
   margin-bottom: 14px;
@@ -908,7 +908,7 @@ display:none;
 }
 
 .publicFooter p {
-  color: rgba(255,255,255,0.55);
+  color: rgba(27,45,91,0.65);
   font-size: 14px;
   line-height: 1.7;
   max-width: 280px;
@@ -916,26 +916,26 @@ display:none;
 
 .publicFooter a {
   display: block;
-  color: rgba(255,255,255,0.7);
+  color: #1B2D5B;
   font-size: 14px;
   text-decoration: none;
   margin-bottom: 10px;
 }
 
 .publicFooter a:hover {
-  color: #E8B4A8;
+  color: #C76B4A;
 }
 
 .footerBottom {
   grid-column: 1 / -1;
-  border-top: 0.5px solid rgba(255,255,255,0.1);
+  border-top: 0.5px solid #E8B4A8;
   padding-top: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
-  color: rgba(255,255,255,0.35);
+  color: rgba(27,45,91,0.45);
   font-size: 13px;
 }
 
