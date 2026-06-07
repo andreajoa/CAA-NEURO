@@ -728,79 +728,285 @@ function Sequencia({ cards, onBack }) {
 
 
 function CompletarFrase({ cards, onBack }) {
-  const FRASES = [
-    { template: "Eu quero ___", cat: "necessidades", hint: "necessidades" },
-    { template: "Eu estou ___", cat: "emocoes", hint: "emoções" },
-    { template: "Eu preciso de ___", cat: "core", hint: "core" },
-    { template: "Vou ___", cat: "acoes", hint: "ações" },
-    { template: "Estou com ___", cat: "saude", hint: "saúde" },
+
+  // Frases com resposta ESPECIFICA — cada frase tem um unico card correto
+  // distratores: ids de cards que fazem sentido mas sao errados para esta frase
+  const FRASES_BASE = [
+    {
+      template: "Eu quero ___",
+      correta: "agua",
+      distratores: ["comer", "brincar", "passear"],
+      dica: "O que você quer beber?"
+    },
+    {
+      template: "Eu quero ___",
+      correta: "comer",
+      distratores: ["agua", "dormir", "brincar"],
+      dica: "O que você quer fazer quando está com fome?"
+    },
+    {
+      template: "Eu quero ___",
+      correta: "brincar",
+      distratores: ["comer", "dormir", "esperar"],
+      dica: "O que você quer fazer na hora do lazer?"
+    },
+    {
+      template: "Eu quero ___",
+      correta: "passear",
+      distratores: ["comer", "brincar", "esperar"],
+      dica: "O que você quer fazer para sair de casa?"
+    },
+    {
+      template: "Eu estou ___",
+      correta: "feliz",
+      distratores: ["triste", "bravo", "medo"],
+      dica: "Como você está quando algo bom acontece?"
+    },
+    {
+      template: "Eu estou ___",
+      correta: "triste",
+      distratores: ["feliz", "bravo", "cansado"],
+      dica: "Como você está quando fica com saudade ou algo ruim acontece?"
+    },
+    {
+      template: "Eu estou ___",
+      correta: "bravo",
+      distratores: ["feliz", "triste", "medo"],
+      dica: "Como você está quando algo te irrita?"
+    },
+    {
+      template: "Eu estou ___",
+      correta: "cansado",
+      distratores: ["feliz", "bravo", "medo"],
+      dica: "Como você está quando precisa descansar?"
+    },
+    {
+      template: "Eu preciso ir ao ___",
+      correta: "banheiro",
+      distratores: ["escola", "comer", "agua"],
+      dica: "Onde você vai quando precisa fazer xixi ou cocô?"
+    },
+    {
+      template: "Eu preciso de ___",
+      correta: "ajuda",
+      distratores: ["agua", "comer", "brincar"],
+      dica: "O que você pede quando não consegue fazer sozinho?"
+    },
+    {
+      template: "Eu preciso de ___",
+      correta: "remedio",
+      distratores: ["agua", "ajuda", "comer"],
+      dica: "O que você toma quando está doente?"
+    },
+    {
+      template: "Eu estou com ___",
+      correta: "dor",
+      distratores: ["medo", "feliz", "cansado"],
+      dica: "O que você sente quando algo dói?"
+    },
+    {
+      template: "Eu estou com ___",
+      correta: "medo",
+      distratores: ["dor", "feliz", "bravo"],
+      dica: "O que você sente quando algo te assusta?"
+    },
+    {
+      template: "Quero ___",
+      correta: "dormir",
+      distratores: ["comer", "brincar", "sair"],
+      dica: "O que você quer fazer quando está com sono?"
+    },
+    {
+      template: "Preciso ___",
+      correta: "esperar",
+      distratores: ["brincar", "comer", "sair"],
+      dica: "O que você faz quando ainda não é a sua vez?"
+    },
+    {
+      template: "Quero ___",
+      correta: "sair",
+      distratores: ["comer", "dormir", "esperar"],
+      dica: "O que você quer fazer para ir para fora?"
+    },
+    {
+      template: "Vou para a ___",
+      correta: "escola",
+      distratores: ["comer", "brincar", "passear"],
+      dica: "Onde você vai para aprender?"
+    },
+    {
+      template: "Quero ___",
+      correta: "tomar-banho",
+      distratores: ["comer", "dormir", "brincar"],
+      dica: "O que você faz para ficar limpo?"
+    },
   ];
 
-  const [idx, setIdx] = useState(0);
-  const [score, setScore] = useState(0);
-  const [feedback, setFeedback] = useState(null);
-  const [done, setDone] = useState(false);
-  const [options, setOptions] = useState([]);
+  // Monta o pool de cards disponiveis do usuario
+  const cardMap = React.useMemo(() => {
+    const m = {};
+    for (const c of (cards || [])) {
+      if (c && c.id) m[String(c.id).trim().normalize("NFC")] = c;
+    }
+    return m;
+  }, [cards]);
 
-  const frase = FRASES[idx];
+  // Filtra so as frases onde o usuario tem a resposta correta E pelo menos 1 distrator
+  const frasesDisponiveis = React.useMemo(() => {
+    return FRASES_BASE.filter(f => {
+      const temCorreta = !!cardMap[f.correta];
+      const temDistratores = f.distratores.some(d => !!cardMap[d]);
+      return temCorreta && temDistratores;
+    });
+  }, [cardMap]);
 
-  // Recalcula opções toda vez que idx ou cards mudam
+  // Embaralha e pega ate 6 frases por rodada
+  const [rodada] = useState(() => shuffle([...frasesDisponiveis.length > 0 ? frasesDisponiveis : []]).slice(0, 6));
+
+  const [idx,      setIdx]      = useState(0);
+  const [score,    setScore]    = useState(0);
+  const [feedback, setFeedback] = useState(null); // null | "correct" | "wrong"
+  const [escolha,  setEscolha]  = useState(null); // card que o usuario clicou
+  const [done,     setDone]     = useState(false);
+  const [options,  setOptions]  = useState([]);
+
+  const frase = rodada[idx] || null;
+
   useEffect(() => {
-    if (!cards?.length) return;
-    const catCards = cards.filter(c => c && c.cat === frase.cat);
-    const wrongPool = cards.filter(c => c && c.cat !== frase.cat);
-    const correct = shuffle(catCards)[0];
-    if (!correct) return;
-    const wrongs = shuffle(wrongPool).slice(0, 3);
-    setOptions(shuffle([correct, ...wrongs]).slice(0, 4));
-  }, [idx, cards]);
+    if (!frase) return;
+    const correta   = cardMap[frase.correta];
+    if (!correta) return;
+    // Pega distratores disponíveis (que o usuario tem na prancha)
+    const distratorCards = frase.distratores
+      .map(d => cardMap[d])
+      .filter(Boolean);
+    // Completa com cards aleatorios se nao tiver distratores suficientes
+    const extras = shuffle(
+      Object.values(cardMap).filter(c =>
+        c.id !== frase.correta && !frase.distratores.includes(c.id)
+      )
+    );
+    const pool = [...distratorCards, ...extras].slice(0, 3);
+    setOptions(shuffle([correta, ...pool]));
+    setFeedback(null);
+    setEscolha(null);
+  }, [idx, frase]);
 
   function pick(card) {
-    if (feedback || !card) return;
-    // Correto se o cat do card bate com o cat da frase
-    const isCorrect = card.cat === frase.cat;
+    if (feedback || !card || !frase) return;
+    const isCorrect = String(card.id).trim().normalize("NFC") === frase.correta;
+    setEscolha(card.id);
     setFeedback(isCorrect ? "correct" : "wrong");
     if (isCorrect) setScore(s => s + 1);
     setTimeout(() => {
-      if (idx + 1 >= FRASES.length) setDone(true);
-      else { setIdx(i => i + 1); setFeedback(null); }
-    }, 1200);
+      if (idx + 1 >= rodada.length) setDone(true);
+      else { setIdx(i => i + 1); }
+    }, 1500);
   }
 
-  function restart() { setIdx(0); setScore(0); setFeedback(null); setDone(false); }
+  function restart() { setIdx(0); setScore(0); setFeedback(null); setEscolha(null); setDone(false); }
+
+  if (frasesDisponiveis.length === 0) return (
+    <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px",textAlign:"center"}}>
+      <div style={{fontSize:"48px",marginBottom:"16px"}}>💬</div>
+      <h2 style={{color:"#1B2D5B",fontSize:"20px",fontWeight:"800",margin:"0 0 12px"}}>Poucos cards na prancha</h2>
+      <p style={{color:"#6b7280",fontSize:"15px",margin:"0 0 24px"}}>Adicione mais cards como "Água", "Comer", "Feliz" e "Ajuda" para usar esta atividade.</p>
+      <button onClick={onBack} style={{background:"#C76B4A",color:"white",border:"none",padding:"12px 28px",borderRadius:"10px",fontWeight:"700",cursor:"pointer"}}>← Voltar</button>
+    </div>
+  );
 
   return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
-      <GameHeader title="💬 Completar Frase" score={score} total={FRASES.length} onBack={onBack} onRestart={restart} />
+      <GameHeader title="💬 Completar Frase" score={score} total={rodada.length} onBack={onBack} onRestart={restart} />
+
       {done
-        ? <Congratulations score={score} total={FRASES.length} onRestart={restart} onBack={onBack} />
-        : <div style={{maxWidth:"560px",margin:"40px auto",padding:"0 24px"}}>
-            <div style={{background:"white",border:"2px solid #e5e7eb",borderRadius:"20px",padding:"32px",textAlign:"center",marginBottom:"32px"}}>
-              <div style={{fontSize:"13px",fontWeight:"700",color:"#C76B4A",marginBottom:"12px",textTransform:"uppercase",letterSpacing:"0.06em"}}>
-                Pergunta {idx+1} de {FRASES.length}
+        ? <Congratulations score={score} total={rodada.length} onRestart={restart} onBack={onBack} />
+        : frase && (
+          <div style={{maxWidth:"520px",margin:"32px auto",padding:"0 20px"}}>
+
+            {/* CARD DA FRASE */}
+            <div style={{
+              background:"white", border:"2px solid #e5e7eb",
+              borderRadius:"20px", padding:"28px 24px",
+              textAlign:"center", marginBottom:"28px",
+              boxShadow:"0 2px 12px rgba(0,0,0,0.05)"
+            }}>
+              <div style={{fontSize:"12px",fontWeight:"700",color:"#C76B4A",marginBottom:"12px",textTransform:"uppercase",letterSpacing:"0.07em"}}>
+                Pergunta {idx+1} de {rodada.length}
               </div>
-              <div style={{fontSize:"26px",fontWeight:"800",color:"#1B2D5B",marginBottom:"8px"}}>{frase.template}</div>
-              <div style={{fontSize:"13px",color:"#9ca3af"}}>Escolha um card de: {frase.hint}</div>
+              <div style={{fontSize:"28px",fontWeight:"800",color:"#1B2D5B",marginBottom:"10px",lineHeight:"1.3"}}>
+                {frase.template}
+              </div>
+              <div style={{
+                display:"inline-block",
+                background:"#f3f4f6", borderRadius:"8px",
+                padding:"6px 14px", fontSize:"13px",
+                color:"#6b7280", fontWeight:"600"
+              }}>
+                💡 {frase.dica}
+              </div>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
-              {(options || []).filter(Boolean).map(card => (
-                <button key={card.id} onClick={() => pick(card)}
-                  style={{background:feedback&&card.cat===frase.cat?"#f0fdf4":feedback&&card.cat!==frase.cat?"#fef2f2":"white",
-                    border:`2px solid ${feedback&&card.cat===frase.cat?"#16a34a":feedback&&card.cat!==frase.cat?"#dc2626":"#e5e7eb"}`,
-                    borderRadius:"14px",padding:"16px",cursor:"pointer",textAlign:"center"}}>
-                  {card.image && <img src={card.image} alt={card.label} style={{width:"64px",height:"64px",objectFit:"contain",marginBottom:"8px"}} />}
-                  <div style={{fontWeight:"700",fontSize:"14px",color:"#1B2D5B"}}>{card.label}</div>
-                </button>
-              ))}
-            </div>
+
+            {/* FEEDBACK BANNER */}
             {feedback && (
-              <div style={{textAlign:"center",marginTop:"20px",fontSize:"24px"}}>{feedback==="correct"?"✅ Correto!":"❌ Tente de novo!"}</div>
+              <div style={{
+                textAlign:"center", marginBottom:"16px",
+                padding:"12px", borderRadius:"12px",
+                background: feedback==="correct" ? "#f0fdf4" : "#fef2f2",
+                border: `2px solid ${feedback==="correct" ? "#16a34a" : "#dc2626"}`,
+                fontSize:"18px", fontWeight:"800",
+                color: feedback==="correct" ? "#16a34a" : "#dc2626"
+              }}>
+                {feedback==="correct" ? "✅ Correto! Muito bem!" : "❌ Não foi dessa vez..."}
+              </div>
             )}
+
+            {/* OPCOES */}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
+              {options.filter(Boolean).map(card => {
+                const isCorreta  = String(card.id).trim().normalize("NFC") === frase.correta;
+                const isSelecion = escolha === card.id;
+                let bg     = "white";
+                let border = "#e5e7eb";
+                if (feedback && isCorreta)           { bg = "#f0fdf4"; border = "#16a34a"; }
+                else if (feedback && isSelecion)     { bg = "#fef2f2"; border = "#dc2626"; }
+                return (
+                  <button key={card.id} onClick={() => pick(card)}
+                    disabled={!!feedback}
+                    style={{
+                      background: bg,
+                      border: `2px solid ${border}`,
+                      borderRadius:"14px", padding:"16px 12px",
+                      cursor: feedback ? "default" : "pointer",
+                      textAlign:"center",
+                      transition:"all 0.25s",
+                      boxShadow: !feedback ? "0 2px 8px rgba(0,0,0,0.04)" : "none"
+                    }}>
+                    {card.image && (
+                      <img src={card.image} alt={card.label}
+                        style={{width:"68px",height:"68px",objectFit:"contain",marginBottom:"8px",display:"block",margin:"0 auto 8px"}} />
+                    )}
+                    <div style={{fontWeight:"700",fontSize:"14px",color:"#1B2D5B"}}>
+                      {card.label}
+                    </div>
+                    {feedback && isCorreta && (
+                      <div style={{fontSize:"12px",color:"#16a34a",fontWeight:"700",marginTop:"4px"}}>✅ Resposta certa!</div>
+                    )}
+                    {feedback && isSelecion && !isCorreta && (
+                      <div style={{fontSize:"12px",color:"#dc2626",fontWeight:"700",marginTop:"4px"}}>❌ Errado</div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
           </div>
+        )
       }
     </div>
   );
 }
+
 
 function Categorizar({ cards, onBack }) {
   const CATS = ["core","necessidades","emocoes","acoes"];
