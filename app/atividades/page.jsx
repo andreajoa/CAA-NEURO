@@ -384,31 +384,26 @@ function Sequencia({ cards, onBack }) {
       titulo: "🛁 Rotina do banho",
       instrucao: "Coloque os cards na ordem certa da rotina do banho!",
       ids: ["tomar-banho", "remedio", "dormir"],
-      fallback: ["tomar-banho", "comer", "dormir"],
     },
     {
       titulo: "🌙 Hora de dormir",
       instrucao: "O que fazemos antes de dormir? Coloque na ordem certa!",
       ids: ["comer", "tomar-banho", "remedio", "dormir"],
-      fallback: ["comer", "tomar-banho", "dormir"],
     },
     {
       titulo: "🏫 Indo para a escola",
       instrucao: "O que fazemos para ir para a escola? Coloque na ordem!",
       ids: ["comer", "tomar-banho", "escola"],
-      fallback: ["comer", "escola"],
     },
     {
       titulo: "🍽️ Na hora da refeição",
       instrucao: "Organize o que acontece na hora de comer!",
       ids: ["agua", "comer", "mais", "acabou"],
-      fallback: ["agua", "comer", "acabou"],
     },
     {
       titulo: "😟 Quando não estou bem",
       instrucao: "O que fazer quando você está com dor ou doente?",
       ids: ["dor", "ajuda", "remedio"],
-      fallback: ["dor", "ajuda"],
     },
   ];
 
@@ -421,15 +416,14 @@ function Sequencia({ cards, onBack }) {
     return m;
   }, [cards]);
 
-  // Escolhe sequencias que o usuario tem cards suficientes
+  // Escolhe sequencias que o usuario tem TODOS os cards necessarios
   const seqsDisponiveis = React.useMemo(() => {
     return SEQUENCIAS.map(seq => {
-      // Tenta a lista principal
-      const principal = seq.ids.map(id => cardMap[id]).filter(Boolean);
-      if (principal.length >= 2) return { ...seq, cardsCorretos: principal };
-      // Tenta o fallback
-      const fb = (seq.fallback||[]).map(id => cardMap[id]).filter(Boolean);
-      if (fb.length >= 2) return { ...seq, cardsCorretos: fb };
+      // So mostra a historia se o usuario tem TODOS os cards dela
+      const cardsCorretos = seq.ids.map(id => cardMap[id]).filter(Boolean);
+      if (cardsCorretos.length === seq.ids.length) {
+        return { ...seq, cardsCorretos };
+      }
       return null;
     }).filter(Boolean);
   }, [cardMap]);
