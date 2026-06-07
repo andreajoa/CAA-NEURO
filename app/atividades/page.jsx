@@ -41,7 +41,9 @@ export default function Atividades() {
         const raw = (d.cards || []).filter(c => c.image || c.image_url || c.label);
         const mapped = raw.map(c => ({
           ...c,
-          image: c.image || c.image_url || `/cards/level-1/${c.id}.webp?v=20260521-optimized`,
+          id: String(c.id || "").trim().normalize("NFC"),
+          label: String(c.label || "").trim(),
+          image: c.image || c.image_url || `/cards/level-1/${String(c.id||"").trim()}.webp?v=20260521-optimized`,
           cat: c.cat || c.category || "core",
         }));
         setCards(mapped.length >= 4 ? mapped : FALLBACK);
@@ -154,7 +156,7 @@ function Associacao({ cards, onBack }) {
     for (const c of (cards || [])) {
       if (c && c.image && c.label && c.id && !seen.has(String(c.id))) {
         seen.add(String(c.id));
-        unique.push({ ...c, id: String(c.id) });
+        unique.push({ ...c, id: String(c.id).trim().normalize("NFC"), label: String(c.label||"").trim() });
       }
     }
     return shuffle(unique).slice(0, 6);
@@ -203,7 +205,9 @@ function Associacao({ cards, onBack }) {
     if (!selectedImg) return;
     if (matched.has(wordId)) return;
 
-    if (selectedImg === wordId) {
+    const selNorm  = String(selectedImg||"").trim().normalize("NFC");
+    const wordNorm = String(wordId||"").trim().normalize("NFC");
+    if (selNorm === wordNorm) {
       const newMatched = new Set(matched);
       newMatched.add(wordId);
       setMatched(newMatched);
