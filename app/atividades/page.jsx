@@ -96,6 +96,24 @@ export default function Atividades() {
     "escola":"/cards/level-1/escola.webp?v=20260521-optimized",
   };
 
+  // ── PRELOAD: carrega todas as imagens na memória do browser logo na abertura
+  useEffect(() => {
+    const urls = Object.values(CARDS_FIXOS).map(c => c.image);
+    // Usa link rel=preload para prioridade alta no browser
+    urls.forEach(url => {
+      const link = document.createElement("link");
+      link.rel  = "preload";
+      link.as   = "image";
+      link.href = url;
+      document.head.appendChild(link);
+    });
+    // Fallback: Image() garante download mesmo sem suporte a link preload
+    urls.forEach(url => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, []);
+
   useEffect(() => {
     fetch("/api/cards?profile=infantil&level=emergente")
       .then(r => r.json())
