@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const CATS = { all:"Todas", core:"Core / Comunicação", necessidades:"Necessidades Básicas", emocoes:"Emoções", saude:"Saúde", escola:"Escola / Educação", social:"Vida Social" };
+const CATS = { all:"Todas", core:"Essenciais / Comunicação", necessidades:"Necessidades Básicas", emocoes:"Emoções", saude:"Saúde", escola:"Escola / Educação", social:"Vida Social" };
 
 export default function PranchotecaPage() {
   const [templates, setTemplates] = useState([]);

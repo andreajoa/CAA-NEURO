@@ -54,7 +54,7 @@ function getLevels(profile) {
 }
 
 const categories = [
-  { id: "core", label: "Core / essenciais" },
+  { id: "core", label: "Essenciais" },
   { id: "necessidades", label: "Necessidades" },
   { id: "emocoes", label: "Emoções" },
   { id: "acoes", label: "Ações" },

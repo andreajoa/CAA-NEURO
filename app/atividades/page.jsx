@@ -681,7 +681,7 @@ function Categorizar({ cards, onBack }) {
     setDone(false);
   }, [cards]);
 
-  const CAT_LABELS = { core:"⭐ Core", necessidades:"🍎 Necessidades", emocoes:"😊 Emoções", acoes:"🏃 Ações" };
+  const CAT_LABELS = { core:"⭐ Essenciais", necessidades:"🍎 Necessidades", emocoes:"😊 Emoções", acoes:"🏃 Ações" };
   const CAT_COLORS = { core:"#2563eb", necessidades:"#059669", emocoes:"#d97706", acoes:"#7c3aed" };
 
   function pick(cat) {
