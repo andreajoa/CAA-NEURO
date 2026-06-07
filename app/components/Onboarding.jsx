@@ -9,32 +9,30 @@ const steps = [
   { icon:"📄", title:"Exporte relatórios", desc:"Baixe PDF profissional ou exporte para Excel/CSV direto do prontuário do paciente.", href:"/pacientes" },
 ];
 
+const TODAY = new Date().toISOString().slice(0, 10); // "2026-06-07"
+const STORAGE_KEY = "caa_onboarding_last_shown";
+
 export default function Onboarding() {
   const [visible, setVisible] = useState(false);
-  const [done, setDone] = useState(true);
   const [step, setStep] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    fetch("/api/user-prefs")
-      .then(r => r.json())
-      .then(d => {
-        const isDone = d.prefs?.onboarding_done === 1;
-        setDone(isDone);
-        setVisible(!isDone);
-        setLoaded(true);
-      })
-      .catch(() => setLoaded(true));
+    const lastShown = localStorage.getItem(STORAGE_KEY);
+    if (lastShown !== TODAY) {
+      setVisible(true);
+      localStorage.setItem(STORAGE_KEY, TODAY);
+    }
+    setLoaded(true);
   }, []);
 
-  async function finish() {
+  function finish() {
     setVisible(false);
-    setDone(true);
-    await fetch("/api/user-prefs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ onboarding_done: true }),
-    }).catch(() => {});
+  }
+
+  function reopen() {
+    setStep(0);
+    setVisible(true);
   }
 
   if (!loaded) return null;
@@ -44,18 +42,18 @@ export default function Onboarding() {
 
   return (
     <>
-      {done && (
+      {!visible && (
         <button
-          onClick={() => { setVisible(true); setStep(0); }}
+          onClick={reopen}
           title="Guia de início"
-          style={{ position:"fixed", bottom:"24px", right:"24px", zIndex:200, background:"#C76B4A", color:"white", border:"none", borderRadius:"50%", width:"50px", height:"50px", fontSize:"22px", cursor:"pointer", boxShadow:"0 4px 16px rgba(0,136,95,0.4)", display:"flex", alignItems:"center", justifyContent:"center" }}
+          style={{ position:"fixed", bottom:"24px", right:"24px", zIndex:200, background:"#C76B4A", color:"white", border:"none", borderRadius:"50%", width:"50px", height:"50px", fontSize:"22px", cursor:"pointer", boxShadow:"0 4px 16px rgba(199,107,74,0.4)", display:"flex", alignItems:"center", justifyContent:"center" }}
         >?</button>
       )}
 
       {visible && (
         <div style={{ position:"fixed", inset:0, zIndex:1000, background:"rgba(0,0,0,0.55)", display:"flex", alignItems:"center", justifyContent:"center", padding:"16px" }}>
           <div style={{ background:"white", borderRadius:"22px", padding:"40px", maxWidth:"480px", width:"100%", position:"relative" }}>
-            <button onClick={finish} style={{ position:"absolute", top:"16px", right:"16px", background:"#f3f4f6", border:"none", width:"34px", height:"34px", borderRadius:"50%", fontSize:"18px", cursor:"pointer", color:"#6b7280", display:"flex", alignItems:"center", justifyContent:"center" }}>×</button>
+            <button onClick={finish} style={{ position:"absolute", top:"16px", right:"16px", background:"#F5EDE8", border:"none", width:"34px", height:"34px", borderRadius:"50%", fontSize:"18px", cursor:"pointer", color:"#C76B4A", display:"flex", alignItems:"center", justifyContent:"center" }}>×</button>
 
             <div style={{ display:"flex", gap:"6px", marginBottom:"32px" }}>
               {steps.map((_,i) => (
@@ -74,7 +72,7 @@ export default function Onboarding() {
 
             <div style={{ display:"flex", gap:"10px" }}>
               {step > 0 && (
-                <button onClick={() => setStep(s => s-1)} style={{ flex:1, padding:"12px", borderRadius:"10px", border:"1px solid #e5e7eb", background:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600" }}>
+                <button onClick={() => setStep(s => s-1)} style={{ flex:1, padding:"12px", borderRadius:"10px", border:"1px solid #E8B4A8", background:"white", fontSize:"14px", cursor:"pointer", fontWeight:"600", color:"#1B2D5B" }}>
                   ← Anterior
                 </button>
               )}
