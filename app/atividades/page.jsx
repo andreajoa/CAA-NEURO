@@ -5,6 +5,45 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MAPA GLOBAL ÚNICO — usado por TODAS as atividades
+// Corrigir aqui corrige em tudo. API nunca sobrescreve isso.
+// ═══════════════════════════════════════════════════════════════════════════
+const CARDS_FIXOS = {
+  "sim":       { label:"Sim",          image:"/cards/level-1/sim.webp?v=20260521-optimized" },
+  "nao":       { label:"Não",          image:"/cards/level-1/nao.webp?v=20260521-optimized" },
+  "ajuda":     { label:"Ajuda",        image:"/cards/level-1/ajuda.webp?v=20260521-optimized" },
+  "mais":      { label:"Mais",         image:"/cards/level-1/mais.webp?v=20260521-optimized" },
+  "agua":      { label:"Água",         image:"/cards/level-1/agua.webp?v=20260521-optimized" },
+  "comer":     { label:"Comer",        image:"/cards/level-1/comer.webp?v=20260521-optimized" },
+  "banheiro":  { label:"Banheiro",     image:"/cards/level-1/banheiro.webp?v=20260521-optimized" },
+  "dormir":    { label:"Dormir",       image:"/cards/level-1/dormir.webp?v=20260521-optimized" },
+  "feliz":     { label:"Feliz",        image:"/cards/level-1/feliz.webp?v=20260521-optimized" },
+  "triste":    { label:"Triste",       image:"/cards/level-1/triste.webp?v=20260521-optimized" },
+  "medo":      { label:"Medo",         image:"/cards/level-1/medo.webp?v=20260521-optimized" },
+  "bravo":     { label:"Bravo",        image:"/cards/level-1/bravo.webp?v=20260521-optimized" },
+  "brincar":   { label:"Brincar",      image:"/cards/level-1/brincar.webp?v=20260521-optimized" },
+  "parar":     { label:"Parar",        image:"/cards/level-1/parar.webp?v=20260521-optimized" },
+  "esperar":   { label:"Esperar",      image:"/cards/level-1/esperar.webp?v=20260521-optimized" },
+  "dor":       { label:"Dor",          image:"/cards/level-1/dor.webp?v=20260521-optimized" },
+  "remedio":   { label:"Remédio",      image:"/cards/level-1/remedio.webp?v=20260521-optimized" },
+  "escola":    { label:"Escola",       image:"/cards/level-1/escola.webp?v=20260521-optimized" },
+  "tomar-banho":{ label:"Tomar banho", image:"/cards/level-1/tomar-banho.webp?v=20260521-optimized" },
+  "sair":      { label:"Sair",         image:"/cards/level-1/sair.webp?v=20260521-optimized" },
+  "passear":   { label:"Passear",      image:"/cards/level-1/passear.webp?v=20260521-optimized" },
+  "cansado":   { label:"Cansado",      image:"/cards/level-1/cansado.webp?v=20260521-optimized" },
+  "acabou":    { label:"Acabou",       image:"/cards/level-1/acabou.webp?v=20260521-optimized" },
+  "me-da":     { label:"Me dá",        image:"/cards/level-1/me-da.webp?v=20260521-optimized" },
+  "nao-quero": { label:"Não quero",    image:"/cards/level-1/nao-quero.webp?v=20260521-optimized" },
+};
+// Helper: dado um id, retorna { id, label, image } sempre correto
+function cardFixo(id) {
+  const f = CARDS_FIXOS[id];
+  if (!f) return { id, label: id, image: `/cards/level-1/${id}.webp?v=20260521-optimized` };
+  return { id, label: f.label, image: f.image };
+}
+
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
 export default function Atividades() {
@@ -510,26 +549,14 @@ function Sequencia({ cards, onBack }) {
     },
   ];
 
-  // Monta o pool de cards disponíveis do usuario
-  const cardMap = React.useMemo(() => {
-    const m = {};
-    for (const c of (cards || [])) {
-      if (c && c.id) m[String(c.id).trim()] = c;
-    }
-    return m;
-  }, [cards]);
-
-  // Escolhe sequencias que o usuario tem TODOS os cards necessarios
+  // Sequencias sempre disponíveis — cards vêm do mapa global CARDS_FIXOS
+  // Não depende da API — imagens e labels sempre corretos
   const seqsDisponiveis = React.useMemo(() => {
     return SEQUENCIAS.map(seq => {
-      // So mostra a historia se o usuario tem TODOS os cards dela
-      const cardsCorretos = seq.ids.map(id => cardMap[id]).filter(Boolean);
-      if (cardsCorretos.length === seq.ids.length) {
-        return { ...seq, cardsCorretos };
-      }
-      return null;
-    }).filter(Boolean);
-  }, [cardMap]);
+      const cardsCorretos = seq.ids.map(id => cardFixo(id));
+      return { ...seq, cardsCorretos };
+    });
+  }, []);
 
   const [seqIdx,    setSeqIdx]    = useState(0);
   const [sequence,  setSequence]  = useState([]);
