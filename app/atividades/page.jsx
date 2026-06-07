@@ -729,59 +729,52 @@ function Sequencia({ cards, onBack }) {
 
 function CompletarFrase({ cards, onBack }) {
 
-  // Cada frase tem resposta UNICA e distratores FIXOS dos 25 cards reais
-  // Distratores escolhidos para serem plausíveis mas claramente errados no contexto
   const FRASES_BASE = [
-    // QUERER coisas
-    { template:"Eu quero ___",   correta:"agua",       distratores:["comer","dormir","brincar"],      dica:"O que você quer beber?" },
-    { template:"Eu quero ___",   correta:"comer",      distratores:["agua","dormir","brincar"],       dica:"O que você quer quando está com fome?" },
-    { template:"Eu quero ___",   correta:"brincar",    distratores:["comer","dormir","passear"],      dica:"O que você quer fazer na hora do lazer?" },
-    { template:"Eu quero ___",   correta:"passear",    distratores:["brincar","sair","comer"],        dica:"O que você quer fazer para ir para fora com alguém?" },
-    { template:"Eu quero ___",   correta:"dormir",     distratores:["comer","brincar","esperar"],     dica:"O que você quer fazer quando está com sono?" },
-    { template:"Eu quero ___",   correta:"sair",       distratores:["brincar","passear","esperar"],   dica:"O que você quer fazer para sair daqui?" },
-    { template:"Eu quero ___",   correta:"tomar-banho",distratores:["comer","dormir","brincar"],      dica:"O que você faz para ficar limpo?" },
-    // ESTAR sentindo
-    { template:"Eu estou ___",   correta:"feliz",      distratores:["triste","bravo","cansado"],      dica:"Como você está quando algo bom acontece?" },
-    { template:"Eu estou ___",   correta:"triste",     distratores:["feliz","bravo","cansado"],       dica:"Como você está quando algo ruim acontece?" },
-    { template:"Eu estou ___",   correta:"bravo",      distratores:["feliz","triste","medo"],         dica:"Como você está quando algo te irrita muito?" },
-    { template:"Eu estou ___",   correta:"cansado",    distratores:["feliz","triste","bravo"],        dica:"Como você está quando precisa descansar?" },
-    { template:"Eu estou ___",   correta:"medo",       distratores:["bravo","triste","cansado"],      dica:"Como você se sente quando algo te assusta?" },
-    // COM algo
-    { template:"Eu estou com ___",correta:"dor",       distratores:["medo","cansado","bravo"],        dica:"O que você sente quando algo dói no seu corpo?" },
-    { template:"Eu estou com ___",correta:"medo",      distratores:["dor","cansado","triste"],        dica:"O que você sente quando algo te assusta?" },
-    // PRECISAR
-    { template:"Eu preciso de ___",correta:"ajuda",    distratores:["agua","comer","remedio"],        dica:"O que você pede quando não consegue sozinho?" },
-    { template:"Eu preciso de ___",correta:"remedio",  distratores:["agua","ajuda","comer"],          dica:"O que você toma quando está doente?" },
-    { template:"Eu preciso ir ao ___",correta:"banheiro",distratores:["escola","sair","passear"],     dica:"Onde você vai quando precisa fazer xixi?" },
-    // OUTROS
-    { template:"Preciso ___",    correta:"esperar",    distratores:["brincar","sair","parar"],        dica:"O que você faz quando ainda não é a sua vez?" },
-    { template:"Vou para a ___", correta:"escola",     distratores:["banheiro","passear","sair"],     dica:"Onde você vai para aprender?" },
-    { template:"Quero ___",      correta:"mais",       distratores:["acabou","esperar","parar"],      dica:"O que você fala quando quer repetir?" },
-    { template:"Já ___",         correta:"acabou",     distratores:["mais","comer","brincar"],        dica:"O que você fala quando terminou?" },
-    { template:"Preciso ___",    correta:"parar",      distratores:["esperar","sair","brincar"],      dica:"O que você diz quando quer que algo pare?" },
+    { template:"Eu quero ___",      correta:"agua",        distratores:["comer","dormir","brincar"],    dica:"O que você quer beber?" },
+    { template:"Eu quero ___",      correta:"comer",       distratores:["agua","dormir","brincar"],     dica:"O que você quer quando está com fome?" },
+    { template:"Eu quero ___",      correta:"brincar",     distratores:["comer","dormir","passear"],    dica:"O que você quer fazer na hora do lazer?" },
+    { template:"Eu quero ___",      correta:"passear",     distratores:["brincar","sair","comer"],      dica:"O que você quer fazer para sair com alguém?" },
+    { template:"Eu quero ___",      correta:"dormir",      distratores:["comer","brincar","esperar"],   dica:"O que você quer fazer quando está com sono?" },
+    { template:"Eu quero ___",      correta:"sair",        distratores:["brincar","passear","esperar"], dica:"O que você quer fazer para ir embora daqui?" },
+    { template:"Eu quero ___",      correta:"tomar-banho", distratores:["comer","dormir","brincar"],    dica:"O que você faz para ficar limpo?" },
+    { template:"Eu estou ___",      correta:"feliz",       distratores:["triste","bravo","cansado"],    dica:"Como você está quando algo bom acontece?" },
+    { template:"Eu estou ___",      correta:"triste",      distratores:["feliz","bravo","cansado"],     dica:"Como você está quando algo ruim acontece?" },
+    { template:"Eu estou ___",      correta:"bravo",       distratores:["feliz","triste","medo"],       dica:"Como você está quando algo te irrita muito?" },
+    { template:"Eu estou ___",      correta:"cansado",     distratores:["feliz","triste","bravo"],      dica:"Como você está quando precisa descansar?" },
+    { template:"Eu estou ___",      correta:"medo",        distratores:["bravo","triste","cansado"],    dica:"Como você se sente quando algo te assusta?" },
+    { template:"Eu estou com ___",  correta:"dor",         distratores:["medo","cansado","bravo"],      dica:"O que você sente quando algo dói no seu corpo?" },
+    { template:"Eu estou com ___",  correta:"medo",        distratores:["dor","cansado","triste"],      dica:"O que você sente quando algo te assusta?" },
+    { template:"Eu preciso de ___", correta:"ajuda",       distratores:["agua","comer","remedio"],      dica:"O que você pede quando não consegue sozinho?" },
+    { template:"Eu preciso de ___", correta:"remedio",     distratores:["agua","ajuda","comer"],        dica:"O que você toma quando está doente?" },
+    { template:"Eu preciso ir ao ___", correta:"banheiro", distratores:["escola","sair","passear"],     dica:"Onde você vai quando precisa fazer xixi?" },
+    { template:"Preciso ___",       correta:"esperar",     distratores:["brincar","sair","parar"],      dica:"O que você faz quando ainda não é a sua vez?" },
+    { template:"Vou para a ___",    correta:"escola",      distratores:["banheiro","passear","sair"],   dica:"Onde você vai para aprender?" },
+    { template:"Quero ___",         correta:"mais",        distratores:["acabou","esperar","parar"],    dica:"O que você fala quando quer repetir?" },
+    { template:"Já ___",            correta:"acabou",      distratores:["mais","comer","brincar"],      dica:"O que você fala quando terminou?" },
+    { template:"Preciso ___",       correta:"parar",       distratores:["esperar","sair","brincar"],    dica:"O que você diz quando quer que algo pare?" },
   ];
 
-  // Monta o pool de cards disponiveis do usuario
+  // cardMap: id → card object
   const cardMap = React.useMemo(() => {
     const m = {};
     for (const c of (cards || [])) {
-      if (c && c.id) m[String(c.id).trim().normalize("NFC")] = c;
+      if (c && c.id) m[String(c.id).trim()] = c;
     }
     return m;
   }, [cards]);
 
-  // So mostra frases onde o usuario tem a correta E pelo menos 2 distratores
+  // Frases jogáveis: correta + pelo menos 2 distratores disponíveis na prancha
   const frasesDisponiveis = React.useMemo(() => {
     return FRASES_BASE.filter(f => {
-      const temCorreta     = !!cardMap[f.correta];
-      const nDistratores   = f.distratores.filter(d => !!cardMap[d]).length;
+      const temCorreta   = !!cardMap[f.correta];
+      const nDistratores = f.distratores.filter(d => !!cardMap[d]).length;
       return temCorreta && nDistratores >= 2;
     });
   }, [cardMap]);
 
-  // Rodada como useMemo — reativo ao cardMap (corrige bug do lazy useState)
+  // Rodada: 6 frases embaralhadas — recalcula só quando o conjunto de frases muda
   const rodada = React.useMemo(() => {
-    if (frasesDisponiveis.length === 0) return [];
+    if (!frasesDisponiveis.length) return [];
     return shuffle([...frasesDisponiveis]).slice(0, 6);
   }, [frasesDisponiveis.length]);
 
@@ -790,43 +783,52 @@ function CompletarFrase({ cards, onBack }) {
   const [feedback, setFeedback] = useState(null);
   const [escolha,  setEscolha]  = useState(null);
   const [done,     setDone]     = useState(false);
-  const [options,  setOptions]  = useState([]);
 
-  const frase = rodada[idx] || null;
+  const frase = rodada[idx] ?? null;
 
-  // Monta as opcoes sempre que a frase mudar — garantido apos cardMap populado
-  useEffect(() => {
-    if (!frase || !cardMap) return;
+  // Opções calculadas via useMemo — sem useEffect, sem estado stale
+  const options = React.useMemo(() => {
+    if (!frase) return [];
     const correta = cardMap[frase.correta];
-    if (!correta) return;
-    const distratorCards = frase.distratores
+    if (!correta) return [];
+    const distratores = frase.distratores
       .map(d => cardMap[d])
       .filter(Boolean)
       .slice(0, 3);
-    setOptions(shuffle([correta, ...distratorCards]));
+    return shuffle([correta, ...distratores]);
+  }, [frase, cardMap]);
+
+  // Reseta feedback quando a frase muda
+  useEffect(() => {
     setFeedback(null);
     setEscolha(null);
-  }, [idx, frase, rodada]);
+  }, [idx]);
 
   function pick(card) {
     if (feedback || !card || !frase) return;
-    const isCorrect = String(card.id).trim().normalize("NFC") === frase.correta;
+    const isCorrect = String(card.id).trim() === String(frase.correta).trim();
     setEscolha(card.id);
     setFeedback(isCorrect ? "correct" : "wrong");
     if (isCorrect) setScore(s => s + 1);
     setTimeout(() => {
       if (idx + 1 >= rodada.length) setDone(true);
-      else { setIdx(i => i + 1); }
+      else setIdx(i => i + 1);
     }, 1500);
   }
 
-  function restart() { setIdx(0); setScore(0); setFeedback(null); setEscolha(null); setDone(false); }
+  function restart() {
+    setIdx(0);
+    setScore(0);
+    setFeedback(null);
+    setEscolha(null);
+    setDone(false);
+  }
 
   if (frasesDisponiveis.length === 0) return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"24px",textAlign:"center"}}>
       <div style={{fontSize:"48px",marginBottom:"16px"}}>💬</div>
       <h2 style={{color:"#1B2D5B",fontSize:"20px",fontWeight:"800",margin:"0 0 12px"}}>Poucos cards na prancha</h2>
-      <p style={{color:"#6b7280",fontSize:"15px",margin:"0 0 24px"}}>Adicione mais cards como "Água", "Comer", "Feliz" e "Ajuda" para usar esta atividade.</p>
+      <p style={{color:"#6b7280",fontSize:"15px",margin:"0 0 24px"}}>Adicione cards como "Água", "Comer", "Feliz" e "Dor" para usar esta atividade.</p>
       <button onClick={onBack} style={{background:"#C76B4A",color:"white",border:"none",padding:"12px 28px",borderRadius:"10px",fontWeight:"700",cursor:"pointer"}}>← Voltar</button>
     </div>
   );
@@ -841,76 +843,42 @@ function CompletarFrase({ cards, onBack }) {
           <div style={{maxWidth:"520px",margin:"32px auto",padding:"0 20px"}}>
 
             {/* CARD DA FRASE */}
-            <div style={{
-              background:"white", border:"2px solid #e5e7eb",
-              borderRadius:"20px", padding:"28px 24px",
-              textAlign:"center", marginBottom:"28px",
-              boxShadow:"0 2px 12px rgba(0,0,0,0.05)"
-            }}>
+            <div style={{background:"white",border:"2px solid #e5e7eb",borderRadius:"20px",padding:"28px 24px",textAlign:"center",marginBottom:"28px",boxShadow:"0 2px 12px rgba(0,0,0,0.05)"}}>
               <div style={{fontSize:"12px",fontWeight:"700",color:"#C76B4A",marginBottom:"12px",textTransform:"uppercase",letterSpacing:"0.07em"}}>
                 Pergunta {idx+1} de {rodada.length}
               </div>
               <div style={{fontSize:"28px",fontWeight:"800",color:"#1B2D5B",marginBottom:"10px",lineHeight:"1.3"}}>
                 {frase.template}
               </div>
-              <div style={{
-                display:"inline-block",
-                background:"#f3f4f6", borderRadius:"8px",
-                padding:"6px 14px", fontSize:"13px",
-                color:"#6b7280", fontWeight:"600"
-              }}>
+              <div style={{display:"inline-block",background:"#f3f4f6",borderRadius:"8px",padding:"6px 14px",fontSize:"13px",color:"#6b7280",fontWeight:"600"}}>
                 💡 {frase.dica}
               </div>
             </div>
 
-            {/* FEEDBACK BANNER */}
+            {/* FEEDBACK */}
             {feedback && (
-              <div style={{
-                textAlign:"center", marginBottom:"16px",
-                padding:"12px", borderRadius:"12px",
-                background: feedback==="correct" ? "#f0fdf4" : "#fef2f2",
-                border: `2px solid ${feedback==="correct" ? "#16a34a" : "#dc2626"}`,
-                fontSize:"18px", fontWeight:"800",
-                color: feedback==="correct" ? "#16a34a" : "#dc2626"
-              }}>
+              <div style={{textAlign:"center",marginBottom:"16px",padding:"12px",borderRadius:"12px",background:feedback==="correct"?"#f0fdf4":"#fef2f2",border:`2px solid ${feedback==="correct"?"#16a34a":"#dc2626"}`,fontSize:"18px",fontWeight:"800",color:feedback==="correct"?"#16a34a":"#dc2626"}}>
                 {feedback==="correct" ? "✅ Correto! Muito bem!" : "❌ Não foi dessa vez..."}
               </div>
             )}
 
-            {/* OPCOES */}
+            {/* OPÇÕES */}
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
-              {options.filter(Boolean).map(card => {
-                const isCorreta  = String(card.id).trim().normalize("NFC") === frase.correta;
+              {options.map(card => {
+                const isCorreta  = String(card.id).trim() === String(frase.correta).trim();
                 const isSelecion = escolha === card.id;
-                let bg     = "white";
-                let border = "#e5e7eb";
-                if (feedback && isCorreta)           { bg = "#f0fdf4"; border = "#16a34a"; }
-                else if (feedback && isSelecion)     { bg = "#fef2f2"; border = "#dc2626"; }
+                let bg = "white", border = "#e5e7eb";
+                if (feedback && isCorreta)       { bg="#f0fdf4"; border="#16a34a"; }
+                else if (feedback && isSelecion) { bg="#fef2f2"; border="#dc2626"; }
                 return (
-                  <button key={card.id} onClick={() => pick(card)}
-                    disabled={!!feedback}
-                    style={{
-                      background: bg,
-                      border: `2px solid ${border}`,
-                      borderRadius:"14px", padding:"16px 12px",
-                      cursor: feedback ? "default" : "pointer",
-                      textAlign:"center",
-                      transition:"all 0.25s",
-                      boxShadow: !feedback ? "0 2px 8px rgba(0,0,0,0.04)" : "none"
-                    }}>
+                  <button key={card.id} onClick={() => pick(card)} disabled={!!feedback}
+                    style={{background:bg,border:`2px solid ${border}`,borderRadius:"14px",padding:"16px 12px",cursor:feedback?"default":"pointer",textAlign:"center",transition:"all 0.25s",boxShadow:!feedback?"0 2px 8px rgba(0,0,0,0.04)":"none"}}>
                     {card.image && (
-                      <img src={card.image} alt={card.label}
-                        style={{width:"68px",height:"68px",objectFit:"contain",marginBottom:"8px",display:"block",margin:"0 auto 8px"}} />
+                      <img src={card.image} alt={card.label} style={{width:"68px",height:"68px",objectFit:"contain",display:"block",margin:"0 auto 8px"}} />
                     )}
-                    <div style={{fontWeight:"700",fontSize:"14px",color:"#1B2D5B"}}>
-                      {card.label}
-                    </div>
-                    {feedback && isCorreta && (
-                      <div style={{fontSize:"12px",color:"#16a34a",fontWeight:"700",marginTop:"4px"}}>✅ Resposta certa!</div>
-                    )}
-                    {feedback && isSelecion && !isCorreta && (
-                      <div style={{fontSize:"12px",color:"#dc2626",fontWeight:"700",marginTop:"4px"}}>❌ Errado</div>
-                    )}
+                    <div style={{fontWeight:"700",fontSize:"14px",color:"#1B2D5B"}}>{card.label}</div>
+                    {feedback && isCorreta && <div style={{fontSize:"12px",color:"#16a34a",fontWeight:"700",marginTop:"4px"}}>✅ Resposta certa!</div>}
+                    {feedback && isSelecion && !isCorreta && <div style={{fontSize:"12px",color:"#dc2626",fontWeight:"700",marginTop:"4px"}}>❌ Errado</div>}
                   </button>
                 );
               })}
