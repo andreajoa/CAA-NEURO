@@ -761,99 +761,109 @@ function Sequencia({ cards, onBack }) {
 
 function CompletarFrase({ cards, onBack }) {
 
-  // Cada frase é construída A PARTIR do card correto.
-  // id  = card correto (deve existir na prancha)
-  // t   = template da frase com ___
-  // d   = distratores (3 ids que também existem na prancha)
-  // dica = contexto da situação — nunca menciona conceito fora dos cards
+  // ── IDs VÁLIDOS: exatamente os 18 do FALLBACK ──────────────────────────
+  // Qualquer card extra da API (lanche, cansado, tomar-banho...) é ignorado
+  const IDS_VALIDOS = ["sim","nao","ajuda","mais","agua","comer","banheiro",
+    "dormir","feliz","triste","medo","bravo","brincar","parar","esperar",
+    "dor","remedio","escola"];
+
+  // ── IMAGENS FIXAS por id ─────────────────────────────────────────────────
+  const IMG = {
+    "sim":"/cards/level-1/sim.webp?v=20260521-optimized",
+    "nao":"/cards/level-1/nao.webp?v=20260521-optimized",
+    "ajuda":"/cards/level-1/ajuda.webp?v=20260521-optimized",
+    "mais":"/cards/level-1/mais.webp?v=20260521-optimized",
+    "agua":"/cards/level-1/agua.webp?v=20260521-optimized",
+    "comer":"/cards/level-1/comer.webp?v=20260521-optimized",
+    "banheiro":"/cards/level-1/banheiro.webp?v=20260521-optimized",
+    "dormir":"/cards/level-1/dormir.webp?v=20260521-optimized",
+    "feliz":"/cards/level-1/feliz.webp?v=20260521-optimized",
+    "triste":"/cards/level-1/triste.webp?v=20260521-optimized",
+    "medo":"/cards/level-1/medo.webp?v=20260521-optimized",
+    "bravo":"/cards/level-1/bravo.webp?v=20260521-optimized",
+    "brincar":"/cards/level-1/brincar.webp?v=20260521-optimized",
+    "parar":"/cards/level-1/parar.webp?v=20260521-optimized",
+    "esperar":"/cards/level-1/esperar.webp?v=20260521-optimized",
+    "dor":"/cards/level-1/dor.webp?v=20260521-optimized",
+    "remedio":"/cards/level-1/remedio.webp?v=20260521-optimized",
+    "escola":"/cards/level-1/escola.webp?v=20260521-optimized",
+  };
+
+  // ── FRASES: construídas A PARTIR do card correto ─────────────────────────
+  // id = card correto | t = template | d = 3 distratores | dica = situação
+  // Todos os ids (id + d) pertencem a IDS_VALIDOS
   const FRASES_BASE = [
-    // ÁGUA
-    { id:"agua",     t:"Eu quero ___",         d:["comer","brincar","dormir"],   dica:"Você está com sede. O que você quer?" },
-    // COMER
-    { id:"comer",    t:"Eu quero ___",         d:["agua","brincar","dormir"],    dica:"Sua barriga está roncando. O que você quer?" },
-    // DORMIR
-    { id:"dormir",   t:"Eu quero ___",         d:["comer","brincar","agua"],     dica:"Seus olhos estão pesados. O que você quer?" },
-    // BRINCAR
-    { id:"brincar",  t:"Eu quero ___",         d:["comer","dormir","esperar"],   dica:"Você quer se divertir. O que você quer fazer?" },
-    // BANHEIRO
-    { id:"banheiro", t:"Eu preciso ir ao ___", d:["escola","comer","dormir"],    dica:"Você precisa fazer xixi. Para onde você vai?" },
-    // ESCOLA
-    { id:"escola",   t:"Eu vou para a ___",    d:["banheiro","comer","brincar"], dica:"É hora de estudar e aprender. Para onde você vai?" },
-    // AJUDA
-    { id:"ajuda",    t:"Eu preciso de ___",    d:["agua","comer","remedio"],     dica:"Você não consegue fazer sozinho. O que você pede?" },
-    // REMÉDIO
-    { id:"remedio",  t:"Eu preciso de ___",    d:["agua","ajuda","comer"],       dica:"Você está doente e o médico mandou tomar. O que você precisa?" },
-    // DOR
-    { id:"dor",      t:"Eu estou com ___",     d:["medo","bravo","triste"],      dica:"Algo está machucando seu corpo. O que você está sentindo?" },
-    // MEDO
-    { id:"medo",     t:"Eu estou com ___",     d:["dor","bravo","triste"],       dica:"Algo te assustou. O que você está sentindo?" },
-    // FELIZ
-    { id:"feliz",    t:"Eu estou ___",         d:["triste","bravo","medo"],      dica:"Algo muito bom aconteceu. Como você está?" },
-    // TRISTE
-    { id:"triste",   t:"Eu estou ___",         d:["feliz","bravo","medo"],       dica:"Algo ruim aconteceu e você quer chorar. Como você está?" },
-    // BRAVO
-    { id:"bravo",    t:"Eu estou ___",         d:["feliz","triste","medo"],      dica:"Algo te irritou muito. Como você está?" },
-    // ESPERAR
-    { id:"esperar",  t:"Preciso ___",          d:["parar","brincar","dormir"],   dica:"Ainda não é sua vez. O que você faz?" },
-    // PARAR
-    { id:"parar",    t:"Quero ___",            d:["esperar","brincar","dormir"], dica:"Você não quer mais continuar. O que você diz?" },
-    // MAIS
-    { id:"mais",     t:"Eu quero ___",         d:["parar","esperar","dormir"],   dica:"Você gostou e quer repetir. O que você fala?" },
-    // SIM
-    { id:"sim",      t:"A resposta é ___",     d:["nao","parar","esperar"],      dica:"Você concorda e quer dizer que sim. Qual card você usa?" },
-    // NÃO
-    { id:"nao",      t:"A resposta é ___",     d:["sim","parar","esperar"],      dica:"Você não quer e precisa recusar. Qual card você usa?" },
+    { id:"agua",     t:"Eu quero ___",          d:["comer","brincar","dormir"],   dica:"Você está com sede. O que você quer?" },
+    { id:"comer",    t:"Eu quero ___",          d:["agua","brincar","dormir"],    dica:"Sua barriga está roncando. O que você quer?" },
+    { id:"dormir",   t:"Eu quero ___",          d:["comer","brincar","agua"],     dica:"Seus olhos estão pesados. O que você quer?" },
+    { id:"brincar",  t:"Eu quero ___",          d:["comer","dormir","esperar"],   dica:"Você quer se divertir. O que você quer fazer?" },
+    { id:"banheiro", t:"Eu preciso ir ao ___",  d:["escola","comer","dormir"],    dica:"Você precisa fazer xixi. Para onde você vai?" },
+    { id:"escola",   t:"Eu vou para a ___",     d:["banheiro","comer","brincar"], dica:"É hora de estudar. Para onde você vai?" },
+    { id:"ajuda",    t:"Eu preciso de ___",     d:["agua","comer","remedio"],     dica:"Você não consegue fazer sozinho. O que você pede?" },
+    { id:"remedio",  t:"Eu preciso de ___",     d:["agua","ajuda","comer"],       dica:"Você está doente. O que você precisa tomar?" },
+    { id:"dor",      t:"Eu estou com ___",      d:["medo","bravo","triste"],      dica:"Algo está machucando seu corpo. O que você sente?" },
+    { id:"medo",     t:"Eu estou com ___",      d:["dor","bravo","triste"],       dica:"Algo te assustou. O que você está sentindo?" },
+    { id:"feliz",    t:"Eu estou ___",          d:["triste","bravo","medo"],      dica:"Algo bom aconteceu. Como você está?" },
+    { id:"triste",   t:"Eu estou ___",          d:["feliz","bravo","medo"],       dica:"Algo ruim aconteceu. Como você está?" },
+    { id:"bravo",    t:"Eu estou ___",          d:["feliz","triste","medo"],      dica:"Algo te irritou muito. Como você está?" },
+    { id:"esperar",  t:"Preciso ___",           d:["parar","brincar","dormir"],   dica:"Ainda não é sua vez. O que você faz?" },
+    { id:"parar",    t:"Quero ___",             d:["esperar","brincar","dormir"], dica:"Você não quer mais continuar. O que você diz?" },
+    { id:"mais",     t:"Eu quero ___",          d:["parar","esperar","dormir"],   dica:"Você gostou e quer repetir. O que você fala?" },
+    { id:"sim",      t:"A resposta é ___",      d:["nao","parar","esperar"],      dica:"Você concorda. Qual card você usa?" },
+    { id:"nao",      t:"A resposta é ___",      d:["sim","parar","esperar"],      dica:"Você não quer. Qual card você usa?" },
   ];
 
-  // cardMap: id → card object (apenas cards reais da prancha)
+  // ── cardMap: SOMENTE ids em IDS_VALIDOS, imagem sempre do IMG fixo ───────
   const cardMap = React.useMemo(() => {
+    const validSet = new Set(IDS_VALIDOS);
     const m = {};
     for (const c of (cards || [])) {
-      if (c && c.id) m[String(c.id).trim()] = c;
+      if (!c || !c.id) continue;
+      const id = String(c.id).trim();
+      if (!validSet.has(id)) continue;          // bloqueia cansado, lanche, etc.
+      m[id] = { ...c, id, image: IMG[id] };     // imagem sempre do mapa fixo
     }
     return m;
   }, [cards]);
 
-  // Só mostra frases onde o card correto E os 3 distratores existem na prancha
-  const frasesDisponiveis = React.useMemo(() => {
-    return FRASES_BASE.filter(f => {
-      const temCorreta     = !!cardMap[f.id];
-      const nDistratores   = f.d.filter(id => !!cardMap[id]).length;
-      return temCorreta && nDistratores === 3;
-    });
-  }, [cardMap]);
+  // ── Frases disponíveis: correta + exatamente 3 distratores no cardMap ────
+  const frasesDisponiveis = React.useMemo(() =>
+    FRASES_BASE.filter(f =>
+      !!cardMap[f.id] && f.d.length === f.d.filter(id => !!cardMap[id]).length
+    )
+  , [cardMap]);
 
-  // Até 8 frases por rodada, embaralhadas
+  // ── Rodada: até 8 frases embaralhadas ────────────────────────────────────
   const rodada = React.useMemo(() => {
     if (!frasesDisponiveis.length) return [];
     return shuffle([...frasesDisponiveis]).slice(0, 8);
   }, [frasesDisponiveis.length]);
 
-  const [idx,     setIdx]     = useState(0);
-  const [score,   setScore]   = useState(0);
-  const [feedback,setFeedback]= useState(null);
-  const [escolha, setEscolha] = useState(null);
-  const [done,    setDone]    = useState(false);
+  const [idx,      setIdx]      = useState(0);
+  const [score,    setScore]    = useState(0);
+  const [feedback, setFeedback] = useState(null);
+  const [escolha,  setEscolha]  = useState(null);
+  const [done,     setDone]     = useState(false);
 
   const frase = rodada[idx] ?? null;
 
-  // Opções: card correto + 3 distratores, todos garantidos
+  // ── Opções: 1 correta + 3 distratores, todos do cardMap filtrado ─────────
   const options = React.useMemo(() => {
     if (!frase) return [];
-    const correta     = cardMap[frase.id];
+    const correta = cardMap[frase.id];
     if (!correta) return [];
-    const distratores = frase.d.map(id => cardMap[id]).filter(Boolean);
-    return shuffle([correta, ...distratores]);
+    const dist = frase.d.map(id => cardMap[id]).filter(Boolean);
+    return shuffle([correta, ...dist]);
   }, [frase, cardMap]);
 
   useEffect(() => { setFeedback(null); setEscolha(null); }, [idx]);
 
   function pick(card) {
     if (feedback || !card || !frase) return;
-    const isCorrect = String(card.id).trim() === String(frase.id).trim();
+    const ok = String(card.id).trim() === frase.id;
     setEscolha(card.id);
-    setFeedback(isCorrect ? "correct" : "wrong");
-    if (isCorrect) setScore(s => s + 1);
+    setFeedback(ok ? "correct" : "wrong");
+    if (ok) setScore(s => s + 1);
     setTimeout(() => {
       if (idx + 1 >= rodada.length) setDone(true);
       else setIdx(i => i + 1);
@@ -881,7 +891,6 @@ function CompletarFrase({ cards, onBack }) {
         : frase && (
           <div style={{maxWidth:"520px",margin:"32px auto",padding:"0 20px"}}>
 
-            {/* FRASE */}
             <div style={{background:"white",border:"2px solid #e5e7eb",borderRadius:"20px",padding:"28px 24px",textAlign:"center",marginBottom:"24px",boxShadow:"0 2px 12px rgba(0,0,0,0.05)"}}>
               <div style={{fontSize:"12px",fontWeight:"700",color:"#C76B4A",marginBottom:"12px",textTransform:"uppercase",letterSpacing:"0.07em"}}>
                 Pergunta {idx+1} de {rodada.length}
@@ -894,25 +903,23 @@ function CompletarFrase({ cards, onBack }) {
               </div>
             </div>
 
-            {/* FEEDBACK */}
             {feedback && (
               <div style={{textAlign:"center",marginBottom:"16px",padding:"12px",borderRadius:"12px",background:feedback==="correct"?"#f0fdf4":"#fef2f2",border:`2px solid ${feedback==="correct"?"#16a34a":"#dc2626"}`,fontSize:"18px",fontWeight:"800",color:feedback==="correct"?"#16a34a":"#dc2626"}}>
                 {feedback==="correct" ? "✅ Correto! Muito bem!" : "❌ Não foi dessa vez..."}
               </div>
             )}
 
-            {/* OPÇÕES — sempre 4 cards garantidos */}
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
               {options.map(card => {
-                const isCorreta  = String(card.id).trim() === String(frase.id).trim();
+                const isCorreta  = String(card.id).trim() === frase.id;
                 const isSelecion = escolha === card.id;
                 let bg = "white", border = "#e5e7eb";
-                if (feedback && isCorreta)            { bg="#f0fdf4"; border="#16a34a"; }
-                else if (feedback && isSelecion)      { bg="#fef2f2"; border="#dc2626"; }
+                if (feedback && isCorreta)           { bg="#f0fdf4"; border="#16a34a"; }
+                else if (feedback && isSelecion)     { bg="#fef2f2"; border="#dc2626"; }
                 return (
                   <button key={card.id} onClick={() => pick(card)} disabled={!!feedback}
                     style={{background:bg,border:`2px solid ${border}`,borderRadius:"14px",padding:"16px 12px",cursor:feedback?"default":"pointer",textAlign:"center",transition:"all 0.25s",boxShadow:!feedback?"0 2px 8px rgba(0,0,0,0.04)":"none"}}>
-                    {card.image && <img src={card.image} alt={card.label} style={{width:"68px",height:"68px",objectFit:"contain",display:"block",margin:"0 auto 8px"}} />}
+                    <img src={IMG[card.id]} alt={card.label} style={{width:"68px",height:"68px",objectFit:"contain",display:"block",margin:"0 auto 8px"}} />
                     <div style={{fontWeight:"700",fontSize:"14px",color:"#1B2D5B"}}>{card.label}</div>
                     {feedback && isCorreta    && <div style={{fontSize:"12px",color:"#16a34a",fontWeight:"700",marginTop:"4px"}}>✅ Resposta certa!</div>}
                     {feedback && isSelecion && !isCorreta && <div style={{fontSize:"12px",color:"#dc2626",fontWeight:"700",marginTop:"4px"}}>❌ Errado</div>}
