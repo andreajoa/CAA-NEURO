@@ -484,20 +484,26 @@ function Sequencia({ cards, onBack }) {
 
   function addCard(card) {
     if (sequence.find(s => s.id === card.id)) return;
-    const next = [...sequence, card];
+    const pos  = sequence.length; // proxima posicao
+    const ok   = correct[pos] && correct[pos].id === card.id;
+    const next = [...sequence, { ...card, ok }];
     setSequence(next);
     setBank(prev => prev.filter(c => c.id !== card.id));
     if (next.length === correct.length) {
-      const hits = next.filter((c, i) => c.id === correct[i].id).length;
+      const hits = next.filter(c => c.ok).length;
       setScore(hits);
-      setPhase("result");
+      setTimeout(() => setPhase("result"), 900);
     }
   }
 
   function removeCard(idx) {
     const card = sequence[idx];
-    setSequence(prev => prev.filter((_, i) => i !== idx));
-    setBank(prev => shuffle([...prev, card]));
+    if (card.ok) return; // nao pode remover card correto
+    // Remove este card e todos os que vierem depois dele
+    const removidos = sequence.slice(idx);
+    const mantidos  = sequence.slice(0, idx);
+    setSequence(mantidos);
+    setBank(prev => shuffle([...prev, ...removidos.map(c => ({ ...c, ok: undefined }))]));
   }
 
   function restart() {
@@ -659,17 +665,37 @@ function Sequencia({ cards, onBack }) {
             border:"2px dashed #e5e7eb",padding:"12px",alignItems:"center"
           }}>
             {sequence.length === 0 && (
-              <p style={{color:"#9ca3af",fontSize:"14px",margin:0,textAlign:"center"}}>
-                👇 Toque nos cards abaixo para montar a sequência
-              </p>
+              <div style={{textAlign:"center"}}>
+                <p style={{color:"#9ca3af",fontSize:"14px",margin:"0 0 4px"}}>
+                  👇 Toque nos cards abaixo para montar a frase
+                </p>
+                <p style={{color:"#C76B4A",fontSize:"13px",fontWeight:"700",margin:0}}>
+                  ✅ Card certo = fica verde e travado!
+                </p>
+              </div>
             )}
             {sequence.map((c, i) => (
-              <div key={c.id} style={{background:"#FFF5F2",border:"2px solid #C76B4A",borderRadius:"10px",padding:"8px",textAlign:"center",minWidth:"76px",position:"relative"}}>
-                <button onClick={() => removeCard(i)}
-                  style={{position:"absolute",top:"-8px",right:"-8px",background:"#dc2626",border:"none",color:"white",borderRadius:"50%",width:"20px",height:"20px",fontSize:"11px",cursor:"pointer",fontWeight:"800",display:"flex",alignItems:"center",justifyContent:"center",padding:0}}>✕</button>
-                <div style={{fontSize:"11px",color:"#C76B4A",fontWeight:"700",marginBottom:"4px"}}>{i+1}º</div>
+              <div key={c.id} style={{
+                background: c.ok ? "#f0fdf4" : "#fef2f2",
+                border: `2px solid ${c.ok ? "#16a34a" : "#dc2626"}`,
+                borderRadius:"10px", padding:"8px", textAlign:"center",
+                minWidth:"76px", position:"relative",
+                transition:"all 0.3s"
+              }}>
+                {/* So mostra X se o card esta ERRADO */}
+                {!c.ok && (
+                  <button onClick={() => removeCard(i)}
+                    style={{position:"absolute",top:"-8px",right:"-8px",background:"#dc2626",border:"none",color:"white",borderRadius:"50%",width:"22px",height:"22px",fontSize:"12px",cursor:"pointer",fontWeight:"800",display:"flex",alignItems:"center",justifyContent:"center",padding:0}}>✕</button>
+                )}
+                {/* Badge de certo/errado */}
+                <div style={{
+                  fontSize:"11px", fontWeight:"800", marginBottom:"4px",
+                  color: c.ok ? "#16a34a" : "#dc2626"
+                }}>
+                  {c.ok ? "✅ Certo!" : "❌ Errado"}
+                </div>
                 <img src={c.image} alt={c.label} style={{width:"44px",height:"44px",objectFit:"contain"}} />
-                <div style={{fontSize:"11px",color:"#1B2D5B",fontWeight:"600",marginTop:"4px"}}>{c.label}</div>
+                <div style={{fontSize:"11px",color: c.ok ? "#16a34a" : "#dc2626",fontWeight:"700",marginTop:"4px"}}>{c.label}</div>
               </div>
             ))}
           </div>
