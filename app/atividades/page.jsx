@@ -729,117 +729,36 @@ function Sequencia({ cards, onBack }) {
 
 function CompletarFrase({ cards, onBack }) {
 
-  // Frases com resposta ESPECIFICA — cada frase tem um unico card correto
-  // distratores: ids de cards que fazem sentido mas sao errados para esta frase
+  // Cada frase tem resposta UNICA e distratores FIXOS dos 25 cards reais
+  // Distratores escolhidos para serem plausíveis mas claramente errados no contexto
   const FRASES_BASE = [
-    {
-      template: "Eu quero ___",
-      correta: "agua",
-      distratores: ["comer", "brincar", "passear"],
-      dica: "O que você quer beber?"
-    },
-    {
-      template: "Eu quero ___",
-      correta: "comer",
-      distratores: ["agua", "dormir", "brincar"],
-      dica: "O que você quer fazer quando está com fome?"
-    },
-    {
-      template: "Eu quero ___",
-      correta: "brincar",
-      distratores: ["comer", "dormir", "esperar"],
-      dica: "O que você quer fazer na hora do lazer?"
-    },
-    {
-      template: "Eu quero ___",
-      correta: "passear",
-      distratores: ["comer", "brincar", "esperar"],
-      dica: "O que você quer fazer para sair de casa?"
-    },
-    {
-      template: "Eu estou ___",
-      correta: "feliz",
-      distratores: ["triste", "bravo", "medo"],
-      dica: "Como você está quando algo bom acontece?"
-    },
-    {
-      template: "Eu estou ___",
-      correta: "triste",
-      distratores: ["feliz", "bravo", "cansado"],
-      dica: "Como você está quando fica com saudade ou algo ruim acontece?"
-    },
-    {
-      template: "Eu estou ___",
-      correta: "bravo",
-      distratores: ["feliz", "triste", "medo"],
-      dica: "Como você está quando algo te irrita?"
-    },
-    {
-      template: "Eu estou ___",
-      correta: "cansado",
-      distratores: ["feliz", "bravo", "medo"],
-      dica: "Como você está quando precisa descansar?"
-    },
-    {
-      template: "Eu preciso ir ao ___",
-      correta: "banheiro",
-      distratores: ["escola", "comer", "agua"],
-      dica: "Onde você vai quando precisa fazer xixi ou cocô?"
-    },
-    {
-      template: "Eu preciso de ___",
-      correta: "ajuda",
-      distratores: ["agua", "comer", "brincar"],
-      dica: "O que você pede quando não consegue fazer sozinho?"
-    },
-    {
-      template: "Eu preciso de ___",
-      correta: "remedio",
-      distratores: ["agua", "ajuda", "comer"],
-      dica: "O que você toma quando está doente?"
-    },
-    {
-      template: "Eu estou com ___",
-      correta: "dor",
-      distratores: ["medo", "feliz", "cansado"],
-      dica: "O que você sente quando algo dói?"
-    },
-    {
-      template: "Eu estou com ___",
-      correta: "medo",
-      distratores: ["dor", "feliz", "bravo"],
-      dica: "O que você sente quando algo te assusta?"
-    },
-    {
-      template: "Quero ___",
-      correta: "dormir",
-      distratores: ["comer", "brincar", "sair"],
-      dica: "O que você quer fazer quando está com sono?"
-    },
-    {
-      template: "Preciso ___",
-      correta: "esperar",
-      distratores: ["brincar", "comer", "sair"],
-      dica: "O que você faz quando ainda não é a sua vez?"
-    },
-    {
-      template: "Quero ___",
-      correta: "sair",
-      distratores: ["comer", "dormir", "esperar"],
-      dica: "O que você quer fazer para ir para fora?"
-    },
-    {
-      template: "Vou para a ___",
-      correta: "escola",
-      distratores: ["comer", "brincar", "passear"],
-      dica: "Onde você vai para aprender?"
-    },
-    {
-      template: "Quero ___",
-      correta: "tomar-banho",
-      distratores: ["comer", "dormir", "brincar"],
-      dica: "O que você faz para ficar limpo?"
-    },
+    // QUERER coisas
+    { template:"Eu quero ___",   correta:"agua",       distratores:["comer","dormir","brincar"],      dica:"O que você quer beber?" },
+    { template:"Eu quero ___",   correta:"comer",      distratores:["agua","dormir","brincar"],       dica:"O que você quer quando está com fome?" },
+    { template:"Eu quero ___",   correta:"brincar",    distratores:["comer","dormir","passear"],      dica:"O que você quer fazer na hora do lazer?" },
+    { template:"Eu quero ___",   correta:"passear",    distratores:["brincar","sair","comer"],        dica:"O que você quer fazer para ir para fora com alguém?" },
+    { template:"Eu quero ___",   correta:"dormir",     distratores:["comer","brincar","esperar"],     dica:"O que você quer fazer quando está com sono?" },
+    { template:"Eu quero ___",   correta:"sair",       distratores:["brincar","passear","esperar"],   dica:"O que você quer fazer para sair daqui?" },
+    { template:"Eu quero ___",   correta:"tomar-banho",distratores:["comer","dormir","brincar"],      dica:"O que você faz para ficar limpo?" },
+    // ESTAR sentindo
+    { template:"Eu estou ___",   correta:"feliz",      distratores:["triste","bravo","cansado"],      dica:"Como você está quando algo bom acontece?" },
+    { template:"Eu estou ___",   correta:"triste",     distratores:["feliz","bravo","cansado"],       dica:"Como você está quando algo ruim acontece?" },
+    { template:"Eu estou ___",   correta:"bravo",      distratores:["feliz","triste","medo"],         dica:"Como você está quando algo te irrita muito?" },
+    { template:"Eu estou ___",   correta:"cansado",    distratores:["feliz","triste","bravo"],        dica:"Como você está quando precisa descansar?" },
+    { template:"Eu estou ___",   correta:"medo",       distratores:["bravo","triste","cansado"],      dica:"Como você se sente quando algo te assusta?" },
+    // COM algo
+    { template:"Eu estou com ___",correta:"dor",       distratores:["medo","cansado","bravo"],        dica:"O que você sente quando algo dói no seu corpo?" },
+    { template:"Eu estou com ___",correta:"medo",      distratores:["dor","cansado","triste"],        dica:"O que você sente quando algo te assusta?" },
+    // PRECISAR
+    { template:"Eu preciso de ___",correta:"ajuda",    distratores:["agua","comer","remedio"],        dica:"O que você pede quando não consegue sozinho?" },
+    { template:"Eu preciso de ___",correta:"remedio",  distratores:["agua","ajuda","comer"],          dica:"O que você toma quando está doente?" },
+    { template:"Eu preciso ir ao ___",correta:"banheiro",distratores:["escola","sair","passear"],     dica:"Onde você vai quando precisa fazer xixi?" },
+    // OUTROS
+    { template:"Preciso ___",    correta:"esperar",    distratores:["brincar","sair","parar"],        dica:"O que você faz quando ainda não é a sua vez?" },
+    { template:"Vou para a ___", correta:"escola",     distratores:["banheiro","passear","sair"],     dica:"Onde você vai para aprender?" },
+    { template:"Quero ___",      correta:"mais",       distratores:["acabou","esperar","parar"],      dica:"O que você fala quando quer repetir?" },
+    { template:"Já ___",         correta:"acabou",     distratores:["mais","comer","brincar"],        dica:"O que você fala quando terminou?" },
+    { template:"Preciso ___",    correta:"parar",      distratores:["esperar","sair","brincar"],      dica:"O que você diz quando quer que algo pare?" },
   ];
 
   // Monta o pool de cards disponiveis do usuario
@@ -851,12 +770,12 @@ function CompletarFrase({ cards, onBack }) {
     return m;
   }, [cards]);
 
-  // Filtra so as frases onde o usuario tem a resposta correta E pelo menos 1 distrator
+  // So mostra frases onde o usuario tem a correta E pelo menos 2 distratores
   const frasesDisponiveis = React.useMemo(() => {
     return FRASES_BASE.filter(f => {
-      const temCorreta = !!cardMap[f.correta];
-      const temDistratores = f.distratores.some(d => !!cardMap[d]);
-      return temCorreta && temDistratores;
+      const temCorreta     = !!cardMap[f.correta];
+      const nDistratores   = f.distratores.filter(d => !!cardMap[d]).length;
+      return temCorreta && nDistratores >= 2;
     });
   }, [cardMap]);
 
@@ -876,18 +795,14 @@ function CompletarFrase({ cards, onBack }) {
     if (!frase) return;
     const correta   = cardMap[frase.correta];
     if (!correta) return;
-    // Pega distratores disponíveis (que o usuario tem na prancha)
+    // Pega EXATAMENTE os distratores definidos — sem aleatorios
     const distratorCards = frase.distratores
       .map(d => cardMap[d])
-      .filter(Boolean);
-    // Completa com cards aleatorios se nao tiver distratores suficientes
-    const extras = shuffle(
-      Object.values(cardMap).filter(c =>
-        c.id !== frase.correta && !frase.distratores.includes(c.id)
-      )
-    );
-    const pool = [...distratorCards, ...extras].slice(0, 3);
-    setOptions(shuffle([correta, ...pool]));
+      .filter(Boolean)
+      .slice(0, 3);
+    // Se nao tem distratores suficientes, a frase nao deveria ter aparecido
+    // mas por segurança filtra da propria lista de frases
+    setOptions(shuffle([correta, ...distratorCards]));
     setFeedback(null);
     setEscolha(null);
   }, [idx, frase]);
