@@ -34,18 +34,50 @@ export default function Atividades() {
     {id:"escola",label:"Escola",image:"/cards/level-1/escola.webp?v=20260521-optimized",cat:"lugares"},
   ];
 
+  // Mapa fixo de imagens confiáveis para os 18 ids do FALLBACK
+  // Ignora completamente o campo image da API — evita imagem errada no card
+  const IMAGEM_FIXA = {
+    "sim":"/cards/level-1/sim.webp?v=20260521-optimized",
+    "nao":"/cards/level-1/nao.webp?v=20260521-optimized",
+    "ajuda":"/cards/level-1/ajuda.webp?v=20260521-optimized",
+    "mais":"/cards/level-1/mais.webp?v=20260521-optimized",
+    "agua":"/cards/level-1/agua.webp?v=20260521-optimized",
+    "comer":"/cards/level-1/comer.webp?v=20260521-optimized",
+    "banheiro":"/cards/level-1/banheiro.webp?v=20260521-optimized",
+    "dormir":"/cards/level-1/dormir.webp?v=20260521-optimized",
+    "feliz":"/cards/level-1/feliz.webp?v=20260521-optimized",
+    "triste":"/cards/level-1/triste.webp?v=20260521-optimized",
+    "medo":"/cards/level-1/medo.webp?v=20260521-optimized",
+    "bravo":"/cards/level-1/bravo.webp?v=20260521-optimized",
+    "brincar":"/cards/level-1/brincar.webp?v=20260521-optimized",
+    "parar":"/cards/level-1/parar.webp?v=20260521-optimized",
+    "esperar":"/cards/level-1/esperar.webp?v=20260521-optimized",
+    "dor":"/cards/level-1/dor.webp?v=20260521-optimized",
+    "remedio":"/cards/level-1/remedio.webp?v=20260521-optimized",
+    "escola":"/cards/level-1/escola.webp?v=20260521-optimized",
+  };
+
   useEffect(() => {
     fetch("/api/cards?profile=infantil&level=emergente")
       .then(r => r.json())
       .then(d => {
         const raw = (d.cards || []).filter(c => c.image || c.image_url || c.label);
-        const mapped = raw.map(c => ({
-          ...c,
-          id: String(c.id || "").trim().normalize("NFC"),
-          label: String(c.label || "").trim(),
-          image: c.image || c.image_url || `/cards/level-1/${String(c.id||"").trim()}.webp?v=20260521-optimized`,
-          cat: c.cat || c.category || "core",
-        }));
+        const mapped = raw.map(c => {
+          const id = String(c.id || "").trim().normalize("NFC");
+          // Se o id é conhecido, usa sempre a imagem confiável do mapa fixo
+          // Nunca confia no campo image da API para ids conhecidos
+          const image = IMAGEM_FIXA[id]
+            || c.image
+            || c.image_url
+            || `/cards/level-1/${id}.webp?v=20260521-optimized`;
+          return {
+            ...c,
+            id,
+            label: String(c.label || "").trim(),
+            image,
+            cat: c.cat || c.category || "core",
+          };
+        });
         setCards(mapped.length >= 4 ? mapped : FALLBACK);
         setLoading(false);
       })
