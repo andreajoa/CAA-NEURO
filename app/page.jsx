@@ -109,46 +109,46 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer style={{background:"#0a1e0f",color:"white",padding:"48px 40px 32px",marginTop:0}}>
+      <footer style={{background:"#F2E8E1",color:"#1B2D5B",padding:"48px 40px 32px",marginTop:0}}>
         <div style={{maxWidth:1200,margin:"0 auto"}}>
           <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:40,marginBottom:40}}>
             <div>
-              <div style={{fontSize:22,fontWeight:700,color:"#E8B4A8",marginBottom:8}}>CAA Neuro</div>
-              <p style={{color:"rgba(255,255,255,0.55)",fontSize:14,lineHeight:1.7,maxWidth:280}}>Plataforma completa para comunicação funcional, acompanhamento clínico, acessibilidade e recursos terapêuticos.</p>
-              <p style={{color:"rgba(255,255,255,0.4)",fontSize:13,marginTop:16}}>Responsável técnica:<br/><strong style={{color:"#E8B4A8"}}>Margareth Almeida</strong><br/><span style={{fontSize:12}}>Fonoaudióloga · CRFa</span></p>
+              <div style={{fontSize:22,fontWeight:700,color:"#C76B4A",marginBottom:8}}>CAA Neuro</div>
+              <p style={{color:"rgba(27,45,91,0.65)",fontSize:14,lineHeight:1.7,maxWidth:280}}>Plataforma completa para comunicação funcional, acompanhamento clínico, acessibilidade e recursos terapêuticos.</p>
+              <p style={{color:"#C76B4A",fontSize:13,marginTop:16}}>Responsável técnica:<br/><strong style={{color:"#C76B4A"}}>Margareth Almeida</strong><br/><span style={{fontSize:12}}>Fonoaudióloga · CRFa</span></p>
             </div>
             <div>
-              <p style={{color:"rgba(255,255,255,0.4)",fontSize:12,fontWeight:700,marginBottom:14,letterSpacing:1}}>PLATAFORMA</p>
+              <p style={{color:"#C76B4A",fontSize:12,fontWeight:700,marginBottom:14,letterSpacing:1}}>PLATAFORMA</p>
               <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                <Link href="/recursos" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Recursos</Link>
-                <Link href="/como-funciona" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Como funciona</Link>
-                <Link href="/beneficios" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Benefícios</Link>
-                <Link href="/depoimentos" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Depoimentos</Link>
+                <Link href="/recursos" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Recursos</Link>
+                <Link href="/como-funciona" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Como funciona</Link>
+                <Link href="/beneficios" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Benefícios</Link>
+                <Link href="/depoimentos" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Depoimentos</Link>
               </div>
             </div>
             <div>
-              <p style={{color:"rgba(255,255,255,0.4)",fontSize:12,fontWeight:700,marginBottom:14,letterSpacing:1}}>PARA QUEM</p>
+              <p style={{color:"#C76B4A",fontSize:12,fontWeight:700,marginBottom:14,letterSpacing:1}}>PARA QUEM</p>
               <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                <Link href="/para-quem" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Fonoaudiólogos</Link>
-                <Link href="/para-quem" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Terapeutas Ocupacionais</Link>
-                <Link href="/para-quem" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Psicólogos</Link>
-                <Link href="/para-quem" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Educadores</Link>
-                <Link href="/para-quem" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Prefeituras</Link>
+                <Link href="/para-quem" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Fonoaudiólogos</Link>
+                <Link href="/para-quem" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Terapeutas Ocupacionais</Link>
+                <Link href="/para-quem" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Psicólogos</Link>
+                <Link href="/para-quem" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Educadores</Link>
+                <Link href="/para-quem" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Prefeituras</Link>
               </div>
             </div>
             <div>
-              <p style={{color:"rgba(255,255,255,0.4)",fontSize:12,fontWeight:700,marginBottom:14,letterSpacing:1}}>SUPORTE</p>
+              <p style={{color:"#C76B4A",fontSize:12,fontWeight:700,marginBottom:14,letterSpacing:1}}>SUPORTE</p>
               <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                <Link href="/duvidas" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Dúvidas frequentes</Link>
-                <Link href="/suporte" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Suporte</Link>
-                <Link href="/sign-up" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Criar conta</Link>
-                <Link href="/sign-in" style={{color:"rgba(255,255,255,0.7)",fontSize:14,textDecoration:"none"}}>Entrar</Link>
+                <Link href="/duvidas" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Dúvidas frequentes</Link>
+                <Link href="/suporte" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Suporte</Link>
+                <Link href="/sign-up" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Criar conta</Link>
+                <Link href="/sign-in" style={{color:"#1B2D5B",fontSize:14,textDecoration:"none"}}>Entrar</Link>
               </div>
             </div>
           </div>
-          <div style={{borderTop:"0.5px solid rgba(255,255,255,0.1)",paddingTop:24,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
-            <p style={{color:"rgba(255,255,255,0.35)",fontSize:13}}>© 2026 CAA Neuro · Todos os direitos reservados · Desenvolvido com propósito</p>
-            <p style={{color:"rgba(255,255,255,0.35)",fontSize:13}}>Dados protegidos pela LGPD · <a href="/seguranca" style={{color:"rgba(255,255,255,0.6)",textDecoration:"underline"}}>Política de Segurança</a></p>
+          <div style={{borderTop:"0.5px solid #E8B4A8",paddingTop:24,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
+            <p style={{color:"rgba(27,45,91,0.45)",fontSize:13}}>© 2026 CAA Neuro · Todos os direitos reservados · Desenvolvido com propósito</p>
+            <p style={{color:"rgba(27,45,91,0.45)",fontSize:13}}>Dados protegidos pela LGPD · <a href="/seguranca" style={{color:"#C76B4A",textDecoration:"underline"}}>Política de Segurança</a></p>
           </div>
         </div>
       </footer>
