@@ -147,68 +147,109 @@ function Congratulations({ score, total, onRestart, onBack }) {
 function Associacao({ cards, onBack }) {
   const [items, setItems] = useState([]);
   const [options, setOptions] = useState([]);
-  useEffect(() => {
-    const pool = shuffle((cards || []).filter(c => c && c.image && c.label)).slice(0, 8);
-    setItems(pool);
-    setOptions(shuffle([...pool]));
-  }, []);
   const [answers, setAnswers] = useState({});
   const [score, setScore] = useState(0);
   const [done, setDone] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [wrongFlash, setWrongFlash] = useState(null);
 
-  function restart() { setAnswers({}); setScore(0); setDone(false); setSelected(null); }
-
-  function pick(card) {
-    if (!selected) { setSelected(card); return; }
-    const match = items.find(i => i.id === selected.id);
-    const correct = match?.label === card.label || selected.id === card.id;
-    const newAns = { ...answers, [selected.id]: correct ? "correct" : "wrong" };
-    setAnswers(newAns);
-    if (correct) setScore(s => s + 1);
+  function init() {
+    const pool = shuffle((cards || []).filter(c => c && c.image && c.label)).slice(0, 8);
+    setItems(pool);
+    setOptions(shuffle(pool.map(c => ({ id: c.id, label: c.label }))));
+    setAnswers({});
+    setScore(0);
+    setDone(false);
     setSelected(null);
-    if (Object.keys(newAns).length === items.length) setDone(true);
+    setWrongFlash(null);
+  }
+
+  useEffect(() => { init(); }, []);
+
+  function pickImage(card) {
+    if (answers[card.id] === "correct") return;
+    setSelected(selected?.id === card.id ? null : card);
+    setWrongFlash(null);
+  }
+
+  function pickWord(opt) {
+    if (!selected) return;
+    const correct = selected.id === opt.id;
+    if (correct) {
+      const newAns = { ...answers, [selected.id]: "correct" };
+      setAnswers(newAns);
+      setScore(s => s + 1);
+      setOptions(prev => prev.filter(o => o.id !== opt.id));
+      setSelected(null);
+      if (Object.keys(newAns).length === items.length) setDone(true);
+    } else {
+      setWrongFlash(opt.id);
+      setTimeout(() => setWrongFlash(null), 600);
+    }
   }
 
   if (done) return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
-      <GameHeader title="🔗 Associação" score={score} total={items.length} onBack={onBack} onRestart={restart} />
-      <Congratulations score={score} total={items.length} onRestart={restart} onBack={onBack} />
+      <GameHeader title="🔗 Associação" score={score} total={items.length} onBack={onBack} onRestart={init} />
+      <Congratulations score={score} total={items.length} onRestart={init} onBack={onBack} />
     </div>
   );
 
   return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
-      <GameHeader title="🔗 Associação" score={score} total={items.length} onBack={onBack} onRestart={restart} />
+      <GameHeader title="🔗 Associação" score={score} total={items.length} onBack={onBack} onRestart={init} />
       <div style={{maxWidth:"900px",margin:"0 auto",padding:"24px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:"32px"}}>
         <div>
           <p style={{fontWeight:"700",color:"#374151",marginBottom:"12px",fontSize:"14px",textTransform:"uppercase",letterSpacing:"0.05em"}}>Imagens</p>
           <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
-            {(items || []).filter(Boolean).map(card => (
-              <button key={card.id} onClick={() => setSelected(selected?.id===card.id ? null : card)}
-                disabled={!!answers[card.id]}
-                style={{background: answers[card.id]==="correct"?"#f0fdf4":answers[card.id]==="wrong"?"#fef2f2":selected?.id===card.id?"#eff6ff":"white",
-                  border:`2px solid ${answers[card.id]==="correct"?"#16a34a":answers[card.id]==="wrong"?"#dc2626":selected?.id===card.id?"#2563eb":"#e5e7eb"}`,
-                  borderRadius:"12px",padding:"12px",display:"flex",alignItems:"center",gap:"12px",cursor:answers[card.id]?"default":"pointer",textAlign:"left"}}>
-                <img src={card.image} alt={card.label} style={{width:"48px",height:"48px",objectFit:"contain",borderRadius:"8px",flexShrink:0}} />
-                <span style={{fontSize:"24px"}}>{answers[card.id]==="correct"?"✅":answers[card.id]==="wrong"?"❌":selected?.id===card.id?"👆":""}</span>
-              </button>
-            ))}
+            {(items || []).filter(Boolean).map(card => {
+              const isCorrect = answers[card.id] === "correct";
+              const isSel = selected?.id === card.id;
+              return (
+                <button key={card.id} onClick={() => pickImage(card)}
+                  disabled={isCorrect}
+                  style={{
+                    background: isCorrect ? "#f0fdf4" : isSel ? "#FFF5F2" : "white",
+                    border: `2px solid ${isCorrect ? "#16a34a" : isSel ? "#C76B4A" : "#e5e7eb"}`,
+                    borderRadius:"12px", padding:"12px", display:"flex", alignItems:"center",
+                    gap:"12px", cursor: isCorrect ? "default" : "pointer", textAlign:"left",
+                    transition:"all 0.2s"
+                  }}>
+                  <img src={card.image} alt={card.label}
+                    style={{width:"52px",height:"52px",objectFit:"contain",borderRadius:"8px",flexShrink:0}} />
+                  <span style={{fontSize:"22px"}}>
+                    {isCorrect ? "✅" : isSel ? "👆" : ""}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
         <div>
           <p style={{fontWeight:"700",color:"#374151",marginBottom:"12px",fontSize:"14px",textTransform:"uppercase",letterSpacing:"0.05em"}}>Palavras</p>
           <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
-            {(options || []).filter(Boolean).map(card => (
-              <button key={card.id} onClick={() => selected && pick(card)}
-                style={{background:selected?"#eff6ff":"white",border:"2px solid #e5e7eb",borderRadius:"12px",padding:"14px 16px",cursor:selected?"pointer":"default",fontWeight:"700",fontSize:"15px",color:"#1B2D5B",textAlign:"left"}}>
-                {card.label}
-              </button>
-            ))}
+            {(options || []).filter(Boolean).map(opt => {
+              const isWrong = wrongFlash === opt.id;
+              return (
+                <button key={opt.id} onClick={() => pickWord(opt)}
+                  style={{
+                    background: isWrong ? "#fef2f2" : selected ? "#FFF5F2" : "white",
+                    border: `2px solid ${isWrong ? "#dc2626" : selected ? "#C76B4A" : "#e5e7eb"}`,
+                    borderRadius:"12px", padding:"14px 16px",
+                    cursor: selected ? "pointer" : "default",
+                    fontWeight:"700", fontSize:"15px", color:"#1B2D5B", textAlign:"left",
+                    transition:"all 0.15s"
+                  }}>
+                  {opt.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
-      {!selected && <p style={{textAlign:"center",color:"#9ca3af",fontSize:"14px"}}>Toque em uma imagem para começar</p>}
+      <p style={{textAlign:"center",color:"#9ca3af",fontSize:"14px",marginTop:"8px"}}>
+        {selected ? `👆 Agora toque na palavra correta para "${selected.label}"` : "Toque em uma imagem para começar"}
+      </p>
     </div>
   );
 }
