@@ -768,6 +768,15 @@ function CompletarFrase({ cards, onBack }) {
     "dor","remedio","escola"];
 
   // ── IMAGENS FIXAS por id ─────────────────────────────────────────────────
+  // Labels fixos por id — ignora label corrompido da API
+  const LABEL = {
+    "sim":"Sim","nao":"Não","ajuda":"Ajuda","mais":"Mais",
+    "agua":"Água","comer":"Comer","banheiro":"Banheiro","dormir":"Dormir",
+    "feliz":"Feliz","triste":"Triste","medo":"Medo","bravo":"Bravo",
+    "brincar":"Brincar","parar":"Parar","esperar":"Esperar",
+    "dor":"Dor","remedio":"Remédio","escola":"Escola",
+  };
+
   const IMG = {
     "sim":"/cards/level-1/sim.webp?v=20260521-optimized",
     "nao":"/cards/level-1/nao.webp?v=20260521-optimized",
@@ -821,7 +830,7 @@ function CompletarFrase({ cards, onBack }) {
       if (!c || !c.id) continue;
       const id = String(c.id).trim();
       if (!validSet.has(id)) continue;          // bloqueia cansado, lanche, etc.
-      m[id] = { ...c, id, image: IMG[id] };     // imagem sempre do mapa fixo
+      m[id] = { ...c, id, image: IMG[id], label: LABEL[id] };  // imagem e label sempre fixos
     }
     return m;
   }, [cards]);
