@@ -180,19 +180,32 @@ function Congratulations({ score, total, onRestart, onBack }) {
 }
 
 function Associacao({ cards, onBack }) {
-  // Pool gerado UMA vez com useMemo — nunca muda entre renders
-  // items e words derivados do MESMO pool congelado — ids sempre batem
-  const pool = React.useMemo(() => {
-    const seen = new Set();
-    const unique = [];
-    for (const c of (cards || [])) {
-      if (c && c.image && c.label && c.id && !seen.has(String(c.id))) {
-        seen.add(String(c.id));
-        unique.push({ ...c, id: String(c.id).trim().normalize("NFC"), label: String(c.label||"").trim() });
-      }
-    }
-    return shuffle(unique).slice(0, 6);
-  }, [cards]);
+
+  // ── DADOS 100% FIXOS — API nunca interfere ─────────────────────────────
+  const FALLBACK = [
+    { id:"sim",      label:"Sim",        image:"/cards/level-1/sim.webp?v=20260521-optimized" },
+    { id:"nao",      label:"Não",        image:"/cards/level-1/nao.webp?v=20260521-optimized" },
+    { id:"ajuda",    label:"Ajuda",      image:"/cards/level-1/ajuda.webp?v=20260521-optimized" },
+    { id:"mais",     label:"Mais",       image:"/cards/level-1/mais.webp?v=20260521-optimized" },
+    { id:"agua",     label:"Água",       image:"/cards/level-1/agua.webp?v=20260521-optimized" },
+    { id:"comer",    label:"Comer",      image:"/cards/level-1/comer.webp?v=20260521-optimized" },
+    { id:"banheiro", label:"Banheiro",   image:"/cards/level-1/banheiro.webp?v=20260521-optimized" },
+    { id:"dormir",   label:"Dormir",     image:"/cards/level-1/dormir.webp?v=20260521-optimized" },
+    { id:"feliz",    label:"Feliz",      image:"/cards/level-1/feliz.webp?v=20260521-optimized" },
+    { id:"triste",   label:"Triste",     image:"/cards/level-1/triste.webp?v=20260521-optimized" },
+    { id:"medo",     label:"Medo",       image:"/cards/level-1/medo.webp?v=20260521-optimized" },
+    { id:"bravo",    label:"Bravo",      image:"/cards/level-1/bravo.webp?v=20260521-optimized" },
+    { id:"brincar",  label:"Brincar",    image:"/cards/level-1/brincar.webp?v=20260521-optimized" },
+    { id:"parar",    label:"Parar",      image:"/cards/level-1/parar.webp?v=20260521-optimized" },
+    { id:"esperar",  label:"Esperar",    image:"/cards/level-1/esperar.webp?v=20260521-optimized" },
+    { id:"dor",      label:"Dor",        image:"/cards/level-1/dor.webp?v=20260521-optimized" },
+    { id:"remedio",  label:"Remédio",    image:"/cards/level-1/remedio.webp?v=20260521-optimized" },
+    { id:"escola",   label:"Escola",     image:"/cards/level-1/escola.webp?v=20260521-optimized" },
+  ];
+
+  // Pool fixo escolhido UMA vez — embaralha o FALLBACK e pega 6
+  // Não depende de cards/API — match garantido porque ids nunca mudam
+  const pool = React.useMemo(() => shuffle([...FALLBACK]).slice(0, 6), []);
 
   const [items,       setItems]       = useState([]);
   const [words,       setWords]       = useState([]);
@@ -203,19 +216,10 @@ function Associacao({ cards, onBack }) {
   const [done,        setDone]        = useState(false);
 
   function init() {
-    // Pool ja esta pronto e congelado — usa ele diretamente
-    // items = pool (ordem fixa)
-    // words = mesmos ids do pool, so o label, embaralhados
-    const frozenItems = [...pool]; // copia segura
+    // items = pool em ordem fixa
+    // words = mesmos 6 ids/labels, embaralhados separadamente
+    const frozenItems = [...pool];
     const frozenWords = shuffle(frozenItems.map(c => ({ id: c.id, label: c.label })));
-    
-    // Verifica que todos os ids de words existem em items
-    const itemIds = new Set(frozenItems.map(c => c.id));
-    const allMatch = frozenWords.every(w => itemIds.has(w.id));
-    if (!allMatch) {
-      console.error("ERRO: words tem ids que nao existem em items!");
-    }
-    
     setItems(frozenItems);
     setWords(frozenWords);
     setMatched(new Set());
@@ -225,35 +229,34 @@ function Associacao({ cards, onBack }) {
     setDone(false);
   }
 
-  useEffect(() => { init(); }, [pool]);
+  useEffect(() => { init(); }, []);
 
-  function handleImageClick(imgId) {
-    const normId = String(imgId||"").trim().normalize("NFC");
-    if (matched.has(normId)) return;
-    setSelectedImg(prev => prev === normId ? null : normId);
+  function handleImageClick(id) {
+    if (matched.has(id)) return;
+    setSelectedImg(prev => prev === id ? null : id);
     setWrongWord(null);
   }
 
   function handleWordClick(wordId) {
     if (!selectedImg) return;
-    const selNorm  = String(selectedImg||"").trim().normalize("NFC");
-    const wordNorm = String(wordId||"").trim().normalize("NFC");
-    if (matched.has(selNorm)) return;
-    if (matched.has(wordNorm)) return;
+    if (matched.has(selectedImg) || matched.has(wordId)) return;
 
-    if (selNorm === wordNorm) {
-      const newMatched = new Set(matched);
-      newMatched.add(selNorm); // sempre o id normalizado
-      setMatched(newMatched);
+    if (selectedImg === wordId) {
+      // ✅ match correto
+      const next = new Set(matched);
+      next.add(selectedImg);
+      setMatched(next);
       setScore(s => s + 1);
       setSelectedImg(null);
       setWrongWord(null);
-      if (newMatched.size === items.length) {
-        setTimeout(() => setDone(true), 400);
-      }
+      if (next.size === items.length) setTimeout(() => setDone(true), 400);
     } else {
-      setWrongWord(wordNorm);
-      setTimeout(() => setWrongWord(null), 700);
+      // ❌ errou — pisca vermelho, deseleciona imagem após 700ms
+      setWrongWord(wordId);
+      setTimeout(() => {
+        setWrongWord(null);
+        setSelectedImg(null);
+      }, 700);
     }
   }
 
@@ -272,43 +275,64 @@ function Associacao({ cards, onBack }) {
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui",paddingBottom:"40px"}}>
       <GameHeader title="🔗 Associação" score={score} total={items.length} onBack={onBack} onRestart={init} />
 
+      {/* Instrução */}
       <p style={{
         textAlign:"center", margin:"14px 0 10px",
-        fontSize:"14px", fontWeight: selectedImg ? "700" : "400",
+        fontSize:"15px", fontWeight: selectedImg ? "700" : "500",
         color: selectedImg ? "#C76B4A" : "#9ca3af",
-        transition:"color 0.2s"
+        transition:"color 0.2s", padding:"0 16px"
       }}>
         {selectedImg
-          ? `👆 Toque na palavra correta para "${selectedLabel}"`
-          : "Toque em uma imagem para selecionar"}
+          ? `👆 Toque na palavra: "${selectedLabel}"`
+          : "Toque em uma imagem para começar"}
       </p>
 
-      <div style={{maxWidth:"660px",margin:"0 auto",padding:"0 16px",display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",alignItems:"start"}}>
+      {/* Grid lado-a-lado — funciona mobile e desktop */}
+      <div style={{
+        maxWidth:"680px", margin:"0 auto", padding:"0 12px",
+        display:"grid",
+        gridTemplateColumns:"1fr 1fr",
+        gap:"10px",
+        alignItems:"start"
+      }}>
 
-        {/* IMAGENS — ordem fixa */}
+        {/* COLUNA ESQUERDA — Imagens */}
         <div>
-          <p style={{fontWeight:"700",color:"#374151",fontSize:"12px",textTransform:"uppercase",letterSpacing:"0.06em",margin:"0 0 8px",textAlign:"center"}}>🖼️ Imagem</p>
-          <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+          <p style={{
+            fontWeight:"700", color:"#374151", fontSize:"11px",
+            textTransform:"uppercase", letterSpacing:"0.06em",
+            margin:"0 0 8px", textAlign:"center"
+          }}>🖼️ Imagem</p>
+          <div style={{display:"flex", flexDirection:"column", gap:"8px"}}>
             {items.map(card => {
-              const normCardId = String(card.id||"").trim().normalize("NFC");
-              const isMatched = matched.has(normCardId);
-              const isSel     = selectedImg === normCardId;
+              const isMatched = matched.has(card.id);
+              const isSel     = selectedImg === card.id;
               return (
-                <button key={normCardId} onClick={() => handleImageClick(normCardId)} disabled={isMatched}
+                <button key={card.id}
+                  onClick={() => handleImageClick(card.id)}
+                  disabled={isMatched}
                   style={{
-                    background: isMatched?"#f0fdf4": isSel?"#FFF5F2":"white",
-                    border:`2px solid ${isMatched?"#16a34a":isSel?"#C76B4A":"#e5e7eb"}`,
-                    borderRadius:"12px", padding:"10px 12px",
-                    display:"flex", alignItems:"center", gap:"10px",
-                    cursor:isMatched?"default":"pointer",
-                    transition:"all 0.2s", minHeight:"70px",
-                    boxShadow:isSel?"0 0 0 3px rgba(199,107,74,0.2)":"none"
+                    background: isMatched ? "#f0fdf4" : isSel ? "#FFF5F2" : "white",
+                    border: `2px solid ${isMatched ? "#16a34a" : isSel ? "#C76B4A" : "#e5e7eb"}`,
+                    borderRadius:"12px",
+                    padding:"8px",
+                    display:"flex",
+                    alignItems:"center",
+                    justifyContent:"center",
+                    gap:"6px",
+                    cursor: isMatched ? "default" : "pointer",
+                    transition:"all 0.2s",
+                    minHeight:"64px",
+                    boxShadow: isSel ? "0 0 0 3px rgba(199,107,74,0.25)" : "none",
+                    width:"100%",
                   }}>
-                  <img src={card.image} alt={card.label}
-                    style={{width:"46px",height:"46px",objectFit:"contain",borderRadius:"8px",flexShrink:0}}
-                    onError={e=>{e.target.style.display="none"}} />
-                  <span style={{fontSize:"20px"}}>
-                    {isMatched?"✅":isSel?"👆":""}
+                  <img
+                    src={card.image}
+                    alt={card.label}
+                    style={{width:"44px", height:"44px", objectFit:"contain", borderRadius:"6px", flexShrink:0}}
+                  />
+                  <span style={{fontSize:"18px"}}>
+                    {isMatched ? "✅" : isSel ? "👆" : ""}
                   </span>
                 </button>
               );
@@ -316,30 +340,41 @@ function Associacao({ cards, onBack }) {
           </div>
         </div>
 
-        {/* PALAVRAS — embaralhadas, ids garantidos do mesmo pool */}
+        {/* COLUNA DIREITA — Palavras */}
         <div>
-          <p style={{fontWeight:"700",color:"#374151",fontSize:"12px",textTransform:"uppercase",letterSpacing:"0.06em",margin:"0 0 8px",textAlign:"center"}}>🔤 Palavra</p>
-          <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+          <p style={{
+            fontWeight:"700", color:"#374151", fontSize:"11px",
+            textTransform:"uppercase", letterSpacing:"0.06em",
+            margin:"0 0 8px", textAlign:"center"
+          }}>🔤 Palavra</p>
+          <div style={{display:"flex", flexDirection:"column", gap:"8px"}}>
             {words.map(word => {
-              const normWordId = String(word.id||"").trim().normalize("NFC");
-              const isMatched = matched.has(normWordId);
-              const isWrong   = wrongWord === normWordId;
+              const isMatched = matched.has(word.id);
+              const isWrong   = wrongWord === word.id;
               const isActive  = !!selectedImg && !isMatched;
               return (
-                <button key={normWordId} onClick={() => handleWordClick(normWordId)} disabled={isMatched}
+                <button key={word.id}
+                  onClick={() => handleWordClick(word.id)}
+                  disabled={isMatched}
                   style={{
-                    background: isMatched?"#f0fdf4":isWrong?"#fef2f2":isActive?"#FFF5F2":"white",
-                    border:`2px solid ${isMatched?"#16a34a":isWrong?"#dc2626":isActive?"#C76B4A":"#e5e7eb"}`,
-                    borderRadius:"12px", padding:"10px 14px",
-                    cursor:isMatched?"default":isActive?"pointer":"default",
-                    fontWeight:"700", fontSize:"15px",
-                    color:isMatched?"#16a34a":isWrong?"#dc2626":"#1B2D5B",
-                    textAlign:"center", transition:"all 0.15s",
-                    minHeight:"70px", display:"flex",
-                    alignItems:"center", justifyContent:"center",
-                    gap:"6px", opacity:1
+                    background: isMatched ? "#f0fdf4" : isWrong ? "#fef2f2" : isActive ? "#FFF5F2" : "white",
+                    border: `2px solid ${isMatched ? "#16a34a" : isWrong ? "#dc2626" : isActive ? "#C76B4A" : "#e5e7eb"}`,
+                    borderRadius:"12px",
+                    padding:"8px 6px",
+                    cursor: isMatched ? "default" : isActive ? "pointer" : "default",
+                    fontWeight:"800",
+                    fontSize:"13px",
+                    color: isMatched ? "#16a34a" : isWrong ? "#dc2626" : "#1B2D5B",
+                    textAlign:"center",
+                    transition:"all 0.15s",
+                    minHeight:"64px",
+                    display:"flex",
+                    alignItems:"center",
+                    justifyContent:"center",
+                    width:"100%",
+                    lineHeight:"1.2",
                   }}>
-                  {isMatched?"✅ ":isWrong?"❌ ":""}{word.label}
+                  {isMatched ? "✅ " : isWrong ? "❌ " : ""}{word.label}
                 </button>
               );
             })}
