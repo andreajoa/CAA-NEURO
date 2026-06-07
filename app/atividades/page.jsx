@@ -378,32 +378,68 @@ function Pareamento({ cards, onBack }) {
 
 function Sequencia({ cards, onBack }) {
 
-  // Sequencias tematicas pre-definidas com sentido pedagogico real
+  // Frases completas de CAA — usando ids reais dos defaultCards
+  // Cada sequencia forma uma frase com sentido real para comunicacao
   const SEQUENCIAS = [
     {
-      titulo: "🛁 Rotina do banho",
-      instrucao: "Coloque os cards na ordem certa da rotina do banho!",
-      ids: ["tomar-banho", "remedio", "dormir"],
+      titulo: "💧 Pedir água",
+      frase: "Me dá → Água → Mais",
+      instrucao: "Monte a frase para pedir água! Coloque os cards na ordem certa.",
+      ids: ["me-da", "agua", "mais"],
+    },
+    {
+      titulo: "🍽️ Pedir comida",
+      frase: "Me dá → Comer → Mais",
+      instrucao: "Monte a frase para pedir comida! Qual card vem primeiro?",
+      ids: ["me-da", "comer", "mais"],
+    },
+    {
+      titulo: "🏁 Acabou a comida",
+      frase: "Comer → Mais → Acabou",
+      instrucao: "O que acontece durante a refeição? Monte na ordem certa!",
+      ids: ["comer", "mais", "acabou"],
+    },
+    {
+      titulo: "🛁 Quero tomar banho",
+      frase: "Me dá → Tomar banho → Acabou",
+      instrucao: "Monte a frase sobre o banho! Coloque na ordem certa.",
+      ids: ["me-da", "tomar-banho", "acabou"],
     },
     {
       titulo: "🌙 Hora de dormir",
-      instrucao: "O que fazemos antes de dormir? Coloque na ordem certa!",
-      ids: ["comer", "tomar-banho", "remedio", "dormir"],
+      frase: "Tomar banho → Remédio → Dormir",
+      instrucao: "O que fazemos antes de dormir? Monte a rotina na ordem certa!",
+      ids: ["tomar-banho", "remedio", "dormir"],
     },
     {
       titulo: "🏫 Indo para a escola",
-      instrucao: "O que fazemos para ir para a escola? Coloque na ordem!",
+      frase: "Comer → Tomar banho → Escola",
+      instrucao: "O que fazemos antes de ir para a escola? Monte na ordem!",
       ids: ["comer", "tomar-banho", "escola"],
     },
     {
-      titulo: "🍽️ Na hora da refeição",
-      instrucao: "Organize o que acontece na hora de comer!",
-      ids: ["agua", "comer", "mais", "acabou"],
+      titulo: "🤕 Estou com dor",
+      frase: "Dor → Ajuda → Remédio",
+      instrucao: "O que fazer quando você está com dor? Monte na ordem certa!",
+      ids: ["dor", "ajuda", "remedio"],
     },
     {
-      titulo: "😟 Quando não estou bem",
-      instrucao: "O que fazer quando você está com dor ou doente?",
-      ids: ["dor", "ajuda", "remedio"],
+      titulo: "🎉 Quero brincar",
+      frase: "Me dá → Brincar → Mais",
+      instrucao: "Monte a frase para pedir para brincar!",
+      ids: ["me-da", "brincar", "mais"],
+    },
+    {
+      titulo: "🚶 Quero sair",
+      frase: "Me dá → Sair → Passear",
+      instrucao: "Monte a frase para pedir para sair! Qual card vem primeiro?",
+      ids: ["me-da", "sair", "passear"],
+    },
+    {
+      titulo: "🚫 Não quero esperar",
+      frase: "Não quero → Esperar → Parar",
+      instrucao: "Monte a frase para dizer que não quer esperar!",
+      ids: ["nao-quero", "esperar", "parar"],
     },
   ];
 
@@ -493,8 +529,8 @@ function Sequencia({ cards, onBack }) {
       <div style={{maxWidth:"520px",margin:"0 auto",padding:"28px 20px"}}>
         <div style={{textAlign:"center",marginBottom:"28px"}}>
           <div style={{fontSize:"48px",marginBottom:"8px"}}>📖</div>
-          <h2 style={{fontSize:"22px",fontWeight:"800",color:"#1B2D5B",margin:"0 0 8px"}}>Escolha uma história</h2>
-          <p style={{color:"#6b7280",fontSize:"14px",margin:0}}>Coloque os cards na ordem certa da rotina!</p>
+          <h2 style={{fontSize:"22px",fontWeight:"800",color:"#1B2D5B",margin:"0 0 8px"}}>Monte uma frase!</h2>
+          <p style={{color:"#6b7280",fontSize:"14px",margin:0}}>Escolha uma frase e coloque os cards na ordem certa</p>
         </div>
         <div style={{display:"flex",flexDirection:"column",gap:"12px"}}>
           {seqsDisponiveis.map((seq, i) => (
@@ -512,14 +548,14 @@ function Sequencia({ cards, onBack }) {
                 <div style={{fontWeight:"800",color:"#1B2D5B",fontSize:"16px",marginBottom:"4px"}}>
                   {seq.titulo.split(" ").slice(1).join(" ")}
                 </div>
-                <div style={{color:"#6b7280",fontSize:"13px"}}>{seq.instrucao}</div>
-                <div style={{display:"flex",gap:"6px",marginTop:"8px",flexWrap:"wrap"}}>
-                  {seq.cardsCorretos.map(c => (
-                    <span key={c.id} style={{background:"#f3f4f6",borderRadius:"6px",padding:"2px 8px",fontSize:"12px",color:"#374151",fontWeight:"600"}}>
-                      {c.label}
-                    </span>
-                  ))}
+                <div style={{
+                  background:"#f0f4ff",borderRadius:"8px",padding:"6px 10px",
+                  fontSize:"13px",fontWeight:"700",color:"#1B2D5B",
+                  margin:"4px 0 6px",letterSpacing:"0.01em"
+                }}>
+                  🗣️ {seq.frase}
                 </div>
+                <div style={{color:"#6b7280",fontSize:"12px"}}>{seq.instrucao}</div>
               </div>
               <div style={{fontSize:"20px",color:"#C76B4A"}}>→</div>
             </button>
