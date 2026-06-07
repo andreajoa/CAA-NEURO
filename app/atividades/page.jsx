@@ -196,20 +196,22 @@ function Associacao({ cards, onBack }) {
   useEffect(() => { init(); }, [pool]);
 
   function handleImageClick(imgId) {
-    if (matched.has(imgId)) return;
-    setSelectedImg(prev => prev === imgId ? null : imgId);
+    const normId = String(imgId||"").trim().normalize("NFC");
+    if (matched.has(normId)) return;
+    setSelectedImg(prev => prev === normId ? null : normId);
     setWrongWord(null);
   }
 
   function handleWordClick(wordId) {
     if (!selectedImg) return;
-    if (matched.has(wordId)) return;
-
     const selNorm  = String(selectedImg||"").trim().normalize("NFC");
     const wordNorm = String(wordId||"").trim().normalize("NFC");
+    if (matched.has(selNorm)) return;
+    if (matched.has(wordNorm)) return;
+
     if (selNorm === wordNorm) {
       const newMatched = new Set(matched);
-      newMatched.add(wordId);
+      newMatched.add(selNorm); // sempre o id normalizado
       setMatched(newMatched);
       setScore(s => s + 1);
       setSelectedImg(null);
@@ -218,7 +220,7 @@ function Associacao({ cards, onBack }) {
         setTimeout(() => setDone(true), 400);
       }
     } else {
-      setWrongWord(wordId);
+      setWrongWord(wordNorm);
       setTimeout(() => setWrongWord(null), 700);
     }
   }
@@ -256,10 +258,11 @@ function Associacao({ cards, onBack }) {
           <p style={{fontWeight:"700",color:"#374151",fontSize:"12px",textTransform:"uppercase",letterSpacing:"0.06em",margin:"0 0 8px",textAlign:"center"}}>🖼️ Imagem</p>
           <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
             {items.map(card => {
-              const isMatched = matched.has(card.id);
-              const isSel     = selectedImg === card.id;
+              const normCardId = String(card.id||"").trim().normalize("NFC");
+              const isMatched = matched.has(normCardId);
+              const isSel     = selectedImg === normCardId;
               return (
-                <button key={card.id} onClick={() => handleImageClick(card.id)} disabled={isMatched}
+                <button key={normCardId} onClick={() => handleImageClick(normCardId)} disabled={isMatched}
                   style={{
                     background: isMatched?"#f0fdf4": isSel?"#FFF5F2":"white",
                     border:`2px solid ${isMatched?"#16a34a":isSel?"#C76B4A":"#e5e7eb"}`,
@@ -286,11 +289,12 @@ function Associacao({ cards, onBack }) {
           <p style={{fontWeight:"700",color:"#374151",fontSize:"12px",textTransform:"uppercase",letterSpacing:"0.06em",margin:"0 0 8px",textAlign:"center"}}>🔤 Palavra</p>
           <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
             {words.map(word => {
-              const isMatched = matched.has(word.id);
-              const isWrong   = wrongWord === word.id;
+              const normWordId = String(word.id||"").trim().normalize("NFC");
+              const isMatched = matched.has(normWordId);
+              const isWrong   = wrongWord === normWordId;
               const isActive  = !!selectedImg && !isMatched;
               return (
-                <button key={word.id} onClick={() => handleWordClick(word.id)} disabled={isMatched}
+                <button key={normWordId} onClick={() => handleWordClick(normWordId)} disabled={isMatched}
                   style={{
                     background: isMatched?"#f0fdf4":isWrong?"#fef2f2":isActive?"#FFF5F2":"white",
                     border:`2px solid ${isMatched?"#16a34a":isWrong?"#dc2626":isActive?"#C76B4A":"#e5e7eb"}`,
