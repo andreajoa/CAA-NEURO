@@ -312,7 +312,8 @@ function Associacao({ cards, onBack }) {
                     display:"flex",
                     alignItems:"center",
                     justifyContent:"center",
-                    gap:"6px"
+                    gap:"6px",
+                    opacity: 1
                   }}>
                   {isMatched ? "✅ " : isWrong ? "❌ " : ""}{word.label}
                 </button>
