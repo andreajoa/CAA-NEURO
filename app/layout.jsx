@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { ptBR } from "@clerk/localizations";
 import "./globals.css";
 import ErrorTracker from "./providers/ErrorTracker";
+import PwaUpdateBanner from "./components/PwaUpdateBanner";
 
 export const metadata = {
   title: "CAA Neuro",
@@ -42,6 +43,7 @@ export default function RootLayout({ children }) {
         </head>
         <body>
           <ErrorTracker />
+          <PwaUpdateBanner />
           <ServiceWorkerRegister />
           {children}
         </body>
