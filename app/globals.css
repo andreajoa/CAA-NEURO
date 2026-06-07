@@ -373,10 +373,10 @@ display:none;
 .heroVisual{position:relative;min-height:720px}
 .heroImage{position:absolute;inset:-80px -80px 0 0;background:linear-gradient(90deg,rgba(248,251,249,.05),rgba(248,251,249,.18)),url('/hero-caa.png');background-size:cover;background-position:42% center;border-bottom-left-radius:90px}
 .heroImage:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#F2E8E1 0%,rgba(248,251,249,.68) 25%,rgba(0,80,60,.05) 65%,rgba(0,70,55,.28) 100%)}
-.quoteCard{position:absolute;right:10px;top:230px;width:310px;background:rgba(0,55,48,.76);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.35);border-radius:24px;color:#1B2D5B;padding:30px;box-shadow:0 30px 70px rgba(0,0,0,.18)}
-.quoteCard strong{font-size:72px;color:#C76B4A;line-height:.6}
-.quoteCard p{font-size:27px;line-height:1.25;margin:0}
-.quoteCard span{color:#C76B4A}
+.quoteCard{position:absolute;right:10px;top:230px;width:310px;background:rgba(27,45,91,0.88);backdrop-filter:blur(16px);border:1px solid rgba(232,180,168,.35);border-radius:24px;color:#F2E8E1;padding:30px;box-shadow:0 30px 70px rgba(0,0,0,.18)}
+.quoteCard strong{font-size:72px;color:#E8B4A8;line-height:.6}
+.quoteCard p{font-size:27px;line-height:1.25;margin:0;color:#F2E8E1}
+.quoteCard span{color:#E8B4A8}
 
 .professionalsStrip{margin:-10px auto 40px;width:88%;background:#F2E8E1;color:#1B2D5B;border-radius:18px;padding:24px 38px;display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:22px;align-items:center;box-shadow:0 20px 55px rgba(3,40,56,.2)}
 .professionalsStrip div{display:flex;align-items:center;gap:14px;border-right:1px solid #E8B4A8;min-height:44px}
