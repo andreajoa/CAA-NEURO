@@ -27,9 +27,9 @@ button.active{background:#F2E8E1!important;color:#1B2D5B!important;border-color:
 .caa-words span{background:#fff;border:1px solid #d5dde3;border-radius:10px;padding:12px 22px;font-size:19px;font-weight:900}
 .caa-words em{color:#7b8790}
 .caa-buttons{display:flex;gap:12px;flex-wrap:wrap}
-.caa-buttons button.green,.caa-editor button.green{background:#C76B4A;color:#1B2D5B}
-.caa-buttons button.yellow{background:#ffc328}
-.caa-buttons button.dark{background:#171d26;color:#1B2D5B}
+.caa-buttons button.green,.caa-editor button.green{background:#C76B4A;color:white;font-weight:900}
+.caa-buttons button.yellow{background:#F5EDE8;color:#C76B4A;border:1px solid #C76B4A;font-weight:900}
+.caa-buttons button.dark{background:#1B2D5B;color:white;font-weight:900}
 
 .caa-board{background:#fff;border:2px solid #C76B4A;border-radius:16px;padding:18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px}
 .caa-card{height:214px;position:relative;border-radius:18px;background:#fff;border:2px solid #e4eaf0;box-shadow:0 5px 16px #0002;transition:.18s ease}

@@ -985,7 +985,7 @@ setCards(enriched);
                 <option value="MALE">👨 Masculina</option>
                 <option value="CHILD">🧒 Criança</option>
               </select>
-              <button onClick={()=>setShowMobileTools(v=>!v)} style={{background:showMobileTools?"#1B2D5B":"#f3f4f6",color:showMobileTools?"#E8B4A8":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
+              <button onClick={()=>setShowMobileTools(v=>!v)} style={{background:showMobileTools?"#1B2D5B":"#F5EDE8",color:showMobileTools?"white":"#C76B4A",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
                 {showMobileTools ? "Menos opções" : "Mais opções"}
               </button>
 
@@ -1002,11 +1002,11 @@ setCards(enriched);
                     <option value={2500}>⏱ 2.5s</option>
                     <option value={4000}>⏱ 4.0s</option>
                   </select>
-                  <button onClick={()=>setDarkMode(d=>!d)} title="Alternar modo escuro" style={{background:darkMode?"#E8B4A8":"#f3f4f6",color:darkMode?"#0d1117":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer"}}>
+                  <button onClick={()=>setDarkMode(d=>!d)} title="Alternar modo escuro" style={{background:darkMode?"#1B2D5B":"#F5EDE8",color:darkMode?"white":"#C76B4A",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer"}}>
                     {darkMode?"☀️":"🌙"}
                   </button>
                   <button onClick={()=>setShowAccessibility(true)} title="Acessibilidade adaptativa"
-                    style={{background:diagnostico!=="padrao"?"#1B2D5B":"#f3f4f6",color:diagnostico!=="padrao"?"#E8B4A8":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer",fontWeight:diagnostico!=="padrao"?"700":"400"}}>
+                    style={{background:diagnostico!=="padrao"?"#1B2D5B":"#F5EDE8",color:diagnostico!=="padrao"?"white":"#C76B4A",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer",fontWeight:diagnostico!=="padrao"?"700":"400"}}>
                     ♿{diagnostico!=="padrao"?` ${DIAGNOSTICO_PROFILES[diagnostico]?.icon}`:""}
                   </button>
                   <button onClick={async()=>{
@@ -1019,7 +1019,7 @@ setCards(enriched);
                     🖨️ Imprimir
                   </button>
                   <button className="dark" onClick={addCard}>+ Novo card</button>
-                  <button onClick={()=>window.location.href="/biblioteca"} style={{background:"#1B2D5B",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>📚 Biblioteca</button>
+                  <button onClick={()=>window.location.href="/biblioteca"} style={{background:"#1B2D5B",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"700",fontSize:"13px"}}>📚 Biblioteca</button>
                   <button onClick={shareBoard} disabled={sharing} style={{background:"#B05E50",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>
                     {sharing ? "..." : "🔗 Compartilhar"}
                   </button>
