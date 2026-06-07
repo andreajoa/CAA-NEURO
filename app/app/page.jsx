@@ -957,7 +957,7 @@ setCards(enriched);
             )}
             {showQuickFires && (
               <div style={{background:"#faf5ff",border:"1px solid #e9d5ff",borderRadius:"10px",padding:"10px",marginBottom:"8px"}}>
-                <div style={{fontSize:"12px",fontWeight:"700",color:"#7c3aed",marginBottom:"8px"}}>⚡ QuickFires — frases rápidas</div>
+                <div style={{fontSize:"12px",fontWeight:"700",color:"#C76B4A",marginBottom:"8px"}}>⚡ QuickFires — frases rápidas</div>
                 <div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
                   {quickFirePhrases.map((f, i) => (
                     <button key={i} onClick={()=>{speak(f);setPhrase(p=>[...p,...f.split(" ")]);}}
@@ -992,7 +992,7 @@ setCards(enriched);
               {showMobileTools && (
                 <>
                   <button onClick={()=>setPhrase([])}>Limpar</button>
-                  <button onClick={()=>setShowQuickFires(q=>!q)} style={{background:showQuickFires?"#7c3aed":"#ede9fe",color:showQuickFires?"white":"#7c3aed",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
+                  <button onClick={()=>setShowQuickFires(q=>!q)} style={{background:showQuickFires?"#C76B4A":"#F5EDE8",color:showQuickFires?"white":"#C76B4A",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
                     ⚡ QuickFires
                   </button>
                   <select value={dwellMs} onChange={e=>setDwellMs(Number(e.target.value))} title="Dwell time — seleção por tempo de toque" style={{padding:"6px 8px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer",background:"white"}}>
@@ -1015,12 +1015,12 @@ setCards(enriched);
                     const w = window.open("","_blank");
                     w.document.write(html);
                     w.document.close();
-                  }} style={{background:"#eff6ff",color:"#2563eb",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
+                  }} style={{background:"#F5EDE8",color:"#C76B4A",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
                     🖨️ Imprimir
                   </button>
                   <button className="dark" onClick={addCard}>+ Novo card</button>
-                  <button onClick={()=>window.location.href="/biblioteca"} style={{background:"#7c3aed",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>📚 Biblioteca</button>
-                  <button onClick={shareBoard} disabled={sharing} style={{background:"#6366f1",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>
+                  <button onClick={()=>window.location.href="/biblioteca"} style={{background:"#1B2D5B",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>📚 Biblioteca</button>
+                  <button onClick={shareBoard} disabled={sharing} style={{background:"#B05E50",color:"white",border:"none",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"600",fontSize:"13px"}}>
                     {sharing ? "..." : "🔗 Compartilhar"}
                   </button>
                   {shareUrl && (
