@@ -21,7 +21,7 @@ export default function LandingPage() {
         </nav>
         <div className="navActions">
           <Link href="/sign-in" className="loginBtn">Entrar</Link>
-          <Link href="/sign-up" className="primaryBtn">Começar gratuitamente</Link>
+          <Link href="/sign-up" className="primaryBtn">Inscreva-se agora →</Link>
         </div>
       </header>
 
@@ -39,7 +39,7 @@ export default function LandingPage() {
           </div>
 
           <div className="heroActions">
-            <Link href="/sign-up" className="primaryBig">Começar gratuitamente agora →</Link>
+            <Link href="/sign-up" className="primaryBig">🚀 Inscreva-se agora para usar o app</Link>
             <Link href="/como-funciona" className="secondaryBig">Ver como funciona ▶</Link>
           </div>
 
@@ -105,7 +105,7 @@ export default function LandingPage() {
         <div><strong>100%</strong><span>gratuito para começar</span></div>
         <div className="ctaBox">
           <b>Pronto para transformar a comunicação?</b>
-          <Link href="/sign-up">Começar gratuitamente agora →</Link>
+          <Link href="/sign-up" className="primaryBig">🚀 Inscreva-se agora para usar o app</Link>
         </div>
       </section>
 
