@@ -1,14 +1,26 @@
 {
   "name": "CAA Neuro",
   "short_name": "CAA Neuro",
-  "description": "Sistema de comunicação aumentativa e alternativa",
+  "description": "Sistema de comunicação aumentativa e alternativa para autismo e TDAH",
   "start_url": "/app",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#00885f",
+  "theme_color": "#C76B4A",
   "orientation": "any",
+  "categories": ["medical", "education"],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable any" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
+    { "src": "/icon-57.png",   "sizes": "57x57",   "type": "image/png" },
+    { "src": "/icon-60.png",   "sizes": "60x60",   "type": "image/png" },
+    { "src": "/icon-72.png",   "sizes": "72x72",   "type": "image/png" },
+    { "src": "/icon-76.png",   "sizes": "76x76",   "type": "image/png" },
+    { "src": "/icon-114.png",  "sizes": "114x114", "type": "image/png" },
+    { "src": "/icon-120.png",  "sizes": "120x120", "type": "image/png" },
+    { "src": "/icon-144.png",  "sizes": "144x144", "type": "image/png" },
+    { "src": "/icon-152.png",  "sizes": "152x152", "type": "image/png" },
+    { "src": "/icon-167.png",  "sizes": "167x167", "type": "image/png" },
+    { "src": "/icon-180.png",  "sizes": "180x180", "type": "image/png" },
+    { "src": "/icon-192.png",  "sizes": "192x192", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icon-512.png",  "sizes": "512x512", "type": "image/png", "purpose": "maskable any" },
+    { "src": "/icon-1024.png", "sizes": "1024x1024", "type": "image/png" }
   ]
 }
