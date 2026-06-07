@@ -33,7 +33,7 @@ export async function POST(request) {
         display:flex;flex-direction:column;align-items:center;justify-content:center;
         box-shadow:0 2px 8px rgba(0,0,0,0.06);">
         ${imgTag}
-        <div style="font-size:13px;font-weight:700;color:#071b2c;text-align:center;line-height:1.3;word-break:break-word;">
+        <div style="font-size:13px;font-weight:700;color:#1B2D5B;text-align:center;line-height:1.3;word-break:break-word;">
           ${card.label}
         </div>
       </div>`;
@@ -55,15 +55,15 @@ export async function POST(request) {
 </style>
 </head>
 <body>
-<div class="no-print" style="background:#071b2c;color:white;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;">
+<div class="no-print" style="background:#1B2D5B;color:white;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;">
   <span style="font-weight:700;font-size:16px;">CAA Neuro — Prancha: ${title || "Sem título"}</span>
   <div style="display:flex;gap:10px;">
-    <button onclick="window.print()" style="background:#00885f;color:white;border:none;padding:9px 20px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;">🖨️ Imprimir / Salvar PDF</button>
+    <button onclick="window.print()" style="background:#C76B4A;color:white;border:none;padding:9px 20px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;">🖨️ Imprimir / Salvar PDF</button>
     <button onclick="window.close()" style="background:rgba(255,255,255,0.15);color:white;border:none;padding:9px 16px;border-radius:8px;cursor:pointer;font-size:14px;">Fechar</button>
   </div>
 </div>
 <div style="position:relative;width:${pageW}px;min-height:${pageH}px;margin:0 auto;">
-  <div style="padding:${padY}px ${padX}px 0;font-size:22px;font-weight:800;color:#071b2c;text-align:center;height:80px;display:flex;align-items:center;justify-content:center;">
+  <div style="padding:${padY}px ${padX}px 0;font-size:22px;font-weight:800;color:#1B2D5B;text-align:center;height:80px;display:flex;align-items:center;justify-content:center;">
     ${title || "Prancha de Comunicação"}
   </div>
   ${cardHTML}

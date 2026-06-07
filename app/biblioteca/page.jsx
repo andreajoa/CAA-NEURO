@@ -74,19 +74,19 @@ export default function Biblioteca() {
 
   return (
     <div style={{ minHeight:"100vh", background:"#f9fafb", fontFamily:"system-ui" }}>
-      <nav style={{background:"#071b2c",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #00885f"}}>
-        <span style={{color:"#4ec9a0",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
+      <nav style={{background:"#1B2D5B",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #C76B4A"}}>
+        <span style={{color:"#E8B4A8",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
         <a href="/app" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏠 Prancha</a>
         <a href="/biblioteca" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>📚 Biblioteca</a>
         <a href="/paciente" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👤 Modo Paciente</a>
         <a href="/atividades" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🎮 Atividades</a>
-        <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.2)",border:"1px solid #4ec9a0",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>✨ Relatório IA</a>
+        <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.2)",border:"1px solid #E8B4A8",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>✨ Relatório IA</a>
         <a href="/admin" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>📊 Admin</a>
         <a href="/suporte" style={{color:"rgba(255,255,255,0.6)",textDecoration:"none",fontSize:"12px",marginLeft:"auto"}}>❓ Ajuda</a>
       </nav>
 
       <div style={{ maxWidth:"900px", margin:"0 auto", padding:"32px 24px" }}>
-        <h1 style={{ fontSize:"28px", fontWeight:"800", color:"#071b2c", marginBottom:"8px" }}>📚 Biblioteca de Pranchas</h1>
+        <h1 style={{ fontSize:"28px", fontWeight:"800", color:"#1B2D5B", marginBottom:"8px" }}>📚 Biblioteca de Pranchas</h1>
         <p style={{ color:"#6b7280", marginBottom:"32px" }}>Importe pranchas prontas com pictogramas ARASAAC — os cards são adicionados à sua prancha atual.</p>
 
         {loading && <p style={{ color:"#6b7280", textAlign:"center", padding:"40px" }}>Carregando...</p>}
@@ -105,11 +105,11 @@ export default function Biblioteca() {
               </div>
 
               <div style={{ padding:"16px" }}>
-                <div style={{ fontSize:"18px", fontWeight:"800", color:"#071b2c", marginBottom:"4px" }}>{t.title}</div>
+                <div style={{ fontSize:"18px", fontWeight:"800", color:"#1B2D5B", marginBottom:"4px" }}>{t.title}</div>
                 <div style={{ fontSize:"13px", color:"#6b7280", marginBottom:"16px" }}>{t.description}</div>
                 <button onClick={() => importar(t)} disabled={!!importing}
                   style={{ width:"100%", padding:"10px", borderRadius:"10px", border:"none", cursor: importing ? "not-allowed" : "pointer",
-                    background: done===t.slug ? "#00885f" : importing===t.slug ? "#e5e7eb" : "#00885f",
+                    background: done===t.slug ? "#C76B4A" : importing===t.slug ? "#e5e7eb" : "#C76B4A",
                     color: importing===t.slug && done!==t.slug ? "#6b7280" : "white",
                     fontWeight:"700", fontSize:"14px", transition:"all 0.2s" }}>
                   {done===t.slug ? "✅ Importado!" : importing===t.slug ? "Importando..." : "⬇️ Importar prancha"}

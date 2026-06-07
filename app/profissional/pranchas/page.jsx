@@ -144,7 +144,7 @@ export default function PranchasTerapeuticas(){
   return (
     <AppShell>
       <div style={{maxWidth:1200,margin:"0 auto",padding:"32px 24px",fontFamily:"system-ui"}}>
-        <h1 style={{fontSize:28,fontWeight:900,color:"#071b2c",margin:"0 0 6px"}}>Pranchas Terapêuticas</h1>
+        <h1 style={{fontSize:28,fontWeight:900,color:"#1B2D5B",margin:"0 0 6px"}}>Pranchas Terapêuticas</h1>
         <p style={{color:"#6b7280",margin:"0 0 24px"}}>Monte pranchas individuais para cada paciente, compartilhe por link ou imprima em PDF.</p>
 
         <div style={{display:"grid",gridTemplateColumns:"280px 1fr",gap:20}}>
@@ -202,7 +202,7 @@ export default function PranchasTerapeuticas(){
             <div style={modal} onClick={e=>e.stopPropagation()}>
               <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"start"}}>
                 <div>
-                  <h2 style={{margin:"0 0 4px",color:"#071b2c"}}>Banco de imagens</h2>
+                  <h2 style={{margin:"0 0 4px",color:"#1B2D5B"}}>Banco de imagens</h2>
                   <p style={{margin:"0 0 16px",color:"#6b7280",fontSize:13}}>Busque, envie do dispositivo ou gere com IA.</p>
                 </div>
                 <button onClick={()=>setImagePickerOpen(false)} style={{fontSize:24,background:"none",border:0,cursor:"pointer"}}>×</button>
@@ -263,15 +263,15 @@ function ImageGrid({images,chooseImage}){
 }
 
 const panel={background:"white",border:"1px solid #e5e7eb",borderRadius:16,padding:18,marginBottom:16};
-const h3={fontSize:14,color:"#071b2c",margin:"22px 0 10px"};
+const h3={fontSize:14,color:"#1B2D5B",margin:"22px 0 10px"};
 const lbl={fontSize:12,fontWeight:800,color:"#374151"};
 const inp={width:"100%",boxSizing:"border-box",padding:"10px 12px",border:"1px solid #d1d5db",borderRadius:10,margin:"6px 0 12px"};
-const btnGreen={background:"#00885f",color:"white",border:0,borderRadius:10,padding:"10px 16px",fontWeight:800,cursor:"pointer",textDecoration:"none"};
+const btnGreen={background:"#C76B4A",color:"white",border:0,borderRadius:10,padding:"10px 16px",fontWeight:800,cursor:"pointer",textDecoration:"none"};
 const btn={background:"#f3f4f6",color:"#374151",border:0,borderRadius:10,padding:"10px 16px",fontWeight:700,cursor:"pointer",textDecoration:"none"};
 const saved={width:"100%",textAlign:"left",border:"1px solid #e5e7eb",borderRadius:10,padding:10,marginBottom:8,cursor:"pointer",display:"flex",flexDirection:"column",gap:4};
 const cardBox={background:"white",border:"1px solid #e5e7eb",borderRadius:14,padding:10};
 const imgBox={width:"100%",height:110,background:"#f3f4f6",border:"1px solid #e5e7eb",borderRadius:10,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",cursor:"pointer"};
-const smallBtn={width:"100%",background:"#071b2c",color:"white",border:0,borderRadius:8,padding:"8px",fontSize:12,cursor:"pointer"};
+const smallBtn={width:"100%",background:"#1B2D5B",color:"white",border:0,borderRadius:8,padding:"8px",fontSize:12,cursor:"pointer"};
 const overlay={position:"fixed",inset:0,background:"rgba(0,0,0,.45)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:16};
 const modal={background:"white",borderRadius:18,padding:20,width:"min(760px,96vw)",maxHeight:"88vh",overflowY:"auto"};
 const err={background:"#fef2f2",border:"1px solid #fecaca",color:"#b91c1c",borderRadius:10,padding:10,fontSize:13,marginBottom:12};

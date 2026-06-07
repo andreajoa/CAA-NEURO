@@ -30,12 +30,12 @@ export default class ErrorBoundary extends Component {
         <div style={{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"system-ui,sans-serif", background:"#f9fafb" }}>
           <div style={{ background:"white", borderRadius:"20px", border:"1px solid #e5e7eb", padding:"48px", maxWidth:"480px", textAlign:"center" }}>
             <div style={{ fontSize:"52px", marginBottom:"16px" }}>⚠️</div>
-            <h2 style={{ fontSize:"22px", fontWeight:"800", color:"#071b2c", margin:"0 0 12px" }}>Algo deu errado</h2>
+            <h2 style={{ fontSize:"22px", fontWeight:"800", color:"#1B2D5B", margin:"0 0 12px" }}>Algo deu errado</h2>
             <p style={{ color:"#6b7280", fontSize:"15px", margin:"0 0 28px", lineHeight:"1.7" }}>
               O erro foi registrado automaticamente. Tente recarregar a página.
             </p>
             <button onClick={() => window.location.reload()}
-              style={{ background:"#00885f", color:"white", border:"none", padding:"13px 32px", borderRadius:"10px", fontSize:"15px", fontWeight:"700", cursor:"pointer" }}>
+              style={{ background:"#C76B4A", color:"white", border:"none", padding:"13px 32px", borderRadius:"10px", fontSize:"15px", fontWeight:"700", cursor:"pointer" }}>
               Recarregar página
             </button>
           </div>

@@ -71,7 +71,7 @@ export default function DepoimentosPage() {
             <div style={{ display:"inline-block", background:"#f0fdf4", color:"#15803d", padding:"6px 18px", borderRadius:"999px", fontSize:"13px", fontWeight:"700", marginBottom:"20px", border:"1px solid #bbf7d0" }}>
               Histórias reais
             </div>
-          <h1 style={{ fontSize:"clamp(28px,5vw,44px)", fontWeight:"800", color:"#071b2c", margin:"0 0 16px", lineHeight:"1.15" }}>
+          <h1 style={{ fontSize:"clamp(28px,5vw,44px)", fontWeight:"800", color:"#1B2D5B", margin:"0 0 16px", lineHeight:"1.15" }}>
             O que dizem os profissionais
           </h1>
           <p style={{ color:"#42515e", fontSize:"18px", margin:"0 0 36px", maxWidth:"560px", marginLeft:"auto", marginRight:"auto", lineHeight:"1.6" }}>
@@ -79,7 +79,7 @@ export default function DepoimentosPage() {
           </p>
           {!showForm && !sent && (
             <button onClick={() => { setShowForm(true); setError(""); }}
-              style={{ background:"#00885f", color:"white", border:"none", padding:"14px 36px", borderRadius:"10px", fontSize:"16px", fontWeight:"700", cursor:"pointer" }}>
+              style={{ background:"#C76B4A", color:"white", border:"none", padding:"14px 36px", borderRadius:"10px", fontSize:"16px", fontWeight:"700", cursor:"pointer" }}>
               Compartilhar minha experiência
             </button>
           )}
@@ -87,7 +87,7 @@ export default function DepoimentosPage() {
 
         {showForm && !sent && (
           <div style={{ background:"white", borderRadius:"20px", border:"1px solid #e5e7eb", padding:"36px", marginBottom:"56px", boxShadow:"0 4px 24px rgba(0,0,0,0.06)" }}>
-            <h2 style={{ fontSize:"22px", fontWeight:"800", color:"#071b2c", margin:"0 0 6px" }}>Compartilhe sua experiência</h2>
+            <h2 style={{ fontSize:"22px", fontWeight:"800", color:"#1B2D5B", margin:"0 0 6px" }}>Compartilhe sua experiência</h2>
             <p style={{ color:"#6b7280", fontSize:"14px", margin:"0 0 28px" }}>Seu depoimento será revisado antes de aparecer publicamente. Obrigado por contribuir!</p>
 
             <form onSubmit={submit} style={{ display:"flex", flexDirection:"column", gap:"18px" }}>
@@ -138,7 +138,7 @@ export default function DepoimentosPage() {
                   Cancelar
                 </button>
                 <button type="submit" disabled={sending}
-                  style={{ padding:"11px 32px", borderRadius:"9px", background:sending?"#6ee7b7":"#00885f", color:"white", border:"none", fontSize:"14px", fontWeight:"700", cursor:sending?"wait":"pointer" }}>
+                  style={{ padding:"11px 32px", borderRadius:"9px", background:sending?"#E8B4A8":"#C76B4A", color:"white", border:"none", fontSize:"14px", fontWeight:"700", cursor:sending?"wait":"pointer" }}>
                   {sending ? "Enviando..." : "Enviar depoimento"}
                 </button>
               </div>
@@ -169,9 +169,9 @@ export default function DepoimentosPage() {
         ) : (
           <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))", gap:"24px" }}>
             {testimonials.map(t => (
-              <div key={t.id} style={{ background:"white", borderRadius:"18px", border: t.destaque ? "2px solid #00885f" : "1px solid #e5e7eb", padding:"28px", display:"flex", flexDirection:"column", gap:"16px", position:"relative" }}>
+              <div key={t.id} style={{ background:"white", borderRadius:"18px", border: t.destaque ? "2px solid #C76B4A" : "1px solid #e5e7eb", padding:"28px", display:"flex", flexDirection:"column", gap:"16px", position:"relative" }}>
                 {t.destaque && (
-                  <div style={{ position:"absolute", top:"-1px", right:"18px", background:"#00885f", color:"white", fontSize:"11px", fontWeight:"800", padding:"4px 12px", borderRadius:"0 0 10px 10px" }}>
+                  <div style={{ position:"absolute", top:"-1px", right:"18px", background:"#C76B4A", color:"white", fontSize:"11px", fontWeight:"800", padding:"4px 12px", borderRadius:"0 0 10px 10px" }}>
                     ⭐ Destaque
                   </div>
                 )}
@@ -185,7 +185,7 @@ export default function DepoimentosPage() {
                       </div>
                   }
                   <div>
-                    <div style={{ fontWeight:"800", fontSize:"14px", color:"#071b2c" }}>{t.nome}</div>
+                    <div style={{ fontWeight:"800", fontSize:"14px", color:"#1B2D5B" }}>{t.nome}</div>
                     {(t.profissao || t.cidade) && <div style={{ fontSize:"13px", color:"#6b7280" }}>{t.profissao}{t.profissao && t.cidade ? ` · ${t.cidade}` : t.cidade}</div>}
                   </div>
                 </div>
@@ -195,9 +195,9 @@ export default function DepoimentosPage() {
         )}
 
         <div style={{ textAlign:"center", marginTop:"72px", padding:"52px 32px", background:"white", borderRadius:"20px", border:"1px solid #e5e7eb" }}>
-          <h2 style={{ fontSize:"26px", fontWeight:"800", color:"#071b2c", margin:"0 0 12px" }}>Pronto para transformar seu atendimento?</h2>
+          <h2 style={{ fontSize:"26px", fontWeight:"800", color:"#1B2D5B", margin:"0 0 12px" }}>Pronto para transformar seu atendimento?</h2>
           <p style={{ color:"#6b7280", margin:"0 0 28px", fontSize:"16px" }}>Junte-se a centenas de profissionais que já usam o CAA Neuro.</p>
-          <Link href="/sign-up" style={{ background:"#00885f", color:"white", padding:"15px 36px", borderRadius:"10px", textDecoration:"none", fontSize:"16px", fontWeight:"700", display:"inline-block" }}>
+          <Link href="/sign-up" style={{ background:"#C76B4A", color:"white", padding:"15px 36px", borderRadius:"10px", textDecoration:"none", fontSize:"16px", fontWeight:"700", display:"inline-block" }}>
             Começar gratuitamente →
           </Link>
         </div>

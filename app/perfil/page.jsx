@@ -74,7 +74,7 @@ export default function PerfilPage() {
 
 
       <div style={{ maxWidth:"640px", margin:"0 auto", padding:"40px 24px" }}>
-        <h1 style={{ fontSize:"24px", fontWeight:"800", color:"#071b2c", margin:"0 0 6px" }}>Perfil profissional</h1>
+        <h1 style={{ fontSize:"24px", fontWeight:"800", color:"#1B2D5B", margin:"0 0 6px" }}>Perfil profissional</h1>
         <p style={{ color:"#6b7280", fontSize:"14px", margin:"0 0 32px" }}>
           Essas informações aparecem nos relatórios e prontuários gerados, conforme exigido pela Resolução CFFa nº 777/2025.
         </p>
@@ -143,16 +143,16 @@ export default function PerfilPage() {
           </div>
 
           {/* ── Seção: Diretório de Profissionais ── */}
-          <div style={{ marginTop:"32px", background:"linear-gradient(135deg,#071b2c,#0d2d3e)", borderRadius:"16px", padding:"24px", color:"white" }}>
+          <div style={{ marginTop:"32px", background:"linear-gradient(135deg,#1B2D5B,#0d2d3e)", borderRadius:"16px", padding:"24px", color:"white" }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"16px", flexWrap:"wrap", gap:"12px" }}>
               <div>
-                <div style={{ fontWeight:"800", fontSize:"16px", color:"#4ec9a0" }}>🌐 Diretório de Profissionais</div>
+                <div style={{ fontWeight:"800", fontSize:"16px", color:"#E8B4A8" }}>🌐 Diretório de Profissionais</div>
                 <div style={{ fontSize:"13px", color:"rgba(255,255,255,0.6)", marginTop:"4px" }}>Apareça para famílias e colegas que buscam especialistas em CAA</div>
               </div>
               <label style={{ display:"flex", alignItems:"center", gap:"10px", cursor:"pointer" }}>
                 <span style={{ fontSize:"13px", color:"rgba(255,255,255,0.7)" }}>{dirVisible ? "Visível" : "Oculto"}</span>
                 <div onClick={() => setDirVisible(v => !v)}
-                  style={{ width:"44px", height:"24px", borderRadius:"12px", background:dirVisible?"#4ec9a0":"rgba(255,255,255,0.2)", position:"relative", cursor:"pointer", transition:"background 0.2s" }}>
+                  style={{ width:"44px", height:"24px", borderRadius:"12px", background:dirVisible?"#E8B4A8":"rgba(255,255,255,0.2)", position:"relative", cursor:"pointer", transition:"background 0.2s" }}>
                   <div style={{ position:"absolute", top:"3px", left:dirVisible?"23px":"3px", width:"18px", height:"18px", borderRadius:"50%", background:"white", transition:"left 0.2s" }} />
                 </div>
               </label>
@@ -185,22 +185,22 @@ export default function PerfilPage() {
                 </div>
                 <label style={{ display:"flex", alignItems:"center", gap:"10px", cursor:"pointer" }}>
                   <div onClick={() => setDirOnline(v => !v)}
-                    style={{ width:"36px", height:"20px", borderRadius:"10px", background:dirOnline?"#4ec9a0":"rgba(255,255,255,0.2)", position:"relative", cursor:"pointer", transition:"background 0.2s", flexShrink:0 }}>
+                    style={{ width:"36px", height:"20px", borderRadius:"10px", background:dirOnline?"#E8B4A8":"rgba(255,255,255,0.2)", position:"relative", cursor:"pointer", transition:"background 0.2s", flexShrink:0 }}>
                     <div style={{ position:"absolute", top:"2px", left:dirOnline?"18px":"2px", width:"16px", height:"16px", borderRadius:"50%", background:"white", transition:"left 0.2s" }} />
                   </div>
                   <span style={{ fontSize:"13px", color:"rgba(255,255,255,0.8)" }}>Atendo online</span>
                 </label>
                 <button onClick={saveDiretorio} disabled={dirSaving}
-                  style={{ background:"#00885f", color:"white", border:"none", borderRadius:"10px", padding:"11px 20px", fontWeight:"700", fontSize:"14px", cursor:"pointer", alignSelf:"flex-start", display:"flex", alignItems:"center", gap:"8px" }}>
+                  style={{ background:"#C76B4A", color:"white", border:"none", borderRadius:"10px", padding:"11px 20px", fontWeight:"700", fontSize:"14px", cursor:"pointer", alignSelf:"flex-start", display:"flex", alignItems:"center", gap:"8px" }}>
                   {dirSaving ? "Salvando..." : "💾 Salvar no diretório"}
-                  {dirSaved && <span style={{ color:"#4ec9a0" }}>✅</span>}
+                  {dirSaved && <span style={{ color:"#E8B4A8" }}>✅</span>}
                 </button>
               </div>
             )}
           </div>
 
           <div style={{ marginTop:"24px", display:"flex", gap:"10px", alignItems:"center" }}>
-            <button onClick={save} disabled={saving} style={{ background: saving?"#6ee7b7":"#00885f", color:"white", border:"none", padding:"12px 32px", borderRadius:"10px", fontSize:"15px", fontWeight:"700", cursor:"pointer" }}>
+            <button onClick={save} disabled={saving} style={{ background: saving?"#E8B4A8":"#C76B4A", color:"white", border:"none", padding:"12px 32px", borderRadius:"10px", fontSize:"15px", fontWeight:"700", cursor:"pointer" }}>
               {saving ? "Salvando..." : "Salvar perfil"}
             </button>
             {saved && <span style={{ color:"#16a34a", fontSize:"14px", fontWeight:"600" }}>✅ Salvo com sucesso!</span>}

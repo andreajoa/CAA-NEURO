@@ -83,15 +83,15 @@ export default function PranchotecaPage() {
 
       <div style={{ maxWidth:"1000px", margin:"0 auto", padding:"32px 24px" }}>
         <div style={{ marginBottom:"32px" }}>
-          <Link href="/app" style={{ display:"inline-flex", alignItems:"center", gap:"6px", color:"#00885f", fontWeight:"600", fontSize:"14px", textDecoration:"none", marginBottom:"16px" }}>← Voltar à prancha</Link>
-          <h1 style={{ fontSize:"28px", fontWeight:"800", color:"#071b2c", margin:"0 0 8px" }}>Pranchoteca</h1>
+          <Link href="/app" style={{ display:"inline-flex", alignItems:"center", gap:"6px", color:"#C76B4A", fontWeight:"600", fontSize:"14px", textDecoration:"none", marginBottom:"16px" }}>← Voltar à prancha</Link>
+          <h1 style={{ fontSize:"28px", fontWeight:"800", color:"#1B2D5B", margin:"0 0 8px" }}>Pranchoteca</h1>
           <p style={{ color:"#6b7280", margin:"0 0 20px" }}>Pranchas prontas criadas por especialistas. Importe com um clique e personalize para seu paciente.</p>
           <div style={{ display:"flex", gap:"10px", flexWrap:"wrap", alignItems:"center" }}>
             <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar prancha..."
               style={{ border:"1px solid #e5e7eb", borderRadius:"8px", padding:"9px 14px", fontSize:"14px", minWidth:"200px" }} />
             {Object.entries(CATS).map(([k,v]) => (
               <button key={k} onClick={()=>setCat(k)}
-                style={{ padding:"8px 14px", borderRadius:"20px", border: cat===k ? "2px solid #00885f" : "1px solid #e5e7eb", background: cat===k ? "#f0fdf4" : "white", color: cat===k ? "#00885f" : "#374151", fontSize:"13px", fontWeight: cat===k ? "700" : "500", cursor:"pointer" }}>
+                style={{ padding:"8px 14px", borderRadius:"20px", border: cat===k ? "2px solid #C76B4A" : "1px solid #e5e7eb", background: cat===k ? "#f0fdf4" : "white", color: cat===k ? "#C76B4A" : "#374151", fontSize:"13px", fontWeight: cat===k ? "700" : "500", cursor:"pointer" }}>
                 {v}
               </button>
             ))}
@@ -111,7 +111,7 @@ export default function PranchotecaPage() {
               <div key={t.id} style={{ background:"white", borderRadius:"16px", border:"1px solid #e5e7eb", padding:"24px", display:"flex", flexDirection:"column", gap:"12px" }}>
                 <div>
                   <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:"8px", marginBottom:"8px" }}>
-                    <h3 style={{ fontSize:"16px", fontWeight:"800", color:"#071b2c", margin:0 }}>{t.title}</h3>
+                    <h3 style={{ fontSize:"16px", fontWeight:"800", color:"#1B2D5B", margin:0 }}>{t.title}</h3>
                     <span style={{ background:"#f0fdf4", color:"#16a34a", padding:"3px 10px", borderRadius:"20px", fontSize:"11px", fontWeight:"700", flexShrink:0 }}>
                       {t.cards?.length||0} cards
                     </span>
@@ -126,7 +126,7 @@ export default function PranchotecaPage() {
                 )}
                 <div style={{ display:"flex", gap:"8px", marginTop:"auto", flexWrap:"wrap" }}>
                   <button onClick={()=>importar(t)} disabled={importing===t.id}
-                    style={{ flex:1, padding:"10px", background: imported===t.id ? "#16a34a" : importing===t.id ? "#9ca3af" : "#00885f", color:"white", border:"none", borderRadius:"9px", fontWeight:"700", cursor: importing===t.id ? "wait" : "pointer", fontSize:"14px" }}>
+                    style={{ flex:1, padding:"10px", background: imported===t.id ? "#16a34a" : importing===t.id ? "#9ca3af" : "#C76B4A", color:"white", border:"none", borderRadius:"9px", fontWeight:"700", cursor: importing===t.id ? "wait" : "pointer", fontSize:"14px" }}>
                     {imported===t.id ? "✅ Importada!" : importing===t.id ? "Importando..." : "Importar prancha"}
                   </button>
                   <button onClick={() => setPreview(t)}
@@ -147,7 +147,7 @@ export default function PranchotecaPage() {
             style={{ background:"white", borderRadius:"20px", maxWidth:"720px", width:"100%", maxHeight:"90vh", overflowY:"auto", boxShadow:"0 20px 60px rgba(0,0,0,0.3)" }}>
             <div style={{ padding:"24px 28px", borderBottom:"1px solid #e5e7eb", display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:"16px", position:"sticky", top:0, background:"white", borderRadius:"20px 20px 0 0", zIndex:1 }}>
               <div style={{ flex:1 }}>
-                <h2 style={{ fontSize:"20px", fontWeight:"800", color:"#071b2c", margin:"0 0 4px" }}>{preview.title}</h2>
+                <h2 style={{ fontSize:"20px", fontWeight:"800", color:"#1B2D5B", margin:"0 0 4px" }}>{preview.title}</h2>
                 <p style={{ fontSize:"13px", color:"#6b7280", margin:0 }}>
                   {preview.cards?.length} cards
                   {preview.autor && " · " + preview.autor}
@@ -165,14 +165,14 @@ export default function PranchotecaPage() {
                 {(preview.cards || []).map((c, i) => (
                   <div key={i} style={{ background:"#f9fafb", border:"1px solid #e5e7eb", borderRadius:"10px", padding:"10px 6px", display:"flex", flexDirection:"column", alignItems:"center", gap:"6px", textAlign:"center" }}>
                     <ModalCardImg card={c} />
-                    <span style={{ fontSize:"11px", fontWeight:"700", color:"#071b2c", lineHeight:"1.3", wordBreak:"break-word" }}>{c.label}</span>
+                    <span style={{ fontSize:"11px", fontWeight:"700", color:"#1B2D5B", lineHeight:"1.3", wordBreak:"break-word" }}>{c.label}</span>
                     {c.cat && <span style={{ fontSize:"9px", color:"#9ca3af", textTransform:"uppercase" }}>{c.cat}</span>}
                   </div>
                 ))}
               </div>
               <div style={{ display:"flex", gap:"12px" }}>
                 <button onClick={() => { importar(preview); setPreview(null); }} disabled={!!importing}
-                  style={{ flex:2, padding:"13px", background:"#00885f", color:"white", border:"none", borderRadius:"10px", fontWeight:"700", fontSize:"15px", cursor:"pointer" }}>
+                  style={{ flex:2, padding:"13px", background:"#C76B4A", color:"white", border:"none", borderRadius:"10px", fontWeight:"700", fontSize:"15px", cursor:"pointer" }}>
                   Importar esta prancha
                 </button>
                 <button onClick={() => setPreview(null)}

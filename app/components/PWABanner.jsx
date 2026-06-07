@@ -23,7 +23,7 @@ export default function PWABanner() {
   if (!show) return null;
 
   return (
-    <div style={{background:"#071b2c",borderBottom:"2px solid #00885f",padding:"12px 20px",display:"flex",alignItems:"flex-start",gap:"14px",position:"sticky",top:0,zIndex:100}}>
+    <div style={{background:"#1B2D5B",borderBottom:"2px solid #C76B4A",padding:"12px 20px",display:"flex",alignItems:"flex-start",gap:"14px",position:"sticky",top:0,zIndex:100}}>
       <div style={{fontSize:"28px",flexShrink:0}}>📲</div>
       <div style={{flex:1}}>
         <div style={{color:"white",fontWeight:"700",fontSize:"14px",marginBottom:"4px"}}>
@@ -31,16 +31,16 @@ export default function PWABanner() {
         </div>
         {os === "ios" && (
           <div style={{color:"rgba(255,255,255,0.8)",fontSize:"13px",lineHeight:"1.6"}}>
-            No <strong style={{color:"#4ec9a0"}}>Safari</strong>: toque em 
-            <strong style={{color:"#4ec9a0"}}> compartilhar</strong> (□↑) → 
-            <strong style={{color:"#4ec9a0"}}> "Adicionar à Tela de Início"</strong> → Adicionar
+            No <strong style={{color:"#E8B4A8"}}>Safari</strong>: toque em 
+            <strong style={{color:"#E8B4A8"}}> compartilhar</strong> (□↑) → 
+            <strong style={{color:"#E8B4A8"}}> "Adicionar à Tela de Início"</strong> → Adicionar
           </div>
         )}
         {os === "android" && (
           <div style={{color:"rgba(255,255,255,0.8)",fontSize:"13px",lineHeight:"1.6"}}>
-            No <strong style={{color:"#4ec9a0"}}>Chrome</strong>: toque nos 
-            <strong style={{color:"#4ec9a0"}}> três pontos</strong> (⋮) → 
-            <strong style={{color:"#4ec9a0"}}> "Adicionar à tela inicial"</strong> → Adicionar
+            No <strong style={{color:"#E8B4A8"}}>Chrome</strong>: toque nos 
+            <strong style={{color:"#E8B4A8"}}> três pontos</strong> (⋮) → 
+            <strong style={{color:"#E8B4A8"}}> "Adicionar à tela inicial"</strong> → Adicionar
           </div>
         )}
       </div>

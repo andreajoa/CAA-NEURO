@@ -165,9 +165,9 @@ export function AccessibilityPanel({ diagnostico, setDiagnostico, config, overri
         maxHeight:"90vh", overflow:"auto", boxShadow:"0 20px 60px rgba(0,0,0,0.3)"
       }}>
         {/* Header */}
-        <div style={{background:"#071b2c", color:"white", padding:"20px 24px", borderRadius:"20px 20px 0 0", display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+        <div style={{background:"#1B2D5B", color:"white", padding:"20px 24px", borderRadius:"20px 20px 0 0", display:"flex", justifyContent:"space-between", alignItems:"center"}}>
           <div>
-            <div style={{fontWeight:"800", fontSize:"16px", color:"#4ec9a0"}}>♿ Acessibilidade Adaptativa</div>
+            <div style={{fontWeight:"800", fontSize:"16px", color:"#E8B4A8"}}>♿ Acessibilidade Adaptativa</div>
             <div style={{fontSize:"12px", color:"rgba(255,255,255,0.6)", marginTop:"2px"}}>IntelliTouch · IntelliPosition · IntelliVision</div>
           </div>
           <button onClick={onClose} style={{background:"rgba(255,255,255,0.1)", border:"none", color:"white", width:"32px", height:"32px", borderRadius:"50%", cursor:"pointer", fontSize:"16px"}}>×</button>
@@ -178,7 +178,7 @@ export function AccessibilityPanel({ diagnostico, setDiagnostico, config, overri
           {[["diagnostico","🏥 Diagnóstico"],["toque","👆 Toque"],["visual","👁️ Visual"]].map(([t,l]) => (
             <button key={t} onClick={()=>setTab(t)}
               style={{flex:1, padding:"12px", border:"none", background:"none", fontWeight:tab===t?"800":"400",
-                color:tab===t?"#071b2c":"#6b7280", borderBottom:tab===t?"3px solid #4ec9a0":"3px solid transparent",
+                color:tab===t?"#1B2D5B":"#6b7280", borderBottom:tab===t?"3px solid #E8B4A8":"3px solid transparent",
                 cursor:"pointer", fontSize:"13px"}}>
               {l}
             </button>
@@ -197,9 +197,9 @@ export function AccessibilityPanel({ diagnostico, setDiagnostico, config, overri
                 {Object.entries(DIAGNOSTICO_PROFILES).map(([key, p]) => (
                   <button key={key} onClick={() => { setDiagnostico(key); setOverrides({}); }}
                     style={{
-                      background: diagnostico===key ? "#071b2c" : "white",
+                      background: diagnostico===key ? "#1B2D5B" : "white",
                       color: diagnostico===key ? "white" : "#374151",
-                      border: `2px solid ${diagnostico===key ? "#4ec9a0" : "#e5e7eb"}`,
+                      border: `2px solid ${diagnostico===key ? "#E8B4A8" : "#e5e7eb"}`,
                       borderRadius:"12px", padding:"12px", textAlign:"left", cursor:"pointer",
                       display:"flex", alignItems:"center", gap:"10px"
                     }}>
@@ -274,7 +274,7 @@ export function AccessibilityPanel({ diagnostico, setDiagnostico, config, overri
                 <label style={{display:"flex", alignItems:"center", gap:"12px", cursor:"pointer"}}>
                   <div onClick={() => setOverrides(o => ({...o, positionLocked: !(overrides.positionLocked ?? config.positionLocked)}))}
                     style={{width:"44px", height:"24px", borderRadius:"12px", flexShrink:0,
-                      background:(overrides.positionLocked ?? config.positionLocked)?"#00885f":"#e5e7eb",
+                      background:(overrides.positionLocked ?? config.positionLocked)?"#C76B4A":"#e5e7eb",
                       position:"relative", cursor:"pointer", transition:"background 0.2s"}}>
                     <div style={{position:"absolute", top:"3px",
                       left:(overrides.positionLocked ?? config.positionLocked)?"23px":"3px",
@@ -296,7 +296,7 @@ export function AccessibilityPanel({ diagnostico, setDiagnostico, config, overri
                 <label style={{display:"flex", alignItems:"center", gap:"12px", cursor:"pointer"}}>
                   <div onClick={() => setOverrides(o => ({...o, highContrast: !(overrides.highContrast ?? config.highContrast)}))}
                     style={{width:"44px", height:"24px", borderRadius:"12px", flexShrink:0,
-                      background:(overrides.highContrast ?? config.highContrast)?"#00885f":"#e5e7eb",
+                      background:(overrides.highContrast ?? config.highContrast)?"#C76B4A":"#e5e7eb",
                       position:"relative", cursor:"pointer", transition:"background 0.2s"}}>
                     <div style={{position:"absolute", top:"3px",
                       left:(overrides.highContrast ?? config.highContrast)?"23px":"3px",
@@ -342,7 +342,7 @@ export function AccessibilityPanel({ diagnostico, setDiagnostico, config, overri
                       </div>
                       <div style={{
                         fontSize:`${14 * ((overrides.largeFontScale ?? config.largeFontScale) || 1)}px`,
-                        fontWeight:"700", color:"#071b2c"
+                        fontWeight:"700", color:"#1B2D5B"
                       }}>{label}</div>
                     </div>
                   ))}
@@ -354,7 +354,7 @@ export function AccessibilityPanel({ diagnostico, setDiagnostico, config, overri
 
         <div style={{padding:"0 24px 24px", display:"flex", justifyContent:"flex-end"}}>
           <button onClick={onClose}
-            style={{background:"#071b2c", color:"white", border:"none", borderRadius:"10px",
+            style={{background:"#1B2D5B", color:"white", border:"none", borderRadius:"10px",
               padding:"12px 28px", fontWeight:"700", cursor:"pointer", fontSize:"14px"}}>
             ✅ Aplicar configurações
           </button>

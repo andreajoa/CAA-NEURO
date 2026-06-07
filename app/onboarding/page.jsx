@@ -54,19 +54,19 @@ export default function OnboardingPage() {
   const isLast = step === steps.length - 1;
 
   return (
-    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#071b2c,#0d3320)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"Arial,Helvetica,sans-serif",padding:"24px"}}>
+    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#1B2D5B,#0d3320)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"Arial,Helvetica,sans-serif",padding:"24px"}}>
       <div style={{maxWidth:"560px",width:"100%"}}>
         {/* Progress */}
         <div style={{display:"flex",gap:"6px",marginBottom:"32px",justifyContent:"center"}}>
           {steps.map((_,i) => (
-            <div key={i} style={{height:"4px",flex:1,borderRadius:"2px",background:i<=step?"#4ec9a0":"rgba(255,255,255,0.15)",transition:"background 0.3s"}} />
+            <div key={i} style={{height:"4px",flex:1,borderRadius:"2px",background:i<=step?"#E8B4A8":"rgba(255,255,255,0.15)",transition:"background 0.3s"}} />
           ))}
         </div>
 
         {/* Card */}
         <div style={{background:"white",borderRadius:"24px",padding:"40px",textAlign:"center",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
           <div style={{fontSize:"64px",marginBottom:"20px"}}>{current.icon}</div>
-          <h1 style={{fontSize:"24px",fontWeight:"900",color:"#071b2c",margin:"0 0 12px"}}>{current.titulo}</h1>
+          <h1 style={{fontSize:"24px",fontWeight:"900",color:"#1B2D5B",margin:"0 0 12px"}}>{current.titulo}</h1>
           <p style={{fontSize:"16px",color:"#374151",lineHeight:"1.6",margin:"0 0 16px"}}>{current.descricao}</p>
           <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:"12px",padding:"14px 16px",marginBottom:"28px"}}>
             <p style={{fontSize:"14px",color:"#166534",margin:0,lineHeight:"1.5"}}>💡 {current.dica}</p>
@@ -80,7 +80,7 @@ export default function OnboardingPage() {
             )}
             <button
               onClick={()=>{ if(isLast) router.push("/app"); else setStep(s=>s+1); }}
-              style={{padding:"12px 32px",borderRadius:"12px",border:"none",background:"#00885f",color:"white",cursor:"pointer",fontWeight:"700",fontSize:"15px",flex:step===0?1:"auto"}}>
+              style={{padding:"12px 32px",borderRadius:"12px",border:"none",background:"#C76B4A",color:"white",cursor:"pointer",fontWeight:"700",fontSize:"15px",flex:step===0?1:"auto"}}>
               {isLast ? "Ir para a prancha →" : "Próximo →"}
             </button>
           </div>

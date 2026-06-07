@@ -83,10 +83,10 @@ u.voice=selectedVoice;
   }, [active, cards, selectCard]);
 
   return (
-    <div style={{minHeight:"100vh",background:"#071b2c",fontFamily:"system-ui,sans-serif",color:"white",userSelect:"none"}}>
+    <div style={{minHeight:"100vh",background:"#1B2D5B",fontFamily:"system-ui,sans-serif",color:"white",userSelect:"none"}}>
       <div style={{background:"rgba(255,255,255,0.05)",padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"10px"}}>
         <div>
-          <span style={{fontWeight:"800",color:"#4ec9a0",fontSize:"16px"}}>CAA Neuro</span>
+          <span style={{fontWeight:"800",color:"#E8B4A8",fontSize:"16px"}}>CAA Neuro</span>
           <span style={{marginLeft:"12px",fontSize:"13px",color:"rgba(255,255,255,0.5)"}}>Modo Varredura</span>
         </div>
         <div style={{display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap"}}>
@@ -104,7 +104,7 @@ u.voice=selectedVoice;
             <option value={4}>4 colunas</option>
           </select>
           <button onClick={()=>setActive(a=>!a)}
-            style={{background:active?"#dc2626":"#00885f",color:"white",border:"none",padding:"8px 20px",borderRadius:"8px",fontWeight:"700",cursor:"pointer",fontSize:"14px"}}>
+            style={{background:active?"#dc2626":"#C76B4A",color:"white",border:"none",padding:"8px 20px",borderRadius:"8px",fontWeight:"700",cursor:"pointer",fontSize:"14px"}}>
             {active ? "⏹ Parar (S)" : "▶ Iniciar (S)"}
           </button>
           <a href="/paciente" style={{color:"rgba(255,255,255,0.6)",fontSize:"13px",textDecoration:"none"}}>← Modo toque</a>
@@ -121,7 +121,7 @@ u.voice=selectedVoice;
         {phrase.length > 0 && (
           <div style={{marginLeft:"auto",display:"flex",gap:"8px"}}>
             <button onClick={()=>speak(phrase.join(" "))}
-              style={{background:"#00885f",border:"none",color:"white",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"700",fontSize:"13px"}}>🔊 Falar</button>
+              style={{background:"#C76B4A",border:"none",color:"white",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontWeight:"700",fontSize:"13px"}}>🔊 Falar</button>
             <button onClick={()=>setPhrase(p=>p.slice(0,-1))}
               style={{background:"rgba(255,255,255,0.1)",border:"none",color:"white",padding:"8px 16px",borderRadius:"8px",cursor:"pointer",fontSize:"13px"}}>← Desfazer</button>
             <button onClick={()=>setPhrase([])}
@@ -134,8 +134,8 @@ u.voice=selectedVoice;
         {cards.map((card,i) => (
           <button key={card.id} onClick={()=>selectCard(card)}
             style={{
-              background: i===focusIndex&&active ? "#00885f" : "rgba(255,255,255,0.08)",
-              border: i===focusIndex&&active ? "3px solid #4ec9a0" : "2px solid rgba(255,255,255,0.1)",
+              background: i===focusIndex&&active ? "#C76B4A" : "rgba(255,255,255,0.08)",
+              border: i===focusIndex&&active ? "3px solid #E8B4A8" : "2px solid rgba(255,255,255,0.1)",
               borderRadius:"16px",padding:"16px 8px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:"10px",
               transform: i===focusIndex&&active ? "scale(1.06)" : "scale(1)",
               transition:"all 0.2s",outline:"none",

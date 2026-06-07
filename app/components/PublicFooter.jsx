@@ -2,17 +2,17 @@ import Link from "next/link";
 
 export default function PublicFooter() {
   return (
-    <footer style={{ background:"#071b2c", color:"white", padding:"48px 40px 32px", marginTop:"auto" }}>
+    <footer style={{ background:"#1B2D5B", color:"white", padding:"48px 40px 32px", marginTop:"auto" }}>
       <div style={{ maxWidth:1200, margin:"0 auto" }}>
         <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr 1fr", gap:40, marginBottom:40 }}>
           <div>
-            <div style={{ fontSize:22, fontWeight:700, color:"#4ec9a0", marginBottom:8 }}>CAA Neuro</div>
+            <div style={{ fontSize:22, fontWeight:700, color:"#E8B4A8", marginBottom:8 }}>CAA Neuro</div>
             <p style={{ color:"rgba(255,255,255,0.55)", fontSize:14, lineHeight:1.7, maxWidth:280 }}>
               Plataforma de Comunicação Aumentativa e Alternativa para profissionais da saúde e educação.
             </p>
             <p style={{ color:"rgba(255,255,255,0.4)", fontSize:13, marginTop:16 }}>
               Responsável técnica:<br/>
-              <strong style={{ color:"#4ec9a0" }}>Margareth Almeida</strong><br/>
+              <strong style={{ color:"#E8B4A8" }}>Margareth Almeida</strong><br/>
               <span style={{ fontSize:12 }}>Fonoaudióloga · CRFa</span>
             </p>
           </div>

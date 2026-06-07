@@ -10,22 +10,22 @@ type Patient = {
 const emptyForm = { nome:"", data_nascimento:"", diagnostico:"", responsavel:"", escola:"", medicamentos:"", objetivos_terapeuticos:"", observacoes:"" };
 
 const NAV = () => (
-  <nav style={{background:"#071b2c",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #00885f"}}>
-    <span style={{color:"#4ec9a0",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
+  <nav style={{background:"#1B2D5B",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #C76B4A"}}>
+    <span style={{color:"#E8B4A8",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
     <a href="/app" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏠 Prancha</a>
     <a href="/biblioteca" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>📚 Biblioteca</a>
     <a href="/paciente" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👤 Modo Paciente</a>
     <a href="/atividades" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🎮 Atividades</a>
-    <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.3)",border:"1px solid #4ec9a0",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>✨ Relatório IA</a>
+    <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.3)",border:"1px solid #E8B4A8",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>✨ Relatório IA</a>
     <a href="/suporte" style={{color:"rgba(255,255,255,0.6)",textDecoration:"none",fontSize:"12px",marginLeft:"auto"}}>❓ Ajuda</a>
   </nav>
 );
 
 const S = {
-  page: {minHeight:"100vh",background:"#f5f7fb",fontFamily:"Arial,Helvetica,sans-serif"},
+  page: {minHeight:"100vh",background:"#F2E8E1",fontFamily:"Arial,Helvetica,sans-serif"},
   container: {maxWidth:"900px",margin:"0 auto",padding:"32px 24px"},
   card: {background:"white",borderRadius:"16px",border:"1px solid #e2e8f0",padding:"24px",marginBottom:"16px",boxShadow:"0 2px 8px rgba(0,0,0,0.06)"},
-  title: {margin:"0 0 4px",fontSize:"28px",fontWeight:"900",color:"#071b2c"},
+  title: {margin:"0 0 4px",fontSize:"28px",fontWeight:"900",color:"#1B2D5B"},
   btn: {border:"none",borderRadius:"10px",padding:"10px 20px",fontWeight:"700",cursor:"pointer",fontSize:"14px"},
   inp: {width:"100%",border:"1px solid #d4dde5",borderRadius:"10px",padding:"10px 14px",fontSize:"14px",fontFamily:"inherit",boxSizing:"border-box" as const},
   lbl: {display:"block",fontSize:"12px",fontWeight:"700",color:"#4b5563",marginBottom:"6px",marginTop:"14px"},
@@ -145,7 +145,7 @@ export default function PacientesPage() {
             </div>
           </div>
           <div style={{display:"flex",gap:"10px",marginTop:"20px"}}>
-            <button onClick={save} disabled={loading||!form.nome} style={{...S.btn,background:"#00885f",color:"white",opacity:loading||!form.nome?0.5:1}}>
+            <button onClick={save} disabled={loading||!form.nome} style={{...S.btn,background:"#C76B4A",color:"white",opacity:loading||!form.nome?0.5:1}}>
               {loading?"Salvando...":"Salvar Paciente"}
             </button>
             <button onClick={()=>{setView("list");setEditing(null);setForm(emptyForm);}} style={{...S.btn,background:"#f3f4f6",color:"#374151"}}>Cancelar</button>
@@ -213,7 +213,7 @@ export default function PacientesPage() {
 
         {/* Registrar sessão */}
         <div style={S.card}>
-          <div style={{fontSize:"16px",fontWeight:"800",color:"#071b2c",marginBottom:"16px"}}>📋 Registrar sessão</div>
+          <div style={{fontSize:"16px",fontWeight:"800",color:"#1B2D5B",marginBottom:"16px"}}>📋 Registrar sessão</div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
             <div style={{gridColumn:"1/-1"}}>
               <label style={S.lbl}>Evolução observada *</label>
@@ -233,21 +233,21 @@ export default function PacientesPage() {
             </div>
           </div>
           <button onClick={saveSession} disabled={loading||!sessionForm.evolucao_observada}
-            style={{...S.btn,background:"#00885f",color:"white",marginTop:"16px",opacity:loading||!sessionForm.evolucao_observada?0.5:1}}>
+            style={{...S.btn,background:"#C76B4A",color:"white",marginTop:"16px",opacity:loading||!sessionForm.evolucao_observada?0.5:1}}>
             {loading?"Salvando...":"✅ Salvar sessão"}
           </button>
         </div>
 
         {/* Histórico */}
-        <div style={{fontSize:"16px",fontWeight:"800",color:"#071b2c",marginBottom:"12px"}}>
+        <div style={{fontSize:"16px",fontWeight:"800",color:"#1B2D5B",marginBottom:"12px"}}>
           🕐 Histórico de sessões ({sessions.length})
         </div>
         {sessions.length === 0 ? (
           <div style={{...S.card,textAlign:"center",color:"#9ca3af",padding:"40px"}}>Nenhuma sessão registrada ainda.</div>
         ) : sessions.map((s,i) => (
-          <div key={s.id} style={{...S.card,borderLeft:"4px solid #00885f",paddingLeft:"20px"}}>
+          <div key={s.id} style={{...S.card,borderLeft:"4px solid #C76B4A",paddingLeft:"20px"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}}>
-              <span style={{fontSize:"13px",fontWeight:"700",color:"#00885f"}}>Sessão #{sessions.length - i}</span>
+              <span style={{fontSize:"13px",fontWeight:"700",color:"#C76B4A"}}>Sessão #{sessions.length - i}</span>
               <span style={{fontSize:"12px",color:"#9ca3af"}}>{new Date(s.created_at).toLocaleDateString("pt-BR")}{s.duracao_minutos ? ` · ${s.duracao_minutos} min` : ""}</span>
             </div>
             {s.evolucao_observada && <p style={{margin:"0 0 4px",fontSize:"14px",color:"#1f2937"}}>{s.evolucao_observada}</p>}
@@ -268,7 +268,7 @@ export default function PacientesPage() {
             <h1 style={S.title}>👥 Pacientes</h1>
             <p style={{margin:"4px 0 0",fontSize:"14px",color:"#6b7280"}}>{patients.length} paciente{patients.length !== 1 ? "s" : ""} cadastrado{patients.length !== 1 ? "s" : ""}</p>
           </div>
-          <button onClick={()=>setView("form")} style={{...S.btn,background:"#00885f",color:"white",fontSize:"15px",padding:"12px 24px"}}>
+          <button onClick={()=>setView("form")} style={{...S.btn,background:"#C76B4A",color:"white",fontSize:"15px",padding:"12px 24px"}}>
             + Novo Paciente
           </button>
         </div>
@@ -278,18 +278,18 @@ export default function PacientesPage() {
             <div style={{fontSize:"56px",marginBottom:"16px"}}>👤</div>
             <div style={{fontSize:"18px",fontWeight:"700",color:"#1f2937",marginBottom:"8px"}}>Nenhum paciente cadastrado</div>
             <p style={{color:"#6b7280",marginBottom:"24px"}}>Cadastre o primeiro paciente para começar a registrar sessões e gerar relatórios.</p>
-            <button onClick={()=>setView("form")} style={{...S.btn,background:"#00885f",color:"white",fontSize:"15px",padding:"12px 28px"}}>Cadastrar primeiro paciente</button>
+            <button onClick={()=>setView("form")} style={{...S.btn,background:"#C76B4A",color:"white",fontSize:"15px",padding:"12px 28px"}}>Cadastrar primeiro paciente</button>
           </div>
         ) : patients.map(p => (
           <div key={p.id} onClick={()=>openProntuario(p)}
             style={{...S.card,display:"flex",alignItems:"center",gap:"16px",cursor:"pointer",transition:"box-shadow 0.15s"}}
             onMouseEnter={e=>(e.currentTarget.style.boxShadow="0 4px 20px rgba(0,136,95,0.15)")}
             onMouseLeave={e=>(e.currentTarget.style.boxShadow="0 2px 8px rgba(0,0,0,0.06)")}>
-            <div style={{width:"48px",height:"48px",borderRadius:"50%",background:"#00885f",display:"flex",alignItems:"center",justifyContent:"center",color:"white",fontWeight:"900",fontSize:"20px",flexShrink:0}}>
+            <div style={{width:"48px",height:"48px",borderRadius:"50%",background:"#C76B4A",display:"flex",alignItems:"center",justifyContent:"center",color:"white",fontWeight:"900",fontSize:"20px",flexShrink:0}}>
               {p.nome.charAt(0).toUpperCase()}
             </div>
             <div style={{flex:1}}>
-              <div style={{fontWeight:"800",fontSize:"16px",color:"#071b2c"}}>{p.nome}</div>
+              <div style={{fontWeight:"800",fontSize:"16px",color:"#1B2D5B"}}>{p.nome}</div>
               <div style={{fontSize:"13px",color:"#6b7280",marginTop:"2px"}}>
                 {p.diagnostico || "Sem diagnóstico"}{p.escola ? ` · ${p.escola}` : ""}
               </div>

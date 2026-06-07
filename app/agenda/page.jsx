@@ -225,11 +225,11 @@ export default function AgendaPage() {
       <div style={{ padding:"28px 32px" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"28px", flexWrap:"wrap", gap:"12px" }}>
           <div>
-            <h1 style={{ margin:0, fontSize:"26px", fontWeight:"800", color:"#071b2c" }}>📅 Agenda clínica</h1>
+            <h1 style={{ margin:0, fontSize:"26px", fontWeight:"800", color:"#1B2D5B" }}>📅 Agenda clínica</h1>
             <p style={{ margin:"4px 0 0", color:"#6b7280", fontSize:"14px" }}>{MESES[mesAtual]} {anoAtual} · Sessões, pacientes e pranchas</p>
           </div>
           <button onClick={()=>setShowForm(s=>!s)}
-            style={{ background:"#00885f", color:"white", border:"none", padding:"10px 20px", borderRadius:"10px", fontWeight:"700", cursor:"pointer", fontSize:"14px" }}>
+            style={{ background:"#C76B4A", color:"white", border:"none", padding:"10px 20px", borderRadius:"10px", fontWeight:"700", cursor:"pointer", fontSize:"14px" }}>
             + Novo agendamento
           </button>
         </div>
@@ -239,7 +239,7 @@ export default function AgendaPage() {
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"16px 20px", borderBottom:"1px solid #f3f4f6" }}>
               <button onClick={()=>{ if(mesAtual===0){setMesAtual(11);setAnoAtual(a=>a-1);}else setMesAtual(m=>m-1); }}
                 style={{ background:"#f9fafb", border:"1px solid #e5e7eb", borderRadius:"8px", padding:"6px 12px", cursor:"pointer", fontWeight:"700" }}>←</button>
-              <span style={{ fontWeight:"800", fontSize:"16px", color:"#071b2c" }}>{MESES[mesAtual]} {anoAtual}</span>
+              <span style={{ fontWeight:"800", fontSize:"16px", color:"#1B2D5B" }}>{MESES[mesAtual]} {anoAtual}</span>
               <button onClick={()=>{ if(mesAtual===11){setMesAtual(0);setAnoAtual(a=>a+1);}else setMesAtual(m=>m+1); }}
                 style={{ background:"#f9fafb", border:"1px solid #e5e7eb", borderRadius:"8px", padding:"6px 12px", cursor:"pointer", fontWeight:"700" }}>→</button>
             </div>
@@ -260,12 +260,12 @@ export default function AgendaPage() {
                   <button key={i} onClick={()=>setDiaSel(dia)}
                     style={{
                       aspectRatio:"1", borderRadius:"10px", border:"none", cursor:"pointer", fontSize:"14px", fontWeight: isHoje||isSel?"800":"500",
-                      background: isSel?"#00885f": isHoje?"#f0fdf4":"transparent",
-                      color: isSel?"white": isHoje?"#00885f":"#374151",
+                      background: isSel?"#C76B4A": isHoje?"#f0fdf4":"transparent",
+                      color: isSel?"white": isHoje?"#C76B4A":"#374151",
                       position:"relative", transition:"all 0.1s",
                     }}>
                     {dia}
-                    {temEvento && <span style={{ position:"absolute", bottom:"4px", left:"50%", transform:"translateX(-50%)", width:"5px", height:"5px", borderRadius:"50%", background: isSel?"rgba(255,255,255,0.8)":"#00885f", display:"block" }} />}
+                    {temEvento && <span style={{ position:"absolute", bottom:"4px", left:"50%", transform:"translateX(-50%)", width:"5px", height:"5px", borderRadius:"50%", background: isSel?"rgba(255,255,255,0.8)":"#C76B4A", display:"block" }} />}
                   </button>
                 );
               })}
@@ -275,7 +275,7 @@ export default function AgendaPage() {
           <div style={{ display:"flex", flexDirection:"column", gap:"16px" }}>
             {showForm && (
               <div style={{ background:"white", borderRadius:"14px", border:"1px solid #e5e7eb", padding:"20px" }}>
-                <h3 style={{ margin:"0 0 16px", fontSize:"15px", fontWeight:"800", color:"#071b2c" }}>Novo agendamento</h3>
+                <h3 style={{ margin:"0 0 16px", fontSize:"15px", fontWeight:"800", color:"#1B2D5B" }}>Novo agendamento</h3>
                 <div style={{ display:"flex", flexDirection:"column", gap:"10px" }}>
                   <input placeholder="Título *" value={form.titulo} onChange={e=>setForm(f=>({...f,titulo:e.target.value}))} style={inp} />
                   <input placeholder="Nome do paciente" value={form.paciente_nome} onChange={e=>setForm(f=>({...f,paciente_nome:e.target.value}))} style={inp} />
@@ -308,7 +308,7 @@ export default function AgendaPage() {
                     style={{...inp, resize:"vertical"}} />
                   <div style={{ display:"flex", gap:"8px" }}>
                     <button onClick={salvar} disabled={saving||!form.titulo.trim()}
-                      style={{ flex:1, background:"#00885f", color:"white", border:"none", padding:"10px", borderRadius:"8px", fontWeight:"700", cursor:"pointer", fontSize:"14px", opacity:saving||!form.titulo.trim()?0.6:1 }}>
+                      style={{ flex:1, background:"#C76B4A", color:"white", border:"none", padding:"10px", borderRadius:"8px", fontWeight:"700", cursor:"pointer", fontSize:"14px", opacity:saving||!form.titulo.trim()?0.6:1 }}>
                       {saving?"Salvando...":"Salvar"}
                     </button>
                     <button onClick={()=>setShowForm(false)}
@@ -321,7 +321,7 @@ export default function AgendaPage() {
             )}
 
             <div style={{ background:"white", borderRadius:"14px", border:"1px solid #e5e7eb", padding:"20px" }}>
-              <h3 style={{ margin:"0 0 14px", fontSize:"15px", fontWeight:"800", color:"#071b2c" }}>
+              <h3 style={{ margin:"0 0 14px", fontSize:"15px", fontWeight:"800", color:"#1B2D5B" }}>
                 {DIAS[new Date(anoAtual,mesAtual,diaSel).getDay()]}, {diaSel} de {MESES[mesAtual]}
               </h3>
               {loading ? (
@@ -337,7 +337,7 @@ export default function AgendaPage() {
                     const meta = parseNotas(e);
                     return (
                       <div key={e.id||i} style={{ background:"#f0fdf4", border:"1px solid #bbf7d0", borderRadius:"10px", padding:"12px 14px" }}>
-                        <div style={{ fontWeight:"700", fontSize:"14px", color:"#071b2c" }}>{e.titulo || "Sessão"}</div>
+                        <div style={{ fontWeight:"700", fontSize:"14px", color:"#1B2D5B" }}>{e.titulo || "Sessão"}</div>
                         <div style={{ fontSize:"12px", color:"#6b7280", marginTop:"4px", lineHeight:"1.5" }}>
                           {(e.hora_inicio || "")}{e.hora_fim ? ` - ${e.hora_fim}` : ""}
                           {meta.paciente_nome ? ` · ${meta.paciente_nome}` : ""}
@@ -352,7 +352,7 @@ export default function AgendaPage() {
                           {meta.share_token && (
                             <a
                               href={`https://www.adhdautism.online/prancha/${meta.share_token}`}
-                              style={{ background:"white", color:"#00885f", border:"1px solid #bbf7d0", padding:"7px 12px", borderRadius:"999px", fontSize:"12px", fontWeight:"700", textDecoration:"none" }}
+                              style={{ background:"white", color:"#C76B4A", border:"1px solid #bbf7d0", padding:"7px 12px", borderRadius:"999px", fontSize:"12px", fontWeight:"700", textDecoration:"none" }}
                             >
                               Abrir prancha
                             </a>

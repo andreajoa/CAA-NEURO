@@ -14,7 +14,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#00885f",
+  themeColor: "#C76B4A",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
           <meta name="apple-mobile-web-app-status-bar-style" content="default" />
           <meta name="apple-mobile-web-app-title" content="CAA Neuro" />
           <meta name="mobile-web-app-capable" content="yes" />
-          <meta name="theme-color" content="#00885f" />
+          <meta name="theme-color" content="#C76B4A" />
         </head>
         <body>
           <ErrorTracker />

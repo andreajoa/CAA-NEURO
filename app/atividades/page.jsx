@@ -58,8 +58,8 @@ export default function Atividades() {
   if (cards.length < 4) return (
     <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"system-ui",flexDirection:"column",gap:"16px",padding:"24px",textAlign:"center"}}>
       <div style={{fontSize:"48px"}}>📚</div>
-      <h2 style={{color:"#071b2c"}}>Adicione pelo menos 4 cards na prancha para usar as atividades.</h2>
-      <Link href="/app" style={{background:"#00885f",color:"white",padding:"12px 24px",borderRadius:"10px",textDecoration:"none",fontWeight:"700"}}>← Ir para a Prancha</Link>
+      <h2 style={{color:"#1B2D5B"}}>Adicione pelo menos 4 cards na prancha para usar as atividades.</h2>
+      <Link href="/app" style={{background:"#C76B4A",color:"white",padding:"12px 24px",borderRadius:"10px",textDecoration:"none",fontWeight:"700"}}>← Ir para a Prancha</Link>
     </div>
   );
 
@@ -82,17 +82,17 @@ function Menu({ setMode, router, total }) {
 
   return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui,sans-serif"}}>
-      <nav style={{background:"#071b2c",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #00885f"}}>
-        <span style={{color:"#4ec9a0",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
+      <nav style={{background:"#1B2D5B",padding:"10px 20px",display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap",borderBottom:"2px solid #C76B4A"}}>
+        <span style={{color:"#E8B4A8",fontWeight:"800",fontSize:"15px",marginRight:"8px"}}>CAA Neuro</span>
         <a href="/app" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🏠 Prancha</a>
         <a href="/pacientes" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>👥 Pacientes</a>
         <a href="/biblioteca" style={{color:"white",textDecoration:"none",background:"rgba(255,255,255,0.1)",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>📚 Biblioteca</a>
-        <a href="/atividades" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.3)",border:"1px solid #4ec9a0",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🎯 Atividades</a>
+        <a href="/atividades" style={{color:"white",textDecoration:"none",background:"rgba(78,201,160,0.3)",border:"1px solid #E8B4A8",padding:"7px 14px",borderRadius:"8px",fontSize:"13px",fontWeight:"600"}}>🎯 Atividades</a>
         <a href="/suporte" style={{color:"rgba(255,255,255,0.6)",textDecoration:"none",fontSize:"12px",marginLeft:"auto"}}>❓ Ajuda</a>
       </nav>
       <div style={{maxWidth:"720px",margin:"0 auto",padding:"40px 24px"}}>
         <div style={{textAlign:"center",marginBottom:"40px"}}>
-          <h1 style={{fontSize:"28px",fontWeight:"800",color:"#071b2c",margin:"0 0 8px"}}>🎯 Atividades Terapêuticas</h1>
+          <h1 style={{fontSize:"28px",fontWeight:"800",color:"#1B2D5B",margin:"0 0 8px"}}>🎯 Atividades Terapêuticas</h1>
           <p style={{color:"#6b7280",fontSize:"16px"}}>{total} cards disponíveis · Escolha uma atividade para começar</p>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:"16px"}}>
@@ -101,7 +101,7 @@ function Menu({ setMode, router, total }) {
               style={{background:"white",border:"2px solid #e5e7eb",borderRadius:"16px",padding:"24px",textAlign:"left",cursor:"pointer",transition:"all 0.2s",display:"flex",gap:"16px",alignItems:"flex-start"}}>
               <div style={{fontSize:"36px",lineHeight:1}}>{m.emoji}</div>
               <div>
-                <div style={{fontWeight:"800",fontSize:"16px",color:"#071b2c",marginBottom:"4px"}}>{m.title}</div>
+                <div style={{fontWeight:"800",fontSize:"16px",color:"#1B2D5B",marginBottom:"4px"}}>{m.title}</div>
                 <div style={{fontSize:"13px",color:"#6b7280",lineHeight:"1.5"}}>{m.desc}</div>
               </div>
             </button>
@@ -114,7 +114,7 @@ function Menu({ setMode, router, total }) {
 
 function GameHeader({ title, score, total, onBack, onRestart }) {
   return (
-    <div style={{background:"#071b2c",color:"white",padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"12px",flexWrap:"wrap"}}>
+    <div style={{background:"#1B2D5B",color:"white",padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"12px",flexWrap:"wrap"}}>
       <button onClick={onBack} style={{background:"rgba(255,255,255,0.1)",border:"none",color:"white",padding:"8px 14px",borderRadius:"8px",cursor:"pointer",fontSize:"13px"}}>← Voltar</button>
       <div style={{fontWeight:"700",fontSize:"16px"}}>{title}</div>
       <div style={{display:"flex",gap:"10px",alignItems:"center"}}>
@@ -132,12 +132,12 @@ function Congratulations({ score, total, onRestart, onBack }) {
   return (
     <div style={{textAlign:"center",padding:"60px 24px"}}>
       <div style={{fontSize:"64px",marginBottom:"16px"}}>{pct===100?"🏆":pct>=70?"⭐":"💪"}</div>
-      <h2 style={{fontSize:"28px",fontWeight:"800",color:"#071b2c",margin:"0 0 8px"}}>
+      <h2 style={{fontSize:"28px",fontWeight:"800",color:"#1B2D5B",margin:"0 0 8px"}}>
         {pct===100?"Perfeito!":pct>=70?"Muito bem!":"Continue praticando!"}
       </h2>
       <p style={{color:"#6b7280",fontSize:"16px",margin:"0 0 32px"}}>{score} de {total} corretos · {pct}%</p>
       <div style={{display:"flex",gap:"12px",justifyContent:"center"}}>
-        <button onClick={onRestart} style={{background:"#00885f",color:"white",border:"none",padding:"12px 28px",borderRadius:"10px",fontWeight:"700",cursor:"pointer",fontSize:"15px"}}>🔄 Tentar novamente</button>
+        <button onClick={onRestart} style={{background:"#C76B4A",color:"white",border:"none",padding:"12px 28px",borderRadius:"10px",fontWeight:"700",cursor:"pointer",fontSize:"15px"}}>🔄 Tentar novamente</button>
         <button onClick={onBack} style={{background:"white",color:"#374151",border:"1px solid #e5e7eb",padding:"12px 24px",borderRadius:"10px",cursor:"pointer",fontSize:"15px"}}>← Outras atividades</button>
       </div>
     </div>
@@ -201,7 +201,7 @@ function Associacao({ cards, onBack }) {
           <div style={{display:"flex",flexDirection:"column",gap:"10px"}}>
             {(options || []).filter(Boolean).map(card => (
               <button key={card.id} onClick={() => selected && pick(card)}
-                style={{background:selected?"#eff6ff":"white",border:"2px solid #e5e7eb",borderRadius:"12px",padding:"14px 16px",cursor:selected?"pointer":"default",fontWeight:"700",fontSize:"15px",color:"#071b2c",textAlign:"left"}}>
+                style={{background:selected?"#eff6ff":"white",border:"2px solid #e5e7eb",borderRadius:"12px",padding:"14px 16px",cursor:selected?"pointer":"default",fontWeight:"700",fontSize:"15px",color:"#1B2D5B",textAlign:"left"}}>
                 {card.label}
               </button>
             ))}
@@ -255,7 +255,7 @@ function Pareamento({ cards, onBack }) {
                 return (
                   <button key={card.uid} onClick={() => flip(card.uid)}
                     style={{aspectRatio:"1",borderRadius:"12px",border:`2px solid ${matched.includes(card.uid)?"#16a34a":"#e5e7eb"}`,
-                      background:matched.includes(card.uid)?"#f0fdf4":isFlipped?"white":"#071b2c",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",padding:"8px"}}>
+                      background:matched.includes(card.uid)?"#f0fdf4":isFlipped?"white":"#1B2D5B",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",padding:"8px"}}>
                     {isFlipped
                       ? <img src={card.image} alt={card.label} style={{width:"100%",height:"100%",objectFit:"contain"}} />
                       : <span style={{fontSize:"24px",color:"rgba(255,255,255,0.3)"}}>?</span>}
@@ -299,8 +299,8 @@ function Sequencia({ cards, onBack }) {
             <p style={{textAlign:"center",color:"#6b7280",marginBottom:"24px"}}>Toque nos cards na ordem correta da história</p>
             <div style={{display:"flex",gap:"8px",justifyContent:"center",marginBottom:"24px",flexWrap:"wrap"}}>
               {selected.map((c, i) => (
-                <div key={c.id} style={{background:"white",border:"2px solid #00885f",borderRadius:"10px",padding:"8px",textAlign:"center",minWidth:"80px"}}>
-                  <div style={{fontSize:"12px",color:"#00885f",fontWeight:"700",marginBottom:"4px"}}>{i+1}</div>
+                <div key={c.id} style={{background:"white",border:"2px solid #C76B4A",borderRadius:"10px",padding:"8px",textAlign:"center",minWidth:"80px"}}>
+                  <div style={{fontSize:"12px",color:"#C76B4A",fontWeight:"700",marginBottom:"4px"}}>{i+1}</div>
                   {c.image && <img src={c.image} alt={c.label} style={{width:"48px",height:"48px",objectFit:"contain"}} />}
                   <div style={{fontSize:"11px",color:"#374151",fontWeight:"600",marginTop:"4px"}}>{c.label}</div>
                 </div>
@@ -316,7 +316,7 @@ function Sequencia({ cards, onBack }) {
                   <button key={card.id} onClick={() => !used && pick(card)} disabled={!!used}
                     style={{background:used?"#f9fafb":"white",border:`2px solid ${used?"#e5e7eb":"#e5e7eb"}`,borderRadius:"12px",padding:"12px 8px",cursor:used?"default":"pointer",opacity:used?0.4:1,textAlign:"center"}}>
                     {card.image && <img src={card.image} alt={card.label} style={{width:"56px",height:"56px",objectFit:"contain"}} />}
-                    <div style={{fontSize:"12px",fontWeight:"700",color:"#071b2c",marginTop:"6px"}}>{card.label}</div>
+                    <div style={{fontSize:"12px",fontWeight:"700",color:"#1B2D5B",marginTop:"6px"}}>{card.label}</div>
                   </button>
                 );
               })}
@@ -376,10 +376,10 @@ function CompletarFrase({ cards, onBack }) {
         ? <Congratulations score={score} total={FRASES.length} onRestart={restart} onBack={onBack} />
         : <div style={{maxWidth:"560px",margin:"40px auto",padding:"0 24px"}}>
             <div style={{background:"white",border:"2px solid #e5e7eb",borderRadius:"20px",padding:"32px",textAlign:"center",marginBottom:"32px"}}>
-              <div style={{fontSize:"13px",fontWeight:"700",color:"#00885f",marginBottom:"12px",textTransform:"uppercase",letterSpacing:"0.06em"}}>
+              <div style={{fontSize:"13px",fontWeight:"700",color:"#C76B4A",marginBottom:"12px",textTransform:"uppercase",letterSpacing:"0.06em"}}>
                 Pergunta {idx+1} de {FRASES.length}
               </div>
-              <div style={{fontSize:"26px",fontWeight:"800",color:"#071b2c",marginBottom:"8px"}}>{frase.template}</div>
+              <div style={{fontSize:"26px",fontWeight:"800",color:"#1B2D5B",marginBottom:"8px"}}>{frase.template}</div>
               <div style={{fontSize:"13px",color:"#9ca3af"}}>Escolha um card de: {frase.hint}</div>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
@@ -389,7 +389,7 @@ function CompletarFrase({ cards, onBack }) {
                     border:`2px solid ${feedback&&card.cat===frase.cat?"#16a34a":feedback&&card.cat!==frase.cat?"#dc2626":"#e5e7eb"}`,
                     borderRadius:"14px",padding:"16px",cursor:"pointer",textAlign:"center"}}>
                   {card.image && <img src={card.image} alt={card.label} style={{width:"64px",height:"64px",objectFit:"contain",marginBottom:"8px"}} />}
-                  <div style={{fontWeight:"700",fontSize:"14px",color:"#071b2c"}}>{card.label}</div>
+                  <div style={{fontWeight:"700",fontSize:"14px",color:"#1B2D5B"}}>{card.label}</div>
                 </button>
               ))}
             </div>
@@ -453,7 +453,7 @@ function Categorizar({ cards, onBack }) {
             <div style={{background:"white",border:"2px solid #e5e7eb",borderRadius:"20px",padding:"32px",textAlign:"center",marginBottom:"28px"}}>
               <div style={{fontSize:"12px",color:"#9ca3af",marginBottom:"16px"}}>{queueIdx+1} / {queue.length}</div>
               {current.image && <img src={current.image} alt={current.label} style={{width:"100px",height:"100px",objectFit:"contain",marginBottom:"16px"}} />}
-              <div style={{fontSize:"22px",fontWeight:"800",color:"#071b2c"}}>{current.label}</div>
+              <div style={{fontSize:"22px",fontWeight:"800",color:"#1B2D5B"}}>{current.label}</div>
               {feedback && <div style={{marginTop:"12px",fontSize:"22px"}}>{feedback==="correct"?"✅":"❌"}</div>}
             </div>
             <p style={{textAlign:"center",color:"#6b7280",marginBottom:"16px",fontSize:"14px"}}>A qual categoria este card pertence?</p>

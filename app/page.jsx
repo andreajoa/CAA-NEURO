@@ -113,9 +113,9 @@ export default function LandingPage() {
         <div style={{maxWidth:1200,margin:"0 auto"}}>
           <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:40,marginBottom:40}}>
             <div>
-              <div style={{fontSize:22,fontWeight:700,color:"#4ec9a0",marginBottom:8}}>CAA Neuro</div>
+              <div style={{fontSize:22,fontWeight:700,color:"#E8B4A8",marginBottom:8}}>CAA Neuro</div>
               <p style={{color:"rgba(255,255,255,0.55)",fontSize:14,lineHeight:1.7,maxWidth:280}}>Plataforma completa para comunicação funcional, acompanhamento clínico, acessibilidade e recursos terapêuticos.</p>
-              <p style={{color:"rgba(255,255,255,0.4)",fontSize:13,marginTop:16}}>Responsável técnica:<br/><strong style={{color:"#4ec9a0"}}>Margareth Almeida</strong><br/><span style={{fontSize:12}}>Fonoaudióloga · CRFa</span></p>
+              <p style={{color:"rgba(255,255,255,0.4)",fontSize:13,marginTop:16}}>Responsável técnica:<br/><strong style={{color:"#E8B4A8"}}>Margareth Almeida</strong><br/><span style={{fontSize:12}}>Fonoaudióloga · CRFa</span></p>
             </div>
             <div>
               <p style={{color:"rgba(255,255,255,0.4)",fontSize:12,fontWeight:700,marginBottom:14,letterSpacing:1}}>PLATAFORMA</p>

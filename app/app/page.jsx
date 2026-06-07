@@ -898,7 +898,7 @@ setCards(enriched);
         <div className="caa-top-actions">
           <button onClick={()=>setEditMode(!editMode)}>{editMode?"Sair da edição":"Editar prancha"}</button>
           <button onClick={resetBoard}>Resetar</button>
-          <a href="/pranchoteca" style={{fontSize:"13px",color:"#00885f",textDecoration:"none",border:"1px solid #00885f",padding:"7px 14px",borderRadius:"8px",fontWeight:"700",whiteSpace:"nowrap"}}>📋 Pranchoteca</a>
+          <a href="/pranchoteca" style={{fontSize:"13px",color:"#C76B4A",textDecoration:"none",border:"1px solid #C76B4A",padding:"7px 14px",borderRadius:"8px",fontWeight:"700",whiteSpace:"nowrap"}}>📋 Pranchoteca</a>
         </div>
       </header>
 
@@ -985,7 +985,7 @@ setCards(enriched);
                 <option value="MALE">👨 Masculina</option>
                 <option value="CHILD">🧒 Criança</option>
               </select>
-              <button onClick={()=>setShowMobileTools(v=>!v)} style={{background:showMobileTools?"#071b2c":"#f3f4f6",color:showMobileTools?"#4ec9a0":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
+              <button onClick={()=>setShowMobileTools(v=>!v)} style={{background:showMobileTools?"#1B2D5B":"#f3f4f6",color:showMobileTools?"#E8B4A8":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
                 {showMobileTools ? "Menos opções" : "Mais opções"}
               </button>
 
@@ -1002,11 +1002,11 @@ setCards(enriched);
                     <option value={2500}>⏱ 2.5s</option>
                     <option value={4000}>⏱ 4.0s</option>
                   </select>
-                  <button onClick={()=>setDarkMode(d=>!d)} title="Alternar modo escuro" style={{background:darkMode?"#4ec9a0":"#f3f4f6",color:darkMode?"#0d1117":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer"}}>
+                  <button onClick={()=>setDarkMode(d=>!d)} title="Alternar modo escuro" style={{background:darkMode?"#E8B4A8":"#f3f4f6",color:darkMode?"#0d1117":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer"}}>
                     {darkMode?"☀️":"🌙"}
                   </button>
                   <button onClick={()=>setShowAccessibility(true)} title="Acessibilidade adaptativa"
-                    style={{background:diagnostico!=="padrao"?"#071b2c":"#f3f4f6",color:diagnostico!=="padrao"?"#4ec9a0":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer",fontWeight:diagnostico!=="padrao"?"700":"400"}}>
+                    style={{background:diagnostico!=="padrao"?"#1B2D5B":"#f3f4f6",color:diagnostico!=="padrao"?"#E8B4A8":"#374151",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"15px",cursor:"pointer",fontWeight:diagnostico!=="padrao"?"700":"400"}}>
                     ♿{diagnostico!=="padrao"?` ${DIAGNOSTICO_PROFILES[diagnostico]?.icon}`:""}
                   </button>
                   <button onClick={async()=>{
@@ -1024,9 +1024,9 @@ setCards(enriched);
                     {sharing ? "..." : "🔗 Compartilhar"}
                   </button>
                   {shareUrl && (
-                    <div style={{background:"#f0fdf4",border:"1px solid #00885f",borderRadius:"10px",padding:"10px 14px",fontSize:"13px",display:"flex",alignItems:"center",gap:"10px",flexWrap:"wrap",width:"100%",marginTop:"6px"}}>
+                    <div style={{background:"#f0fdf4",border:"1px solid #C76B4A",borderRadius:"10px",padding:"10px 14px",fontSize:"13px",display:"flex",alignItems:"center",gap:"10px",flexWrap:"wrap",width:"100%",marginTop:"6px"}}>
                       <span style={{color:"#065f46",fontWeight:"600"}}>✅ Link copiado!</span>
-                      <a href={shareUrl} target="_blank" rel="noopener noreferrer" style={{color:"#00885f",wordBreak:"break-all"}}>{shareUrl}</a>
+                      <a href={shareUrl} target="_blank" rel="noopener noreferrer" style={{color:"#C76B4A",wordBreak:"break-all"}}>{shareUrl}</a>
                       <button onClick={()=>setShareUrl(null)} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af",fontSize:"16px"}}>✕</button>
                     </div>
                   )}
@@ -1259,7 +1259,7 @@ setCards(enriched);
                 </div>
 
                 {/* OFFER — cores verdes do app */}
-                <div style={{background:"linear-gradient(135deg,#062f1b,#00885f)",borderRadius:"14px",padding:"20px",marginBottom:"16px"}}>
+                <div style={{background:"linear-gradient(135deg,#1B2D5B,#C76B4A)",borderRadius:"14px",padding:"20px",marginBottom:"16px"}}>
                   <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"12px"}}>
                     <span style={{background:"rgba(255,255,255,0.2)",borderRadius:"20px",padding:"3px 12px",fontSize:"11px",fontWeight:"700",color:"white"}}>PLANO PRO</span>
                     <span style={{fontSize:"12px",color:"rgba(255,255,255,0.7)"}}>R$ 35/mês · cancele quando quiser</span>
@@ -1278,7 +1278,7 @@ setCards(enriched);
                     <div style={{background:"rgba(0,0,0,0.3)",borderRadius:"8px",padding:"10px",marginBottom:"12px",fontSize:"12px",color:"#fca5a5",lineHeight:"1.5"}}>
                       {generateError}
                       {generateError.includes("Pro") && (
-                        <a href="/planos" style={{display:"block",marginTop:"6px",color:"#4ec9a0",fontWeight:"700",fontSize:"13px"}}>
+                        <a href="/planos" style={{display:"block",marginTop:"6px",color:"#E8B4A8",fontWeight:"700",fontSize:"13px"}}>
                           → Assinar Pro por R$ 35/mês e desbloquear agora
                         </a>
                       )}
@@ -1287,7 +1287,7 @@ setCards(enriched);
                   <button
                     onClick={generateImage}
                     disabled={generating||!generatePrompt.trim()}
-                    style={{width:"100%",padding:"14px",background:generating?"rgba(255,255,255,0.3)":"white",color:generating?"white":"#062f1b",border:"none",borderRadius:"10px",fontWeight:"900",cursor:generating?"wait":"pointer",fontSize:"15px",transition:"all 0.2s",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}
+                    style={{width:"100%",padding:"14px",background:generating?"rgba(255,255,255,0.3)":"white",color:generating?"white":"#1B2D5B",border:"none",borderRadius:"10px",fontWeight:"900",cursor:generating?"wait":"pointer",fontSize:"15px",transition:"all 0.2s",boxShadow:"0 4px 20px rgba(0,0,0,0.3)"}}
                   >
                     {generating?"⏳ Gerando sua imagem...":"✨ Gerar pictograma exclusivo"}
                   </button>
@@ -1305,12 +1305,12 @@ setCards(enriched);
                   </div>
                   <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",borderRadius:"10px",padding:"12px",textAlign:"center"}}>
                     <div style={{fontSize:"20px",marginBottom:"4px"}}>⭐</div>
-                    <div style={{fontSize:"12px",fontWeight:"700",color:"#00885f",marginBottom:"4px"}}>Plano Pro</div>
+                    <div style={{fontSize:"12px",fontWeight:"700",color:"#C76B4A",marginBottom:"4px"}}>Plano Pro</div>
                     <div style={{fontSize:"11px",color:"#6b7280",lineHeight:"1.5"}}>Crie qualquer pictograma com IA. Exclusivo, personalizado, seu.</div>
                   </div>
                 </div>
                 <div style={{textAlign:"center",marginTop:"12px"}}>
-                  <a href="/planos" style={{fontSize:"13px",color:"#00885f",fontWeight:"700",textDecoration:"none"}}>
+                  <a href="/planos" style={{fontSize:"13px",color:"#C76B4A",fontWeight:"700",textDecoration:"none"}}>
                     Ver planos e assinar Pro →
                   </a>
                 </div>

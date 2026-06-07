@@ -90,7 +90,7 @@ export default function DwellButton({
             left: 0,
             height: "4px",
             width: `${progress}%`,
-            background: "linear-gradient(90deg, #4ec9a0, #00885f)",
+            background: "linear-gradient(90deg, #E8B4A8, #C76B4A)",
             transition: "none",
             borderRadius: "0 2px 2px 0",
             zIndex: 10,

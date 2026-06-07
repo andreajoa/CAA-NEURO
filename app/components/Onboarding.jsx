@@ -48,7 +48,7 @@ export default function Onboarding() {
         <button
           onClick={() => { setVisible(true); setStep(0); }}
           title="Guia de início"
-          style={{ position:"fixed", bottom:"24px", right:"24px", zIndex:200, background:"#00885f", color:"white", border:"none", borderRadius:"50%", width:"50px", height:"50px", fontSize:"22px", cursor:"pointer", boxShadow:"0 4px 16px rgba(0,136,95,0.4)", display:"flex", alignItems:"center", justifyContent:"center" }}
+          style={{ position:"fixed", bottom:"24px", right:"24px", zIndex:200, background:"#C76B4A", color:"white", border:"none", borderRadius:"50%", width:"50px", height:"50px", fontSize:"22px", cursor:"pointer", boxShadow:"0 4px 16px rgba(0,136,95,0.4)", display:"flex", alignItems:"center", justifyContent:"center" }}
         >?</button>
       )}
 
@@ -59,16 +59,16 @@ export default function Onboarding() {
 
             <div style={{ display:"flex", gap:"6px", marginBottom:"32px" }}>
               {steps.map((_,i) => (
-                <div key={i} onClick={() => setStep(i)} style={{ flex:1, height:"5px", borderRadius:"3px", background: i <= step ? "#00885f" : "#e5e7eb", cursor:"pointer", transition:"background 0.3s" }} />
+                <div key={i} onClick={() => setStep(i)} style={{ flex:1, height:"5px", borderRadius:"3px", background: i <= step ? "#C76B4A" : "#e5e7eb", cursor:"pointer", transition:"background 0.3s" }} />
               ))}
             </div>
 
             <div style={{ textAlign:"center", marginBottom:"32px" }}>
               <div style={{ fontSize:"52px", marginBottom:"16px" }}>{curr.icon}</div>
-              <div style={{ fontSize:"12px", fontWeight:"700", color:"#00885f", marginBottom:"10px", textTransform:"uppercase", letterSpacing:"0.06em" }}>
+              <div style={{ fontSize:"12px", fontWeight:"700", color:"#C76B4A", marginBottom:"10px", textTransform:"uppercase", letterSpacing:"0.06em" }}>
                 Passo {step + 1} de {steps.length}
               </div>
-              <h2 style={{ fontSize:"20px", fontWeight:"800", color:"#071b2c", margin:"0 0 12px" }}>{curr.title}</h2>
+              <h2 style={{ fontSize:"20px", fontWeight:"800", color:"#1B2D5B", margin:"0 0 12px" }}>{curr.title}</h2>
               <p style={{ color:"#42515e", fontSize:"15px", lineHeight:"1.65", margin:0 }}>{curr.desc}</p>
             </div>
 
@@ -79,11 +79,11 @@ export default function Onboarding() {
                 </button>
               )}
               {!isLast ? (
-                <button onClick={() => setStep(s => s+1)} style={{ flex:2, padding:"12px", borderRadius:"10px", background:"#00885f", color:"white", border:"none", fontSize:"14px", cursor:"pointer", fontWeight:"700" }}>
+                <button onClick={() => setStep(s => s+1)} style={{ flex:2, padding:"12px", borderRadius:"10px", background:"#C76B4A", color:"white", border:"none", fontSize:"14px", cursor:"pointer", fontWeight:"700" }}>
                   Próximo →
                 </button>
               ) : (
-                <a href={curr.href} onClick={finish} style={{ flex:2, padding:"12px", borderRadius:"10px", background:"#00885f", color:"white", border:"none", fontSize:"14px", cursor:"pointer", fontWeight:"700", textDecoration:"none", textAlign:"center", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <a href={curr.href} onClick={finish} style={{ flex:2, padding:"12px", borderRadius:"10px", background:"#C76B4A", color:"white", border:"none", fontSize:"14px", cursor:"pointer", fontWeight:"700", textDecoration:"none", textAlign:"center", display:"flex", alignItems:"center", justifyContent:"center" }}>
                   Começar agora 🚀
                 </a>
               )}

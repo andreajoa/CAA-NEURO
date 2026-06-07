@@ -17,7 +17,7 @@ export default function ProfissionalPage() {
   const nome = user?.firstName || user?.emailAddresses?.[0]?.emailAddress?.split("@")[0] || "Profissional";
 
   const acessos = [
-    { href:"/profissional/pranchas", icon:"🧠", label:"Pranchas Terapêuticas", desc:"Crie pranchas personalizadas por paciente", cor:"#00885f" },
+    { href:"/profissional/pranchas", icon:"🧠", label:"Pranchas Terapêuticas", desc:"Crie pranchas personalizadas por paciente", cor:"#C76B4A" },
     { href:"/app",          icon:"🧩", label:"Prancha CAA",        desc:"Abrir prancha de comunicação padrão",     cor:"#059669" },
     { href:"/pacientes",    icon:"👥", label:"Pacientes",           desc:"Prontuários e histórico clínico",  cor:"#2563eb" },
     { href:"/agenda",       icon:"📅", label:"Agenda",              desc:"Agendamentos e sessões",           cor:"#7c3aed" },
@@ -41,7 +41,7 @@ export default function ProfissionalPage() {
 
         {/* Boas-vindas */}
         <div style={{ marginBottom:"32px" }}>
-          <h1 style={{ fontSize:"26px", fontWeight:"800", color:"#071b2c", margin:"0 0 6px" }}>
+          <h1 style={{ fontSize:"26px", fontWeight:"800", color:"#1B2D5B", margin:"0 0 6px" }}>
             Olá, {nome} 👋
           </h1>
           <p style={{ color:"#6b7280", margin:0, fontSize:"15px" }}>
@@ -61,7 +61,7 @@ export default function ProfissionalPage() {
             ].map(s => (
               <div key={s.label} style={{ background:"white", borderRadius:"14px", border:"1px solid #e5e7eb", padding:"16px", textAlign:"center" }}>
                 <div style={{ fontSize:"24px", marginBottom:"4px" }}>{s.icon}</div>
-                <div style={{ fontSize:"26px", fontWeight:"800", color:"#071b2c" }}>{s.val}</div>
+                <div style={{ fontSize:"26px", fontWeight:"800", color:"#1B2D5B" }}>{s.val}</div>
                 <div style={{ fontSize:"12px", color:"#6b7280" }}>{s.label}</div>
               </div>
             ))}
@@ -69,7 +69,7 @@ export default function ProfissionalPage() {
         )}
 
         {/* Acessos rápidos */}
-        <h2 style={{ fontSize:"16px", fontWeight:"800", color:"#071b2c", margin:"0 0 16px" }}>Acesso rápido</h2>
+        <h2 style={{ fontSize:"16px", fontWeight:"800", color:"#1B2D5B", margin:"0 0 16px" }}>Acesso rápido</h2>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))", gap:"14px", marginBottom:"32px" }}>
           {acessos.map(a => (
             <Link key={a.href} href={a.href} style={{ textDecoration:"none" }}>
@@ -80,7 +80,7 @@ export default function ProfissionalPage() {
                   {a.icon}
                 </div>
                 <div>
-                  <div style={{ fontWeight:"700", fontSize:"14px", color:"#071b2c" }}>{a.label}</div>
+                  <div style={{ fontWeight:"700", fontSize:"14px", color:"#1B2D5B" }}>{a.label}</div>
                   <div style={{ fontSize:"12px", color:"#6b7280", marginTop:"2px" }}>{a.desc}</div>
                 </div>
               </div>
@@ -91,11 +91,11 @@ export default function ProfissionalPage() {
         {/* Funcionalidades Pro */}
         <div style={{ background: isPago ? "#f0fdf4" : "#f9fafb", border:`1px solid ${isPago?"#bbf7d0":"#e5e7eb"}`, borderRadius:"16px", padding:"24px" }}>
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"16px", flexWrap:"wrap", gap:"10px" }}>
-            <h2 style={{ fontSize:"16px", fontWeight:"800", color:"#071b2c", margin:0 }}>
+            <h2 style={{ fontSize:"16px", fontWeight:"800", color:"#1B2D5B", margin:0 }}>
               {isPago ? "✅ Funcionalidades Pro ativas" : "🔒 Funcionalidades Pro"}
             </h2>
             {!isPago && (
-              <Link href="/planos" style={{ background:"#00885f", color:"white", padding:"8px 20px", borderRadius:"8px", textDecoration:"none", fontSize:"13px", fontWeight:"700" }}>
+              <Link href="/planos" style={{ background:"#C76B4A", color:"white", padding:"8px 20px", borderRadius:"8px", textDecoration:"none", fontSize:"13px", fontWeight:"700" }}>
                 Assinar →
               </Link>
             )}
@@ -105,7 +105,7 @@ export default function ProfissionalPage() {
               <div key={b.label} style={{ background:"white", borderRadius:"12px", border:"1px solid #e5e7eb", padding:"16px", opacity: isPago ? 1 : 0.7 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:"10px", marginBottom:"6px" }}>
                   <span style={{ fontSize:"20px" }}>{b.icon}</span>
-                  <span style={{ fontWeight:"700", fontSize:"14px", color:"#071b2c" }}>{b.label}</span>
+                  <span style={{ fontWeight:"700", fontSize:"14px", color:"#1B2D5B" }}>{b.label}</span>
                   {!isPago && <span style={{ marginLeft:"auto", background:"#fef9c3", color:"#854d0e", padding:"2px 8px", borderRadius:"20px", fontSize:"10px", fontWeight:"700" }}>{b.plano}</span>}
                 </div>
                 <div style={{ fontSize:"12px", color:"#6b7280" }}>{b.desc}</div>

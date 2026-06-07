@@ -21,7 +21,7 @@ export default function TestimonialsSection() {
       <h2>O que dizem os profissionais</h2>
       <p className="sub">Seja o primeiro a compartilhar sua experiência.</p>
       <div style={{ textAlign:"center" }}>
-        <Link href="/depoimentos" className="testimonialsCtaRow" style={{ display:"inline-block", border:"2px solid #00885f", color:"#00885f", padding:"12px 32px", borderRadius:"10px", fontWeight:"700", fontSize:"15px", textDecoration:"none" }}>
+        <Link href="/depoimentos" className="testimonialsCtaRow" style={{ display:"inline-block", border:"2px solid #C76B4A", color:"#C76B4A", padding:"12px 32px", borderRadius:"10px", fontWeight:"700", fontSize:"15px", textDecoration:"none" }}>
           Compartilhar minha experiência →
         </Link>
       </div>

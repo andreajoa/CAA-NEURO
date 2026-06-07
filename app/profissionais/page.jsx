@@ -43,8 +43,8 @@ export default function Profissionais() {
 
       {/* Hero */}
       {/* Hero */}
-      <div style={{background:"linear-gradient(135deg,#071b2c,#0d2d3e)",color:"white",padding:"48px 24px",textAlign:"center"}}>
-        <h1 style={{fontSize:"32px",fontWeight:"800",margin:"0 0 12px",color:"#4ec9a0"}}>Encontre um Especialista em CAA</h1>
+      <div style={{background:"linear-gradient(135deg,#1B2D5B,#0d2d3e)",color:"white",padding:"48px 24px",textAlign:"center"}}>
+        <h1 style={{fontSize:"32px",fontWeight:"800",margin:"0 0 12px",color:"#E8B4A8"}}>Encontre um Especialista em CAA</h1>
         <p style={{fontSize:"16px",color:"rgba(255,255,255,0.7)",margin:"0 0 32px"}}>Fonoaudiólogos, Terapeutas Ocupacionais, Psicólogos e outros profissionais especializados</p>
         <div style={{maxWidth:"500px",margin:"0 auto"}}>
           <input
@@ -63,7 +63,7 @@ export default function Profissionais() {
             {ESPECIALIDADES.map(e => (
               <button key={e.id} onClick={() => setFiltroEsp(e.id)}
                 style={{padding:"8px 14px",borderRadius:"20px",border:"1px solid",fontSize:"13px",fontWeight:"700",cursor:"pointer",
-                  background:filtroEsp===e.id?"#071b2c":"white",color:filtroEsp===e.id?"white":"#374151",borderColor:filtroEsp===e.id?"#071b2c":"#e5e7eb"}}>
+                  background:filtroEsp===e.id?"#1B2D5B":"white",color:filtroEsp===e.id?"white":"#374151",borderColor:filtroEsp===e.id?"#1B2D5B":"#e5e7eb"}}>
                 {e.label}
               </button>
             ))}
@@ -82,7 +82,7 @@ export default function Profissionais() {
             <div style={{fontSize:"48px",marginBottom:"16px"}}>🔍</div>
             <h3 style={{color:"#374151",margin:"0 0 8px"}}>Nenhum profissional encontrado</h3>
             <p style={{color:"#6b7280",margin:"0 0 24px"}}>Tente outros filtros ou seja o primeiro da sua região!</p>
-            <Link href="/perfil" style={{background:"#00885f",color:"white",padding:"12px 24px",borderRadius:"10px",textDecoration:"none",fontWeight:"700"}}>
+            <Link href="/perfil" style={{background:"#C76B4A",color:"white",padding:"12px 24px",borderRadius:"10px",textDecoration:"none",fontWeight:"700"}}>
               Cadastrar meu perfil
             </Link>
           </div>
@@ -96,10 +96,10 @@ export default function Profissionais() {
         )}
 
         {/* CTA para cadastro */}
-        <div style={{background:"linear-gradient(135deg,#071b2c,#0d2d3e)",borderRadius:"20px",padding:"40px",textAlign:"center",marginTop:"48px",color:"white"}}>
-          <h2 style={{fontSize:"24px",fontWeight:"800",margin:"0 0 12px",color:"#4ec9a0"}}>Você é profissional de CAA?</h2>
+        <div style={{background:"linear-gradient(135deg,#1B2D5B,#0d2d3e)",borderRadius:"20px",padding:"40px",textAlign:"center",marginTop:"48px",color:"white"}}>
+          <h2 style={{fontSize:"24px",fontWeight:"800",margin:"0 0 12px",color:"#E8B4A8"}}>Você é profissional de CAA?</h2>
           <p style={{color:"rgba(255,255,255,0.7)",margin:"0 0 24px"}}>Apareça no diretório, amplie sua visibilidade e conecte-se com famílias e colegas.</p>
-          <Link href="/perfil" style={{background:"#00885f",color:"white",padding:"14px 32px",borderRadius:"12px",textDecoration:"none",fontWeight:"800",fontSize:"16px",display:"inline-block"}}>
+          <Link href="/perfil" style={{background:"#C76B4A",color:"white",padding:"14px 32px",borderRadius:"12px",textDecoration:"none",fontWeight:"800",fontSize:"16px",display:"inline-block"}}>
             Cadastrar meu perfil gratuitamente
           </Link>
         </div>
@@ -139,7 +139,7 @@ function CardProfissional({ p }) {
           </div>
         )}
         <div style={{flex:1,minWidth:0}}>
-          <div style={{fontWeight:"800",fontSize:"16px",color:"#071b2c",marginBottom:"4px"}}>{p.nome_profissional || "Profissional CAA"}</div>
+          <div style={{fontWeight:"800",fontSize:"16px",color:"#1B2D5B",marginBottom:"4px"}}>{p.nome_profissional || "Profissional CAA"}</div>
           <div style={{fontSize:"13px",fontWeight:"700",color:cor,marginBottom:"4px"}}>{PROF_LABELS[p.profissao] || p.profissao}</div>
           {p.conselho_regional && (
             <div style={{fontSize:"12px",color:"#6b7280"}}>{p.conselho_regional}</div>

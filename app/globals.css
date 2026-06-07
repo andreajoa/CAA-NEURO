@@ -38,7 +38,7 @@ button.active{background:#1B2D5B!important;color:#fff!important;border-color:#1B
 .caa-card-button{border:0;background:transparent;padding:0;width:100%;flex:1;display:flex;flex-direction:column}
 .caa-image-frame{aspect-ratio:1/1;border:5px solid var(--cat,#C76B4A);border-radius:14px;overflow:hidden;background:#f8fafc}
 .caa-image-frame img{width:100%;height:100%;object-fit:cover;display:block}
-.caa-empty{height:100%;display:flex;align-items:center;justify-content:center;font-size:54px;font-weight:900;color:#9aa6af;background:linear-gradient(135deg,#fff,#eef3f7)}
+.caa-empty{height:100%;display:flex;align-items:center;justify-content:center;font-size:54px;font-weight:900;color:#9aa6af;background:linear-gradient(135deg,#fff,#F2E8E1)}
 .caa-empty.large{aspect-ratio:1/1;border:4px dashed #cfd8df;border-radius:14px}
 .caa-label{min-height:43px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:900;line-height:1.05;color:#111}
 .caa-tools{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
@@ -372,7 +372,7 @@ display:none;
 .trustRow{display:flex;gap:34px;color:#1B2D5B;font-weight:800;margin-top:30px;margin-bottom:80px;flex-wrap:wrap}
 .heroVisual{position:relative;min-height:720px}
 .heroImage{position:absolute;inset:-80px -80px 0 0;background:linear-gradient(90deg,rgba(248,251,249,.05),rgba(248,251,249,.18)),url('/hero-caa.png');background-size:cover;background-position:42% center;border-bottom-left-radius:90px}
-.heroImage:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#f8fbf9 0%,rgba(248,251,249,.68) 25%,rgba(0,80,60,.05) 65%,rgba(0,70,55,.28) 100%)}
+.heroImage:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#F2E8E1 0%,rgba(248,251,249,.68) 25%,rgba(0,80,60,.05) 65%,rgba(0,70,55,.28) 100%)}
 .quoteCard{position:absolute;right:10px;top:230px;width:310px;background:rgba(0,55,48,.76);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.35);border-radius:24px;color:white;padding:30px;box-shadow:0 30px 70px rgba(0,0,0,.18)}
 .quoteCard strong{font-size:72px;color:#E8B4A8;line-height:.6}
 .quoteCard p{font-size:27px;line-height:1.25;margin:0}
@@ -883,7 +883,7 @@ display:none;
 }
 
 .publicFooter {
-  background: #071b2c;
+  background: #1B2D5B;
   color: white;
   padding: 48px 40px 32px;
   display: grid;

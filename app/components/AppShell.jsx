@@ -36,7 +36,7 @@ export default function AppShell({ children }) {
   const isActive = (href) => href === "/app" ? path === "/app" : path.startsWith(href);
 
   return (
-    <div style={{ display:"flex", minHeight:"100vh", background:"#f4f6f9", fontFamily:"'Segoe UI',system-ui,sans-serif" }}>
+    <div style={{ display:"flex", minHeight:"100vh", background:"#F2E8E1", fontFamily:"'Segoe UI',system-ui,sans-serif" }}>
 
       {/* ── OVERLAY mobile ── */}
       {sideOpen && isMobile && (
@@ -50,7 +50,7 @@ export default function AppShell({ children }) {
         top: 0, left: 0,
         height: "100vh",
         width: 220,
-        background: "#071b2c",
+        background: "#1B2D5B",
         display: "flex",
         flexDirection: "column",
         zIndex: 50,
@@ -60,7 +60,7 @@ export default function AppShell({ children }) {
       }}>
         {/* Logo */}
         <div style={{ padding:"20px 18px 14px", borderBottom:"1px solid rgba(255,255,255,0.08)" }}>
-          <div style={{ fontWeight:"900", fontSize:"20px", color:"#4ec9a0", letterSpacing:"-0.5px" }}>CAA Neuro</div>
+          <div style={{ fontWeight:"900", fontSize:"20px", color:"#E8B4A8", letterSpacing:"-0.5px" }}>CAA Neuro</div>
           <div style={{ fontSize:"11px", color:"rgba(255,255,255,0.4)", marginTop:"2px" }}>Plataforma clínica</div>
         </div>
 
@@ -75,11 +75,11 @@ export default function AppShell({ children }) {
                   padding:"10px 12px", borderRadius:"10px", marginBottom:"2px",
                   textDecoration:"none",
                   background: active ? "rgba(78,201,160,0.15)" : "transparent",
-                  color: active ? "#4ec9a0" : "rgba(255,255,255,0.65)",
+                  color: active ? "#E8B4A8" : "rgba(255,255,255,0.65)",
                   fontWeight: active ? "700" : "500",
                   fontSize:"14px",
                   transition:"all 0.15s",
-                  borderLeft: active ? "3px solid #4ec9a0" : "3px solid transparent",
+                  borderLeft: active ? "3px solid #E8B4A8" : "3px solid transparent",
                 }}>
                 <span style={{ fontSize:"16px", width:"20px", textAlign:"center" }}>{item.icon}</span>
                 {item.label}
@@ -102,7 +102,7 @@ export default function AppShell({ children }) {
         {isMobile && (
           <header style={{
             position:"sticky", top:0, zIndex:30,
-            background:"#071b2c", color:"white",
+            background:"#1B2D5B", color:"white",
             padding:"0 16px",
             height:"54px",
             display:"flex", alignItems:"center", justifyContent:"space-between",
@@ -112,7 +112,7 @@ export default function AppShell({ children }) {
               style={{ background:"none", border:"none", color:"white", fontSize:"22px", cursor:"pointer", padding:"6px", lineHeight:1 }}>
               ☰
             </button>
-            <span style={{ fontWeight:"800", fontSize:"16px", color:"#4ec9a0" }}>CAA Neuro</span>
+            <span style={{ fontWeight:"800", fontSize:"16px", color:"#E8B4A8" }}>CAA Neuro</span>
             <UserButton afterSignOutUrl="/" />
           </header>
         )}
@@ -127,7 +127,7 @@ export default function AppShell({ children }) {
       {isMobile && (
         <nav style={{
           position:"fixed", bottom:0, left:0, right:0, zIndex:30,
-          background:"#071b2c",
+          background:"#1B2D5B",
           display:"flex",
           borderTop:"1px solid rgba(255,255,255,0.08)",
           height:"64px",
@@ -140,7 +140,7 @@ export default function AppShell({ children }) {
                   flex:1, display:"flex", flexDirection:"column",
                   alignItems:"center", justifyContent:"center", gap:"2px",
                   textDecoration:"none",
-                  color: active ? "#4ec9a0" : "rgba(255,255,255,0.45)",
+                  color: active ? "#E8B4A8" : "rgba(255,255,255,0.45)",
                   fontSize:"10px", fontWeight: active ? "700" : "500",
                   background: active ? "rgba(78,201,160,0.1)" : "transparent",
                   transition:"all 0.15s",

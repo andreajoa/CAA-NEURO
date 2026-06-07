@@ -23,10 +23,10 @@ export default function PacientesPage() {
       <div style={{ padding:"28px 32px", maxWidth:"900px" }}>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"28px", flexWrap:"wrap", gap:"12px" }}>
           <div>
-            <h1 style={{ margin:0, fontSize:"26px", fontWeight:"800", color:"#071b2c" }}>👥 Pacientes</h1>
+            <h1 style={{ margin:0, fontSize:"26px", fontWeight:"800", color:"#1B2D5B" }}>👥 Pacientes</h1>
             <p style={{ margin:"4px 0 0", color:"#6b7280", fontSize:"14px" }}>{patients.length} paciente{patients.length!==1?"s":""} cadastrado{patients.length!==1?"s":""}</p>
           </div>
-          <Link href="/app" style={{ background:"#00885f", color:"white", padding:"10px 20px", borderRadius:"10px", fontWeight:"700", textDecoration:"none", fontSize:"14px" }}>
+          <Link href="/app" style={{ background:"#C76B4A", color:"white", padding:"10px 20px", borderRadius:"10px", fontWeight:"700", textDecoration:"none", fontSize:"14px" }}>
             + Nova sessão
           </Link>
         </div>
@@ -42,7 +42,7 @@ export default function PacientesPage() {
             <div style={{ fontSize:"48px", marginBottom:"12px" }}>👥</div>
             <p style={{ fontWeight:"700", color:"#374151", margin:"0 0 8px" }}>{search ? "Nenhum resultado" : "Nenhum paciente ainda"}</p>
             <p style={{ color:"#9ca3af", fontSize:"14px", margin:"0 0 20px" }}>Crie uma sessão no app para registrar o primeiro paciente.</p>
-            <Link href="/app" style={{ background:"#00885f", color:"white", padding:"10px 22px", borderRadius:"10px", fontWeight:"700", textDecoration:"none", fontSize:"14px" }}>Ir para a Prancha</Link>
+            <Link href="/app" style={{ background:"#C76B4A", color:"white", padding:"10px 22px", borderRadius:"10px", fontWeight:"700", textDecoration:"none", fontSize:"14px" }}>Ir para a Prancha</Link>
           </div>
         ) : (
           <div style={{ display:"flex", flexDirection:"column", gap:"10px" }}>
@@ -53,7 +53,7 @@ export default function PacientesPage() {
                     {p.diagnóstico === "TEA" ? "🧩" : p.diagnóstico === "AVC" ? "🧠" : "👤"}
                   </div>
                   <div>
-                    <div style={{ fontWeight:"800", color:"#071b2c", fontSize:"15px" }}>{p.nome || p.name || "Sem nome"}</div>
+                    <div style={{ fontWeight:"800", color:"#1B2D5B", fontSize:"15px" }}>{p.nome || p.name || "Sem nome"}</div>
                     <div style={{ fontSize:"12px", color:"#9ca3af", marginTop:"2px" }}>
                       {p.diagnostico && <span style={{ background:"#eff6ff", color:"#2563eb", padding:"2px 8px", borderRadius:"20px", fontWeight:"600", marginRight:"6px" }}>{p.diagnostico}</span>}
                       {p.data_nascimento && <span>Nasc. {new Date(p.data_nascimento).toLocaleDateString("pt-BR")}</span>}
@@ -61,7 +61,7 @@ export default function PacientesPage() {
                   </div>
                 </div>
                 <Link href={`/app?patient=${p.id}`}
-                  style={{ background:"#f0fdf4", color:"#00885f", border:"1px solid #bbf7d0", padding:"8px 16px", borderRadius:"8px", fontWeight:"700", textDecoration:"none", fontSize:"13px" }}>
+                  style={{ background:"#f0fdf4", color:"#C76B4A", border:"1px solid #bbf7d0", padding:"8px 16px", borderRadius:"8px", fontWeight:"700", textDecoration:"none", fontSize:"13px" }}>
                   Abrir sessão →
                 </Link>
               </div>

@@ -33,7 +33,7 @@ function LineChart({ data, color, label }: { data: any[], color: string, label: 
 
 function Funnel({ total, pro, sessions }: { total:number, pro:number, sessions:number }) {
   const steps = [
-    { label:"Cadastros", value:total, color:"#4ec9a0", pct:100 },
+    { label:"Cadastros", value:total, color:"#E8B4A8", pct:100 },
     { label:"Usaram sessões", value:Math.min(sessions,total), color:"#60a5fa", pct:total>0?Math.round(Math.min(sessions,total)/total*100):0 },
     { label:"Assinantes Pro", value:pro, color:"#f59e0b", pct:total>0?Math.round(pro/total*100):0 },
   ];
@@ -98,9 +98,9 @@ export default function AdminPage() {
   }, [isLoaded, isAdmin]);
 
   if (!isLoaded || loading) return (
-    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#071b2c"}}>
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#1B2D5B"}}>
       <div style={{textAlign:"center"}}>
-        <div style={{color:"#4ec9a0",fontSize:"20px",fontWeight:"900",marginBottom:"8px"}}>CAA Neuro</div>
+        <div style={{color:"#E8B4A8",fontSize:"20px",fontWeight:"900",marginBottom:"8px"}}>CAA Neuro</div>
         <div style={{color:"rgba(255,255,255,0.4)",fontSize:"14px"}}>Carregando painel administrativo...</div>
       </div>
     </div>
@@ -113,25 +113,25 @@ export default function AdminPage() {
   const tabStyle = (id:string) => ({
     padding:"10px 20px", border:"none", cursor:"pointer", fontSize:"13px", fontWeight:"600",
     background: activeTab===id ? "rgba(78,201,160,0.2)" : "transparent",
-    color: activeTab===id ? "#4ec9a0" : "rgba(255,255,255,0.4)",
-    borderBottom: activeTab===id ? "2px solid #4ec9a0" : "2px solid transparent",
+    color: activeTab===id ? "#E8B4A8" : "rgba(255,255,255,0.4)",
+    borderBottom: activeTab===id ? "2px solid #E8B4A8" : "2px solid transparent",
   });
 
   return (
-    <div style={{minHeight:"100vh",background:"#071b2c",fontFamily:"system-ui",color:"white"}}>
+    <div style={{minHeight:"100vh",background:"#1B2D5B",fontFamily:"system-ui",color:"white"}}>
       {/* Header */}
       <div style={{borderBottom:"1px solid rgba(255,255,255,0.1)",padding:"16px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"12px"}}>
         <div style={{display:"flex",alignItems:"center",gap:"16px"}}>
-          <span style={{color:"#4ec9a0",fontWeight:"900",fontSize:"22px"}}>CAA Neuro</span>
-          <span style={{background:"rgba(78,201,160,0.15)",border:"1px solid #4ec9a0",color:"#4ec9a0",padding:"3px 12px",borderRadius:"6px",fontSize:"11px",fontWeight:"700",letterSpacing:"0.1em"}}>PROPRIETÁRIO</span>
+          <span style={{color:"#E8B4A8",fontWeight:"900",fontSize:"22px"}}>CAA Neuro</span>
+          <span style={{background:"rgba(78,201,160,0.15)",border:"1px solid #E8B4A8",color:"#E8B4A8",padding:"3px 12px",borderRadius:"6px",fontSize:"11px",fontWeight:"700",letterSpacing:"0.1em"}}>PROPRIETÁRIO</span>
         </div>
         <div style={{display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap"}}>
           <div style={{display:"flex",alignItems:"center",gap:"6px"}}>
-            <div style={{width:"8px",height:"8px",borderRadius:"50%",background:"#4ec9a0",animation:"pulse 2s infinite"}}/>
+            <div style={{width:"8px",height:"8px",borderRadius:"50%",background:"#E8B4A8",animation:"pulse 2s infinite"}}/>
             <span style={{fontSize:"12px",color:"rgba(255,255,255,0.4)"}}>Ao vivo · {lastUpdate.toLocaleTimeString("pt-BR")}</span>
           </div>
           <button onClick={loadData} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",color:"white",padding:"7px 16px",borderRadius:"8px",cursor:"pointer",fontSize:"13px"}}>↻ Atualizar</button>
-          <a href="/app" style={{background:"#00885f",color:"white",padding:"8px 18px",borderRadius:"8px",fontSize:"13px",fontWeight:"700",textDecoration:"none"}}>← Prancha</a>
+          <a href="/app" style={{background:"#C76B4A",color:"white",padding:"8px 18px",borderRadius:"8px",fontSize:"13px",fontWeight:"700",textDecoration:"none"}}>← Prancha</a>
         </div>
       </div>
 
@@ -148,7 +148,7 @@ export default function AdminPage() {
         {activeTab === "overview" && <>
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(160px,1fr))",gap:"16px",marginBottom:"32px"}}>
             {[
-              ["Usuários totais", t.users, "#4ec9a0", "👥"],
+              ["Usuários totais", t.users, "#E8B4A8", "👥"],
               ["Novos esta semana", t.new_users_week, "#60a5fa", "📈"],
               ["Plano Pro", t.pro, "#f59e0b", "⭐"],
               ["Plano Gratuito", t.free, "rgba(255,255,255,0.5)", "🆓"],
@@ -168,7 +168,7 @@ export default function AdminPage() {
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"20px",marginBottom:"24px"}}>
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"16px",border:"1px solid rgba(255,255,255,0.08)",padding:"24px"}}>
               <h3 style={{fontSize:"14px",fontWeight:"700",color:"rgba(255,255,255,0.6)",margin:"0 0 16px",textTransform:"uppercase",letterSpacing:"0.05em"}}>📈 Crescimento de usuários (30 dias)</h3>
-              <LineChart data={stats?.usersPerDay || []} color="#4ec9a0" label="Usuários" />
+              <LineChart data={stats?.usersPerDay || []} color="#E8B4A8" label="Usuários" />
             </div>
             <div style={{background:"rgba(255,255,255,0.04)",borderRadius:"16px",border:"1px solid rgba(255,255,255,0.08)",padding:"24px"}}>
               <h3 style={{fontSize:"14px",fontWeight:"700",color:"rgba(255,255,255,0.6)",margin:"0 0 16px",textTransform:"uppercase",letterSpacing:"0.05em"}}>📋 Sessões por dia (30 dias)</h3>
@@ -187,7 +187,7 @@ export default function AdminPage() {
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"20px",flexWrap:"wrap",gap:"12px"}}>
             <h2 style={{fontSize:"20px",fontWeight:"800",margin:0}}>👥 Todos os usuários ({users.length})</h2>
             <div style={{display:"flex",gap:"12px",fontSize:"13px"}}>
-              <span style={{color:"#4ec9a0"}}>✅ Pro: {users.filter((u:any)=>u.plano==="pro").length}</span>
+              <span style={{color:"#E8B4A8"}}>✅ Pro: {users.filter((u:any)=>u.plano==="pro").length}</span>
               <span style={{color:"rgba(255,255,255,0.4)"}}>🆓 Free: {users.filter((u:any)=>u.plano!=="pro"&&u.plano!=="admin").length}</span>
             </div>
           </div>
@@ -207,7 +207,7 @@ export default function AdminPage() {
                     <td style={{padding:"12px 16px",color:"white",fontWeight:"500"}}>{u.email||"—"}</td>
                     <td style={{padding:"12px 16px"}}>
                       <span style={{background:u.plano==="pro"?"rgba(245,158,11,0.2)":u.plano==="admin"?"rgba(78,201,160,0.2)":"rgba(255,255,255,0.08)",
-                        color:u.plano==="pro"?"#f59e0b":u.plano==="admin"?"#4ec9a0":"rgba(255,255,255,0.4)",
+                        color:u.plano==="pro"?"#f59e0b":u.plano==="admin"?"#E8B4A8":"rgba(255,255,255,0.4)",
                         padding:"2px 10px",borderRadius:"6px",fontSize:"11px",fontWeight:"700"}}>
                         {(u.plano||"free").toUpperCase()}
                       </span>
@@ -242,7 +242,7 @@ export default function AdminPage() {
                     <td style={{padding:"12px 16px",color:"rgba(255,255,255,0.6)",fontSize:"12px"}}>{s.profissional_email||"—"}</td>
                     <td style={{padding:"12px 16px",color:"white",fontWeight:"500"}}>{s.paciente_nome||"—"}</td>
                     <td style={{padding:"12px 16px",color:"rgba(255,255,255,0.4)",fontSize:"12px"}}>{s.created_at ? new Date(s.created_at).toLocaleDateString("pt-BR") : "—"}</td>
-                    <td style={{padding:"12px 16px",color:"#4ec9a0"}}>{s.duracao_minutos ? `${s.duracao_minutos}min` : "—"}</td>
+                    <td style={{padding:"12px 16px",color:"#E8B4A8"}}>{s.duracao_minutos ? `${s.duracao_minutos}min` : "—"}</td>
                     <td style={{padding:"12px 16px",color:"rgba(255,255,255,0.5)",maxWidth:"200px",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.evolucao_observada||"—"}</td>
                   </tr>
                 ))}
@@ -261,7 +261,7 @@ export default function AdminPage() {
           {/* Cards por plano */}
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"16px",marginBottom:"24px"}}>
             {[
-              { label:"Individual Pro", valor:35, qtd:t.pro||0, color:"#4ec9a0", desc:"1 profissional · 50 pacientes", icon:"👤" },
+              { label:"Individual Pro", valor:35, qtd:t.pro||0, color:"#E8B4A8", desc:"1 profissional · 50 pacientes", icon:"👤" },
               { label:"Clínica", valor:149, qtd:t.clinica||0, color:"#60a5fa", desc:"5 profissionais · 200 pacientes", icon:"🏥" },
               { label:"Instituição", valor:399, qtd:t.instituicao||0, color:"#a78bfa", desc:"20 profissionais · ilimitados", icon:"🏛️" },
             ].map(p => (
@@ -289,7 +289,7 @@ export default function AdminPage() {
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:"16px",marginBottom:"24px"}}>
             {[
               ["MRR Total", `R$ ${((t.pro||0)*35 + (t.clinica||0)*149 + (t.instituicao||0)*399).toLocaleString("pt-BR")}`, "Receita mensal recorrente", "#f59e0b"],
-              ["ARR Total", `R$ ${(((t.pro||0)*35 + (t.clinica||0)*149 + (t.instituicao||0)*399)*12).toLocaleString("pt-BR")}`, "Receita anual projetada", "#4ec9a0"],
+              ["ARR Total", `R$ ${(((t.pro||0)*35 + (t.clinica||0)*149 + (t.instituicao||0)*399)*12).toLocaleString("pt-BR")}`, "Receita anual projetada", "#E8B4A8"],
               ["Total assinantes", (t.pro||0)+(t.clinica||0)+(t.instituicao||0), "Pagantes ativos", "#60a5fa"],
               ["Taxa conversão", `${t.conversion_rate||0}%`, "Free → qualquer plano", "#fb7185"],
               ["Usuários free", t.free||0, "Potencial de conversão", "rgba(255,255,255,0.4)"],
@@ -340,14 +340,14 @@ export default function AdminPage() {
                   <div style={{fontSize:"13px",color:"rgba(255,255,255,0.4)",lineHeight:"1.5"}}>{r.desc}</div>
                 </div>
                 <button onClick={exportExcel}
-                  style={{marginTop:"auto",padding:"10px",background:"#00885f",color:"white",border:"none",borderRadius:"10px",cursor:"pointer",fontWeight:"700",fontSize:"13px"}}>
+                  style={{marginTop:"auto",padding:"10px",background:"#C76B4A",color:"white",border:"none",borderRadius:"10px",cursor:"pointer",fontWeight:"700",fontSize:"13px"}}>
                   Exportar {r.format}
                 </button>
               </div>
             ))}
           </div>
           <div style={{marginTop:"24px",background:"rgba(78,201,160,0.08)",borderRadius:"16px",border:"1px solid rgba(78,201,160,0.2)",padding:"20px"}}>
-            <div style={{fontSize:"14px",fontWeight:"700",color:"#4ec9a0",marginBottom:"8px"}}>💡 Para apresentações institucionais</div>
+            <div style={{fontSize:"14px",fontWeight:"700",color:"#E8B4A8",marginBottom:"8px"}}>💡 Para apresentações institucionais</div>
             <div style={{fontSize:"13px",color:"rgba(255,255,255,0.5)",lineHeight:"1.6"}}>
               Os dados exportados mostram métricas reais da plataforma. Use para demonstrar impacto clínico, alcance e viabilidade financeira para prefeituras, secretarias de saúde e educação, e investidores.
             </div>
