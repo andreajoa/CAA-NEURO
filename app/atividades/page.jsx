@@ -1027,12 +1027,12 @@ function CompletarFrase({ cards, onBack }) {
 
 function Categorizar({ cards, onBack }) {
   const ALL_CAT_META = {
-    core:         { label:"⭐ Essenciais",   color:"#2563eb", bg:"#eff6ff" },
-    necessidades: { label:"🍎 Necessidades", color:"#059669", bg:"#ecfdf5" },
-    emocoes:      { label:"😊 Emoções",      color:"#d97706", bg:"#fffbeb" },
-    acoes:        { label:"🏃 Ações",         color:"#7c3aed", bg:"#f5f3ff" },
-    lugares:      { label:"📍 Lugares",       color:"#0891b2", bg:"#ecfeff" },
-    saude:        { label:"❤️ Saúde",         color:"#e11d48", bg:"#fff1f2" },
+    core:         { label:"Essenciais",   emoji:"⭐", color:"#2563eb", bg:"#eff6ff" },
+    necessidades: { label:"Necessidades", emoji:"🍎", color:"#059669", bg:"#ecfdf5" },
+    emocoes:      { label:"Emoções",      emoji:"😊", color:"#d97706", bg:"#fffbeb" },
+    acoes:        { label:"Ações",        emoji:"🏃", color:"#7c3aed", bg:"#f5f3ff" },
+    lugares:      { label:"Lugares",      emoji:"📍", color:"#0891b2", bg:"#ecfeff" },
+    saude:        { label:"Saúde",        emoji:"❤️", color:"#e11d48", bg:"#fff1f2" },
   };
   const PHASE = { INTRO:"intro", PLAYING:"playing", DONE:"done" };
   const [phase, setPhase]           = useState(PHASE.INTRO);
@@ -1044,22 +1044,44 @@ function Categorizar({ cards, onBack }) {
   const [feedback, setFeedback]     = useState(null);
   const [activeCats, setActiveCats] = useState([]);
   const [roundCats, setRoundCats]   = useState([]);
-
+  const [nivel, setNivel]           = useState(1); // 1=fácil(2cats) 2=médio(3cats) 3=difícil(todas)
+  const [errosPorCat, setErrosPorCat] = useState({});
+  const [cardAnim, setCardAnim]     = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const lang = "pt-BR";
+
+  // Sons Web Audio API
+  const playSound = (type) => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      if (type === "correct") {
+        o.frequency.setValueAtTime(523, ctx.currentTime);
+        o.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+        o.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+        g.gain.setValueAtTime(0.3, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        o.start(); o.stop(ctx.currentTime + 0.5);
+      } else {
+        o.frequency.setValueAtTime(200, ctx.currentTime);
+        o.frequency.setValueAtTime(150, ctx.currentTime + 0.15);
+        g.gain.setValueAtTime(0.3, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+        o.start(); o.stop(ctx.currentTime + 0.4);
+      }
+    } catch {}
+  };
 
   async function speak(text) {
     try {
       const res = await fetch("/api/tts", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
+        method:"POST", headers:{"Content-Type":"application/json"},
         body: JSON.stringify({ text, lang })
       });
       const data = await res.json();
-      if (data.audio) {
-        const audio = new Audio(`data:audio/mp3;base64,${data.audio}`);
-        audio.play();
-        return;
-      }
+      if (data.audio) { new Audio(`data:audio/mp3;base64,${data.audio}`).play(); return; }
       const spoken = data.translatedText || text;
       const u = new SpeechSynthesisUtterance(spoken);
       const voices = speechSynthesis.getVoices();
@@ -1079,36 +1101,69 @@ function Categorizar({ cards, onBack }) {
     setActiveCats([...new Set(valid.map(c => c.cat))]);
   }, [cards]);
 
+  // Fala o label do card ao trocar + animação de entrada
   useEffect(() => {
-    if (current && phase === PHASE.PLAYING) speak(current.label);
+    if (current && phase === PHASE.PLAYING) {
+      setCardAnim(false);
+      requestAnimationFrame(() => setCardAnim(true));
+      speak(current.label);
+    }
   }, [current]);
 
-  function startGame() {
+  function getCatsParaNivel(n) {
+    const all = [...activeCats];
+    if (n === 1) return all.slice(0, 2);
+    if (n === 2) return all.slice(0, Math.min(3, all.length));
+    return all;
+  }
+
+  function startGame(n) {
+    const nv = n || nivel;
     if (!pool.length) return;
-    const p = shuffle([...pool]).slice(0, 12);
+    const catsNivel = getCatsParaNivel(nv);
+    const filtrado = pool.filter(c => catsNivel.includes(c.cat));
+    const p = shuffle(filtrado.length >= 4 ? filtrado : pool).slice(0, 12);
     const cats = [...new Set(p.map(c => c.cat))];
     const allCats = [...new Set(pool.map(c => c.cat))];
-    setRoundCats(cats.length >= 2 ? cats : allCats.slice(0, 4));
+    setRoundCats(cats.length >= 2 ? cats : allCats.slice(0, Math.min(nv + 1, allCats.length)));
     setQueue(p); setCurrent(p[0]); setQueueIdx(0);
-    setScore(0); setFeedback(null); setPhase(PHASE.PLAYING);
+    setScore(0); setFeedback(null); setErrosPorCat({});
+    setShowConfetti(false); setPhase(PHASE.PLAYING);
   }
 
   function pick(cat) {
     if (feedback || !current) return;
     const correct = cat === current.cat;
     setFeedback(correct ? "correct" : "wrong");
-    if (correct) setScore(s => s + 1);
-    const catLabel = ALL_CAT_META[cat]?.label?.replace(/[^\wÀ-ú\s]/gu, "").trim();
-    const correctLabel = ALL_CAT_META[current.cat]?.label?.replace(/[^\wÀ-ú\s]/gu, "").trim();
-    speak(correct ? "Parabéns! " + catLabel : "Não. Pertencia a " + correctLabel);
+    if (correct) {
+      setScore(s => s + 1);
+      playSound("correct");
+      speak("Parabéns! " + ALL_CAT_META[cat].label);
+    } else {
+      playSound("wrong");
+      setErrosPorCat(e => ({ ...e, [current.cat]: (e[current.cat] || 0) + 1 }));
+      speak("Não. Pertencia a " + ALL_CAT_META[current.cat].label);
+    }
     setTimeout(() => {
       const next = queueIdx + 1;
-      if (next >= queue.length) { setPhase(PHASE.DONE); return; }
+      if (next >= queue.length) {
+        const pct = ((score + (correct?1:0)) / queue.length) * 100;
+        if (pct >= 80) setShowConfetti(true);
+        setPhase(PHASE.DONE);
+        return;
+      }
       setQueueIdx(next); setCurrent(queue[next]); setFeedback(null);
     }, 1800);
   }
 
-  function restart() { startGame(); }
+  function restart(novoNivel) {
+    const n = novoNivel || nivel;
+    setNivel(n);
+    startGame(n);
+  }
+
+  // Confetti simples com CSS
+  const confettiColors = ["#f59e0b","#10b981","#3b82f6","#ec4899","#8b5cf6","#ef4444"];
 
   if (!pool.length) return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
@@ -1120,12 +1175,13 @@ function Categorizar({ cards, onBack }) {
     </div>
   );
 
+  // ── TELA INTRO ──
   if (phase === PHASE.INTRO) return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
       <GameHeader title="🗂️ Categorização" score={0} total={0} onBack={onBack} onRestart={() => {}} />
       <div style={{maxWidth:"480px",margin:"0 auto",padding:"24px 20px"}}>
         <div style={{background:"white",borderRadius:"20px",padding:"28px 24px",
-                     boxShadow:"0 2px 16px rgba(0,0,0,0.08)",marginBottom:"24px",textAlign:"center"}}>
+                     boxShadow:"0 2px 16px rgba(0,0,0,0.08)",marginBottom:"20px",textAlign:"center"}}>
           <div style={{fontSize:"52px",marginBottom:"12px"}}>🗂️</div>
           <h2 style={{fontSize:"22px",fontWeight:"800",color:"#1B2D5B",margin:"0 0 12px"}}>
             Jogo de Categorização
@@ -1134,13 +1190,12 @@ function Categorizar({ cards, onBack }) {
             Veja a <strong>imagem</strong> e a <strong>palavra</strong> no card
             e toque na <strong>categoria</strong> correta abaixo! 👇
           </p>
-          <div style={{background:"#eff6ff",borderRadius:"12px",padding:"16px",
+          <div style={{background:"#eff6ff",borderRadius:"12px",padding:"14px",
                        textAlign:"left",marginBottom:"16px",borderLeft:"4px solid #2563eb"}}>
             <p style={{fontSize:"13px",color:"#1e40af",margin:0,lineHeight:"1.6"}}>
               💡 <strong>Por que fazemos isso?</strong><br/>
               Categorizar ajuda a <strong>organizar o pensamento</strong>, ampliar o vocabulário
-              e facilitar a comunicação — essencial para o desenvolvimento da linguagem
-              em crianças com autismo e TDAH.
+              e facilitar a comunicação — essencial para crianças com autismo e TDAH.
             </p>
           </div>
           <div style={{background:"#f9fafb",borderRadius:"12px",padding:"14px",marginBottom:"20px",textAlign:"left"}}>
@@ -1149,28 +1204,45 @@ function Categorizar({ cards, onBack }) {
               1️⃣ Ouça e veja o card com imagem e palavra<br/>
               2️⃣ Toque na categoria correta<br/>
               3️⃣ Verde = acerto ✅ · Vermelho = erro ❌<br/>
-              4️⃣ Veja a pontuação no final!
+              4️⃣ Veja o relatório no final!
             </p>
           </div>
-          <p style={{fontSize:"13px",color:"#6b7280",marginBottom:"8px",fontWeight:"600"}}>
-            Categorias deste jogo:
+          <p style={{fontSize:"13px",color:"#6b7280",marginBottom:"12px",fontWeight:"700"}}>
+            Escolha o nível de dificuldade:
           </p>
-          <div style={{display:"flex",flexWrap:"wrap",gap:"8px",justifyContent:"center",marginBottom:"24px"}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"8px",marginBottom:"20px"}}>
+            {[
+              { n:1, label:"Fácil", desc:"2 categorias", color:"#059669", bg:"#ecfdf5" },
+              { n:2, label:"Médio", desc:"3 categorias", color:"#d97706", bg:"#fffbeb" },
+              { n:3, label:"Difícil", desc:"Todas",      color:"#dc2626", bg:"#fef2f2" },
+            ].map(({ n, label, desc, color, bg }) => (
+              <button key={n} onClick={() => { setNivel(n); startGame(n); }} style={{
+                background: nivel===n ? color : bg,
+                border:`2px solid ${color}`,
+                borderRadius:"12px",padding:"12px 6px",
+                cursor:"pointer",fontWeight:"800",fontSize:"13px",
+                color: nivel===n ? "white" : color,
+                lineHeight:"1.3",transition:"all 0.15s"
+              }}>
+                {label}<br/>
+                <span style={{fontSize:"11px",fontWeight:"500",opacity:0.85}}>{desc}</span>
+              </button>
+            ))}
+          </div>
+          <p style={{fontSize:"12px",color:"#6b7280",marginBottom:"8px",fontWeight:"600"}}>
+            Categorias disponíveis:
+          </p>
+          <div style={{display:"flex",flexWrap:"wrap",gap:"6px",justifyContent:"center"}}>
             {activeCats.map(cat => (
               <span key={cat} style={{
                 background:ALL_CAT_META[cat].bg,
                 border:`2px solid ${ALL_CAT_META[cat].color}60`,
                 color:ALL_CAT_META[cat].color,
-                borderRadius:"20px",padding:"6px 14px",
-                fontSize:"13px",fontWeight:"700"
-              }}>{ALL_CAT_META[cat].label}</span>
+                borderRadius:"20px",padding:"4px 12px",
+                fontSize:"12px",fontWeight:"700"
+              }}>{ALL_CAT_META[cat].emoji} {ALL_CAT_META[cat].label}</span>
             ))}
           </div>
-          <button onClick={startGame} style={{
-            background:"#1B2D5B",color:"white",border:"none",borderRadius:"14px",
-            padding:"16px 40px",fontSize:"17px",fontWeight:"800",cursor:"pointer",width:"100%",
-            boxShadow:"0 4px 12px rgba(27,45,91,0.3)"
-          }}>🚀 Começar!</button>
         </div>
         <p style={{textAlign:"center",color:"#9ca3af",fontSize:"12px"}}>
           {pool.length} cards disponíveis · até 12 por rodada
@@ -1179,29 +1251,141 @@ function Categorizar({ cards, onBack }) {
     </div>
   );
 
-  if (phase === PHASE.DONE)
-    return <Congratulations score={score} total={queue.length} onRestart={restart} onBack={onBack} />;
+  // ── TELA DONE com relatório ──
+  if (phase === PHASE.DONE) {
+    const total = queue.length;
+    const pct = Math.round((score / total) * 100);
+    const erros = Object.entries(errosPorCat).sort((a,b) => b[1]-a[1]);
+    const proximoNivel = nivel < 3 && pct >= 80 ? nivel + 1 : null;
+    return (
+      <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui",paddingBottom:"40px",position:"relative",overflow:"hidden"}}>
+        {showConfetti && (
+          <div style={{position:"fixed",inset:0,pointerEvents:"none",zIndex:999}}>
+            {Array.from({length:60}).map((_,i) => (
+              <div key={i} style={{
+                position:"absolute",
+                left:`${Math.random()*100}%`,
+                top:`${-10 - Math.random()*10}%`,
+                width:`${6+Math.random()*8}px`,
+                height:`${6+Math.random()*8}px`,
+                background:confettiColors[i%confettiColors.length],
+                borderRadius: Math.random()>0.5 ? "50%" : "2px",
+                animation:`confettiFall ${1.5+Math.random()*2}s ease-in ${Math.random()*1.5}s forwards`,
+                opacity:0
+              }} />
+            ))}
+          </div>
+        )}
+        <GameHeader title="🗂️ Categorização" score={score} total={total} onBack={onBack} onRestart={() => restart(nivel)} />
+        <div style={{maxWidth:"480px",margin:"0 auto",padding:"24px 20px"}}>
+          <div style={{background:"white",borderRadius:"20px",padding:"28px 24px",
+                       boxShadow:"0 2px 16px rgba(0,0,0,0.08)",marginBottom:"16px",textAlign:"center"}}>
+            <div style={{fontSize:"56px",marginBottom:"8px"}}>
+              {pct>=80?"🏆":pct>=50?"👍":"💪"}
+            </div>
+            <h2 style={{fontSize:"24px",fontWeight:"800",color:"#1B2D5B",margin:"0 0 6px"}}>
+              {pct>=80?"Excelente!":pct>=50?"Bom trabalho!":"Continue praticando!"}
+            </h2>
+            <p style={{color:"#6b7280",fontSize:"15px",margin:"0 0 20px"}}>
+              Você acertou <strong style={{color:"#1B2D5B"}}>{score} de {total}</strong> cards
+            </p>
+            <div style={{display:"flex",gap:"12px",justifyContent:"center",marginBottom:"20px"}}>
+              <div style={{background:"#ecfdf5",borderRadius:"12px",padding:"14px 20px",flex:1}}>
+                <div style={{fontSize:"28px",fontWeight:"900",color:"#059669"}}>{score}</div>
+                <div style={{fontSize:"12px",color:"#6b7280",fontWeight:"600"}}>Acertos</div>
+              </div>
+              <div style={{background:"#fef2f2",borderRadius:"12px",padding:"14px 20px",flex:1}}>
+                <div style={{fontSize:"28px",fontWeight:"900",color:"#ef4444"}}>{total-score}</div>
+                <div style={{fontSize:"12px",color:"#6b7280",fontWeight:"600"}}>Erros</div>
+              </div>
+              <div style={{background:"#eff6ff",borderRadius:"12px",padding:"14px 20px",flex:1}}>
+                <div style={{fontSize:"28px",fontWeight:"900",color:"#2563eb"}}>{pct}%</div>
+                <div style={{fontSize:"12px",color:"#6b7280",fontWeight:"600"}}>Aproveit.</div>
+              </div>
+            </div>
+            {erros.length > 0 && (
+              <div style={{background:"#fef9f0",borderRadius:"12px",padding:"14px",marginBottom:"16px",textAlign:"left",borderLeft:"4px solid #f59e0b"}}>
+                <p style={{fontSize:"13px",fontWeight:"700",color:"#92400e",margin:"0 0 8px"}}>
+                  📊 Categorias com mais dificuldade:
+                </p>
+                {erros.map(([cat, n]) => (
+                  <div key={cat} style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"6px"}}>
+                    <span style={{
+                      background:ALL_CAT_META[cat]?.bg,
+                      color:ALL_CAT_META[cat]?.color,
+                      border:`1px solid ${ALL_CAT_META[cat]?.color}40`,
+                      borderRadius:"20px",padding:"2px 10px",fontSize:"12px",fontWeight:"700"
+                    }}>{ALL_CAT_META[cat]?.emoji} {ALL_CAT_META[cat]?.label}</span>
+                    <span style={{fontSize:"12px",color:"#6b7280"}}>{n} erro{n>1?"s":""}</span>
+                  </div>
+                ))}
+                <p style={{fontSize:"12px",color:"#92400e",margin:"8px 0 0",fontStyle:"italic"}}>
+                  💡 Pratique mais cards destas categorias com a criança
+                </p>
+              </div>
+            )}
+            {proximoNivel && (
+              <div style={{background:"#f0fdf4",borderRadius:"12px",padding:"12px",marginBottom:"16px",
+                           border:"2px solid #10b981",textAlign:"center"}}>
+                <p style={{fontSize:"13px",color:"#065f46",fontWeight:"700",margin:"0 0 8px"}}>
+                  🎉 Ótimo desempenho! Que tal avançar para o próximo nível?
+                </p>
+                <button onClick={() => restart(proximoNivel)} style={{
+                  background:"#10b981",color:"white",border:"none",borderRadius:"10px",
+                  padding:"10px 24px",fontSize:"14px",fontWeight:"800",cursor:"pointer"
+                }}>
+                  Nível {proximoNivel === 2 ? "Médio" : "Difícil"} →
+                </button>
+              </div>
+            )}
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px"}}>
+            <button onClick={() => restart(nivel)} style={{
+              background:"#1B2D5B",color:"white",border:"none",borderRadius:"14px",
+              padding:"14px",fontSize:"15px",fontWeight:"800",cursor:"pointer"
+            }}>🔄 Jogar de novo</button>
+            <button onClick={onBack} style={{
+              background:"white",color:"#374151",border:"2px solid #e5e7eb",borderRadius:"14px",
+              padding:"14px",fontSize:"15px",fontWeight:"700",cursor:"pointer"
+            }}>← Atividades</button>
+          </div>
+        </div>
+        <style>{`
+          @keyframes confettiFall {
+            0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
+  // ── TELA DE JOGO ──
   const fbBorder = feedback==="correct" ? "3px solid #10b981" : feedback==="wrong" ? "3px solid #ef4444" : "2px solid #e5e7eb";
   const fbBg     = feedback==="correct" ? "#f0fdf4" : feedback==="wrong" ? "#fef2f2" : "white";
   const catCols  = roundCats.length <= 4 ? "1fr 1fr" : "1fr 1fr 1fr";
 
   return (
     <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui",paddingBottom:"32px"}}>
-      <GameHeader title="🗂️ Categorização" score={score} total={queue.length} onBack={onBack} onRestart={restart} />
+      <GameHeader title="🗂️ Categorização" score={score} total={queue.length} onBack={onBack} onRestart={() => restart(nivel)} />
       <div style={{maxWidth:"480px",margin:"0 auto",padding:"16px 16px 0"}}>
-        <div style={{marginBottom:"16px"}}>
-          <div style={{display:"flex",justifyContent:"space-between",fontSize:"12px",color:"#9ca3af",marginBottom:"6px"}}>
-            <span>Progresso</span><span>{queueIdx + 1} / {queue.length}</span>
+        <div style={{marginBottom:"14px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:"12px",color:"#9ca3af",marginBottom:"6px"}}>
+            <span>Progresso · Nível <strong style={{color:"#1B2D5B"}}>{nivel===1?"Fácil":nivel===2?"Médio":"Difícil"}</strong></span>
+            <span>{queueIdx + 1} / {queue.length}</span>
           </div>
           <div style={{background:"#e5e7eb",borderRadius:"99px",height:"8px"}}>
             <div style={{background:"#1B2D5B",borderRadius:"99px",height:"8px",
               width:`${((queueIdx+1)/queue.length)*100}%`,transition:"width 0.4s ease"}} />
           </div>
         </div>
-        <div style={{border:fbBorder,background:fbBg,borderRadius:"20px",padding:"20px 20px 16px",
-                     textAlign:"center",marginBottom:"16px",transition:"all 0.2s",
-                     boxShadow:"0 2px 12px rgba(0,0,0,0.06)"}}>
+        <div style={{
+          border:fbBorder, background:fbBg,
+          borderRadius:"20px",padding:"20px 20px 16px",textAlign:"center",
+          marginBottom:"14px",transition:"all 0.2s",
+          boxShadow:"0 2px 12px rgba(0,0,0,0.06)",
+          animation: cardAnim ? "slideIn 0.3s ease" : "none"
+        }}>
           {current.image ? (
             <img src={current.image} alt={current.label} style={{
               width:"120px",height:"120px",objectFit:"contain",
@@ -1217,7 +1401,7 @@ function Categorizar({ cards, onBack }) {
             <div style={{fontSize:"26px",fontWeight:"800",color:"#1B2D5B",lineHeight:1.2}}>
               {current.label}
             </div>
-            <button onClick={() => speak(current.label)} title="Ouvir palavra" style={{
+            <button onClick={() => speak(current.label)} title="Ouvir" style={{
               background:"#eff6ff",border:"2px solid #bfdbfe",borderRadius:"50%",
               width:"36px",height:"36px",display:"flex",alignItems:"center",
               justifyContent:"center",cursor:"pointer",fontSize:"16px",flexShrink:0,padding:0
@@ -1231,7 +1415,7 @@ function Categorizar({ cards, onBack }) {
           {feedback==="wrong" && (
             <div style={{fontSize:"13px",color:"#ef4444",marginTop:"6px",fontWeight:"700",
                          background:"#fee2e2",borderRadius:"8px",padding:"6px 12px",display:"inline-block"}}>
-              Pertencia a: {ALL_CAT_META[current.cat]?.label}
+              Pertencia a: {ALL_CAT_META[current.cat]?.emoji} {ALL_CAT_META[current.cat]?.label}
             </div>
           )}
           {feedback==="correct" && (
@@ -1261,14 +1445,15 @@ function Categorizar({ cards, onBack }) {
                 transform: isCorrectAnswer ? "scale(1.04)" : "scale(1)",
                 boxShadow: isCorrectAnswer ? `0 4px 12px ${m.color}40` : "none",
                 minHeight:"56px"
-              }}>{m.label}</button>
+              }}>{m.emoji} {m.label}</button>
             );
           })}
         </div>
       </div>
       <style>{`
-        @keyframes popIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
-        @media(max-width:400px){button{font-size:13px!important;padding:12px 6px!important}}
+        @keyframes popIn  { 0%{transform:scale(.5);opacity:0} 70%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+        @keyframes slideIn{ 0%{transform:translateX(40px);opacity:0} 100%{transform:translateX(0);opacity:1} }
+        @media(max-width:400px){ button{ font-size:13px!important; padding:12px 6px!important } }
       `}</style>
     </div>
   );
