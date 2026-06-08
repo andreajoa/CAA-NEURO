@@ -4,28 +4,29 @@ import { useRouter } from "next/navigation";
 
 
 function CardPreviewImg({ card }) {
-  const [src, setSrc] = useState(
-    card.image ||
-    (card.id && !card.id.startsWith("podd") ? `/cards/level-1/${card.id}.webp?v=20260521-optimized` : null)
-  );
+  // Sempre prefere path local — URLs externas (R2/Cloudflare) podem expirar ou ter CORS
+  function localPath(id) {
+    if (!id || id.startsWith("podd")) return null;
+    return `/cards/level-1/${id}.webp?v=20260521-optimized`;
+  }
+
+  const [src, setSrc] = useState(localPath(card.id) || card.image || null);
   const [tried, setTried] = useState(false);
 
   useEffect(() => {
     if (!src && !tried) {
       setTried(true);
-      const q = encodeURIComponent(card.label || card.id);
+      const q = encodeURIComponent(card.label || card.id || "");
       fetch(`/api/images/search?q=${q}`)
         .then(r => r.json())
-        .then(d => {
-          const url = d.results?.[0]?.url;
-          if (url) setSrc(url);
-        })
+        .then(d => { const url = d.results?.[0]?.url; if (url) setSrc(url); })
         .catch(() => {});
     }
   }, [card, src, tried]);
 
   if (!src) return (
-    <div style={{ width:"40px", height:"40px", background:"#f3f4f6", borderRadius:"6px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"16px" }}>
+    <div style={{ width:"40px", height:"40px", background:"#f3f4f6", borderRadius:"6px",
+                  display:"flex", alignItems:"center", justifyContent:"center", fontSize:"16px" }}>
       🖼️
     </div>
   );
@@ -35,7 +36,11 @@ function CardPreviewImg({ card }) {
       src={src}
       alt={card.label}
       style={{ width:"40px", height:"40px", objectFit:"contain" }}
-      onError={() => setSrc(null)}
+      onError={() => {
+        // Se path local falhou, tenta image da API como fallback
+        if (src !== card.image && card.image) { setSrc(card.image); return; }
+        setSrc(null);
+      }}
     />
   );
 }
