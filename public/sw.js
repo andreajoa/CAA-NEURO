@@ -1,4 +1,4 @@
-const CACHE = "caa-neuro-v5";
+const CACHE = "caa-neuro-v6";
 
 // Imagens pré-cacheadas na instalação — usuário nunca vê loading
 const CARDS_IMAGES = [
@@ -32,8 +32,8 @@ const CARDS_IMAGES = [
 const STATIC = [
   "/app",
   "/manifest.json",
-  "/icon-192.png",
-  "/icon-512.png",
+  "/icon-192-v2.png",
+  "/icon-512-v2.png",
 ];
 
 // Install: pré-cacheia tudo em paralelo

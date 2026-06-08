@@ -28,13 +28,13 @@ export default function RootLayout({ children }) {
       <html lang="pt-BR">
         <head>
           <link rel="manifest" href="/manifest.json" />
-          <link rel="apple-touch-icon" href="/icon-180.png" />
-          <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png" />
-          <link rel="apple-touch-icon" sizes="167x167" href="/icon-167.png" />
-          <link rel="apple-touch-icon" sizes="152x152" href="/icon-152.png" />
-          <link rel="apple-touch-icon" sizes="120x120" href="/icon-120.png" />
-          <link rel="apple-touch-icon" sizes="76x76"   href="/icon-76.png" />
-          <link rel="apple-touch-icon" sizes="57x57"   href="/icon-57.png" />
+          <link rel="apple-touch-icon" href="/icon-180-v2.png" />
+          <link rel="apple-touch-icon" sizes="180x180" href="/icon-180-v2.png" />
+          <link rel="apple-touch-icon" sizes="167x167" href="/icon-167-v2.png" />
+          <link rel="apple-touch-icon" sizes="152x152" href="/icon-152-v2.png" />
+          <link rel="apple-touch-icon" sizes="120x120" href="/icon-120-v2.png" />
+          <link rel="apple-touch-icon" sizes="76x76"   href="/icon-76-v2.png" />
+          <link rel="apple-touch-icon" sizes="57x57"   href="/icon-57-v2.png" />
           <meta name="apple-mobile-web-app-capable" content="yes" />
           <meta name="apple-mobile-web-app-status-bar-style" content="default" />
           <meta name="apple-mobile-web-app-title" content="CAA Neuro" />
