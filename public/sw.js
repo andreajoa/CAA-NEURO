@@ -1,4 +1,4 @@
-const CACHE = "caa-neuro-v4";
+const CACHE = "caa-neuro-v5";
 
 // Imagens pré-cacheadas na instalação — usuário nunca vê loading
 const CARDS_IMAGES = [
