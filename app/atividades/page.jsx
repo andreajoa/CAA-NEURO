@@ -1045,12 +1045,43 @@ function Categorizar({ cards, onBack }) {
   const [activeCats, setActiveCats] = useState([]);
   const [roundCats, setRoundCats]   = useState([]);
 
+  const lang = "pt-BR";
+
+  async function speak(text) {
+    try {
+      const res = await fetch("/api/tts", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ text, lang })
+      });
+      const data = await res.json();
+      if (data.audio) {
+        const audio = new Audio(`data:audio/mp3;base64,${data.audio}`);
+        audio.play();
+        return;
+      }
+      const spoken = data.translatedText || text;
+      const u = new SpeechSynthesisUtterance(spoken);
+      const voices = speechSynthesis.getVoices();
+      const v = voices.find(v => v.lang === lang) || voices.find(v => v.lang.startsWith("pt"));
+      if (v) u.voice = v;
+      u.lang = lang; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    } catch {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = lang; speechSynthesis.cancel(); speechSynthesis.speak(u);
+    }
+  }
+
   useEffect(() => {
     if (!cards?.length) return;
     const valid = cards.filter(c => c && c.cat && ALL_CAT_META[c.cat]);
     setPool(shuffle(valid));
     setActiveCats([...new Set(valid.map(c => c.cat))]);
   }, [cards]);
+
+  useEffect(() => {
+    if (current && phase === PHASE.PLAYING) speak(current.label);
+  }, [current]);
 
   function startGame() {
     if (!pool.length) return;
@@ -1067,11 +1098,14 @@ function Categorizar({ cards, onBack }) {
     const correct = cat === current.cat;
     setFeedback(correct ? "correct" : "wrong");
     if (correct) setScore(s => s + 1);
+    const catLabel = ALL_CAT_META[cat]?.label?.replace(/[^\wÀ-ú\s]/gu, "").trim();
+    const correctLabel = ALL_CAT_META[current.cat]?.label?.replace(/[^\wÀ-ú\s]/gu, "").trim();
+    speak(correct ? "Parabéns! " + catLabel : "Não. Pertencia a " + correctLabel);
     setTimeout(() => {
       const next = queueIdx + 1;
       if (next >= queue.length) { setPhase(PHASE.DONE); return; }
       setQueueIdx(next); setCurrent(queue[next]); setFeedback(null);
-    }, 1200);
+    }, 1800);
   }
 
   function restart() { startGame(); }
@@ -1112,7 +1146,7 @@ function Categorizar({ cards, onBack }) {
           <div style={{background:"#f9fafb",borderRadius:"12px",padding:"14px",marginBottom:"20px",textAlign:"left"}}>
             <p style={{fontSize:"13px",color:"#374151",margin:0,lineHeight:"1.7"}}>
               <strong>Como jogar:</strong><br/>
-              1️⃣ Um card aparece com imagem e palavra<br/>
+              1️⃣ Ouça e veja o card com imagem e palavra<br/>
               2️⃣ Toque na categoria correta<br/>
               3️⃣ Verde = acerto ✅ · Vermelho = erro ❌<br/>
               4️⃣ Veja a pontuação no final!
@@ -1179,8 +1213,15 @@ function Categorizar({ cards, onBack }) {
                          display:"flex",alignItems:"center",justifyContent:"center",
                          margin:"0 auto 12px",fontSize:"40px"}}>🖼️</div>
           )}
-          <div style={{fontSize:"26px",fontWeight:"800",color:"#1B2D5B",marginBottom:"6px",lineHeight:1.2}}>
-            {current.label}
+          <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"10px",marginBottom:"6px"}}>
+            <div style={{fontSize:"26px",fontWeight:"800",color:"#1B2D5B",lineHeight:1.2}}>
+              {current.label}
+            </div>
+            <button onClick={() => speak(current.label)} title="Ouvir palavra" style={{
+              background:"#eff6ff",border:"2px solid #bfdbfe",borderRadius:"50%",
+              width:"36px",height:"36px",display:"flex",alignItems:"center",
+              justifyContent:"center",cursor:"pointer",fontSize:"16px",flexShrink:0,padding:0
+            }}>🔊</button>
           </div>
           {feedback && (
             <div style={{fontSize:"44px",marginTop:"6px",animation:"popIn 0.3s ease"}}>
