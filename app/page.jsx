@@ -7,8 +7,7 @@ export default function LandingPage() {
     <main className="landingPage">
       <header className="landingNav">
         <div className="brand">
-          <Brain size={42} />
-          <div><strong>CAA</strong><span>NEURO</span></div>
+          <img src="/logo.png" alt="CAA Neuro" style={{height:"48px",width:"auto",objectFit:"contain"}} />
         </div>
         <nav>
           <Link href="/recursos">Recursos</Link>

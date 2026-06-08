@@ -60,8 +60,7 @@ export default function AppShell({ children }) {
       }}>
         {/* Logo */}
         <div style={{ padding:"20px 18px 14px", borderBottom:"1px solid rgba(255,255,255,0.08)" }}>
-          <div style={{ fontWeight:"900", fontSize:"20px", color:"#E8B4A8", letterSpacing:"-0.5px" }}>CAA Neuro</div>
-          <div style={{ fontSize:"11px", color:"rgba(255,255,255,0.4)", marginTop:"2px" }}>Plataforma clínica</div>
+          <img src="/logo.png" alt="CAA Neuro" style={{height:"40px",width:"auto",objectFit:"contain",filter:"brightness(0) invert(1)"}} />
         </div>
 
         {/* Nav links */}
