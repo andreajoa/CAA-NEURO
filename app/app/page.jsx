@@ -371,7 +371,8 @@ export default function Home() {
           }
           base = forcedDefaults[forcedKey].map(def => {
             const match = savedForMerge.find(s => s.id === def.id) || savedForMerge.find(s => s.label?.toLowerCase() === def.label?.toLowerCase());
-            return match?.image ? { ...def, image: match.image } : def;
+            const matchImage = match?.image_url || match?.image || "";
+            return matchImage ? { ...def, image: matchImage } : def;
           });
         } else if (res.ok && data.cards?.length) {
           base = data.cards.map(c => ({ id: c.id, label: c.label, image: c.image_url || c.image || "", cat: c.category }));
