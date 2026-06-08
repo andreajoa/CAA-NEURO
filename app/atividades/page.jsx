@@ -1026,28 +1026,41 @@ function CompletarFrase({ cards, onBack }) {
 
 
 function Categorizar({ cards, onBack }) {
-  const CATS = ["core","necessidades","emocoes","acoes"];
-  const [queue, setQueue] = useState([]);
-  const [current, setCurrent] = useState(null);
-  const [queueIdx, setQueueIdx] = useState(0);
-  const [score, setScore] = useState(0);
-  const [feedback, setFeedback] = useState(null);
-  const [done, setDone] = useState(false);
+  const ALL_CAT_META = {
+    core:         { label:"⭐ Essenciais",   color:"#2563eb", bg:"#eff6ff" },
+    necessidades: { label:"🍎 Necessidades", color:"#059669", bg:"#ecfdf5" },
+    emocoes:      { label:"😊 Emoções",      color:"#d97706", bg:"#fffbeb" },
+    acoes:        { label:"🏃 Ações",         color:"#7c3aed", bg:"#f5f3ff" },
+    lugares:      { label:"📍 Lugares",       color:"#0891b2", bg:"#ecfeff" },
+    saude:        { label:"❤️ Saúde",         color:"#e11d48", bg:"#fff1f2" },
+  };
+  const PHASE = { INTRO:"intro", PLAYING:"playing", DONE:"done" };
+  const [phase, setPhase]           = useState(PHASE.INTRO);
+  const [pool, setPool]             = useState([]);
+  const [queue, setQueue]           = useState([]);
+  const [current, setCurrent]       = useState(null);
+  const [queueIdx, setQueueIdx]     = useState(0);
+  const [score, setScore]           = useState(0);
+  const [feedback, setFeedback]     = useState(null);
+  const [activeCats, setActiveCats] = useState([]);
+  const [roundCats, setRoundCats]   = useState([]);
 
   useEffect(() => {
     if (!cards?.length) return;
-    const pool = shuffle(cards.filter(c => c && CATS.includes(c.cat))).slice(0, 12);
-    if (!pool.length) return;
-    setQueue(pool);
-    setCurrent(pool[0]);
-    setQueueIdx(0);
-    setScore(0);
-    setFeedback(null);
-    setDone(false);
+    const valid = cards.filter(c => c && c.cat && ALL_CAT_META[c.cat]);
+    setPool(shuffle(valid));
+    setActiveCats([...new Set(valid.map(c => c.cat))]);
   }, [cards]);
 
-  const CAT_LABELS = { core:"⭐ Essenciais", necessidades:"🍎 Necessidades", emocoes:"😊 Emoções", acoes:"🏃 Ações" };
-  const CAT_COLORS = { core:"#2563eb", necessidades:"#059669", emocoes:"#d97706", acoes:"#7c3aed" };
+  function startGame() {
+    if (!pool.length) return;
+    const p = shuffle([...pool]).slice(0, 12);
+    const cats = [...new Set(p.map(c => c.cat))];
+    const allCats = [...new Set(pool.map(c => c.cat))];
+    setRoundCats(cats.length >= 2 ? cats : allCats.slice(0, 4));
+    setQueue(p); setCurrent(p[0]); setQueueIdx(0);
+    setScore(0); setFeedback(null); setPhase(PHASE.PLAYING);
+  }
 
   function pick(cat) {
     if (feedback || !current) return;
@@ -1056,41 +1069,166 @@ function Categorizar({ cards, onBack }) {
     if (correct) setScore(s => s + 1);
     setTimeout(() => {
       const next = queueIdx + 1;
-      if (next >= queue.length) setDone(true);
-      else { setQueueIdx(next); setCurrent(queue[next]); setFeedback(null); }
-    }, 1000);
+      if (next >= queue.length) { setPhase(PHASE.DONE); return; }
+      setQueueIdx(next); setCurrent(queue[next]); setFeedback(null);
+    }, 1200);
   }
 
-  function restart() {
-    const p = shuffle(queue);
-    setQueue(p); setCurrent(p[0]); setQueueIdx(0); setScore(0); setFeedback(null); setDone(false);
-  }
+  function restart() { startGame(); }
+
+  if (!pool.length) return (
+    <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
+      <GameHeader title="🗂️ Categorização" score={0} total={0} onBack={onBack} onRestart={() => {}} />
+      <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"60vh"}}>
+        <div style={{fontSize:"48px",marginBottom:"16px"}}>⏳</div>
+        <p style={{color:"#6b7280"}}>Carregando cards…</p>
+      </div>
+    </div>
+  );
+
+  if (phase === PHASE.INTRO) return (
+    <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
+      <GameHeader title="🗂️ Categorização" score={0} total={0} onBack={onBack} onRestart={() => {}} />
+      <div style={{maxWidth:"480px",margin:"0 auto",padding:"24px 20px"}}>
+        <div style={{background:"white",borderRadius:"20px",padding:"28px 24px",
+                     boxShadow:"0 2px 16px rgba(0,0,0,0.08)",marginBottom:"24px",textAlign:"center"}}>
+          <div style={{fontSize:"52px",marginBottom:"12px"}}>🗂️</div>
+          <h2 style={{fontSize:"22px",fontWeight:"800",color:"#1B2D5B",margin:"0 0 12px"}}>
+            Jogo de Categorização
+          </h2>
+          <p style={{color:"#4b5563",fontSize:"15px",lineHeight:"1.6",margin:"0 0 16px"}}>
+            Veja a <strong>imagem</strong> e a <strong>palavra</strong> no card
+            e toque na <strong>categoria</strong> correta abaixo! 👇
+          </p>
+          <div style={{background:"#eff6ff",borderRadius:"12px",padding:"16px",
+                       textAlign:"left",marginBottom:"16px",borderLeft:"4px solid #2563eb"}}>
+            <p style={{fontSize:"13px",color:"#1e40af",margin:0,lineHeight:"1.6"}}>
+              💡 <strong>Por que fazemos isso?</strong><br/>
+              Categorizar ajuda a <strong>organizar o pensamento</strong>, ampliar o vocabulário
+              e facilitar a comunicação — essencial para o desenvolvimento da linguagem
+              em crianças com autismo e TDAH.
+            </p>
+          </div>
+          <div style={{background:"#f9fafb",borderRadius:"12px",padding:"14px",marginBottom:"20px",textAlign:"left"}}>
+            <p style={{fontSize:"13px",color:"#374151",margin:0,lineHeight:"1.7"}}>
+              <strong>Como jogar:</strong><br/>
+              1️⃣ Um card aparece com imagem e palavra<br/>
+              2️⃣ Toque na categoria correta<br/>
+              3️⃣ Verde = acerto ✅ · Vermelho = erro ❌<br/>
+              4️⃣ Veja a pontuação no final!
+            </p>
+          </div>
+          <p style={{fontSize:"13px",color:"#6b7280",marginBottom:"8px",fontWeight:"600"}}>
+            Categorias deste jogo:
+          </p>
+          <div style={{display:"flex",flexWrap:"wrap",gap:"8px",justifyContent:"center",marginBottom:"24px"}}>
+            {activeCats.map(cat => (
+              <span key={cat} style={{
+                background:ALL_CAT_META[cat].bg,
+                border:`2px solid ${ALL_CAT_META[cat].color}60`,
+                color:ALL_CAT_META[cat].color,
+                borderRadius:"20px",padding:"6px 14px",
+                fontSize:"13px",fontWeight:"700"
+              }}>{ALL_CAT_META[cat].label}</span>
+            ))}
+          </div>
+          <button onClick={startGame} style={{
+            background:"#1B2D5B",color:"white",border:"none",borderRadius:"14px",
+            padding:"16px 40px",fontSize:"17px",fontWeight:"800",cursor:"pointer",width:"100%",
+            boxShadow:"0 4px 12px rgba(27,45,91,0.3)"
+          }}>🚀 Começar!</button>
+        </div>
+        <p style={{textAlign:"center",color:"#9ca3af",fontSize:"12px"}}>
+          {pool.length} cards disponíveis · até 12 por rodada
+        </p>
+      </div>
+    </div>
+  );
+
+  if (phase === PHASE.DONE)
+    return <Congratulations score={score} total={queue.length} onRestart={restart} onBack={onBack} />;
+
+  const fbBorder = feedback==="correct" ? "3px solid #10b981" : feedback==="wrong" ? "3px solid #ef4444" : "2px solid #e5e7eb";
+  const fbBg     = feedback==="correct" ? "#f0fdf4" : feedback==="wrong" ? "#fef2f2" : "white";
+  const catCols  = roundCats.length <= 4 ? "1fr 1fr" : "1fr 1fr 1fr";
 
   return (
-    <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui"}}>
+    <div style={{minHeight:"100vh",background:"#f9fafb",fontFamily:"system-ui",paddingBottom:"32px"}}>
       <GameHeader title="🗂️ Categorização" score={score} total={queue.length} onBack={onBack} onRestart={restart} />
-      {done
-        ? <Congratulations score={score} total={queue.length} onRestart={restart} onBack={onBack} />
-        : current && (
-          <div style={{maxWidth:"480px",margin:"40px auto",padding:"0 24px"}}>
-            <div style={{background:"white",border:"2px solid #e5e7eb",borderRadius:"20px",padding:"32px",textAlign:"center",marginBottom:"28px"}}>
-              <div style={{fontSize:"12px",color:"#9ca3af",marginBottom:"16px"}}>{queueIdx+1} / {queue.length}</div>
-              {current.image && <img src={current.image} alt={current.label} style={{width:"100px",height:"100px",objectFit:"contain",marginBottom:"16px"}} />}
-              <div style={{fontSize:"22px",fontWeight:"800",color:"#1B2D5B"}}>{current.label}</div>
-              {feedback && <div style={{marginTop:"12px",fontSize:"22px"}}>{feedback==="correct"?"✅":"❌"}</div>}
-            </div>
-            <p style={{textAlign:"center",color:"#6b7280",marginBottom:"16px",fontSize:"14px"}}>A qual categoria este card pertence?</p>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px"}}>
-              {CATS.map(cat => (
-                <button key={cat} onClick={() => pick(cat)}
-                  style={{background:`${CAT_COLORS[cat]}15`,border:`2px solid ${CAT_COLORS[cat]}40`,borderRadius:"12px",padding:"16px",cursor:"pointer",fontWeight:"700",fontSize:"15px",color:CAT_COLORS[cat]}}>
-                  {CAT_LABELS[cat]}
-                </button>
-              ))}
-            </div>
+      <div style={{maxWidth:"480px",margin:"0 auto",padding:"16px 16px 0"}}>
+        <div style={{marginBottom:"16px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:"12px",color:"#9ca3af",marginBottom:"6px"}}>
+            <span>Progresso</span><span>{queueIdx + 1} / {queue.length}</span>
           </div>
-        )
-      }
+          <div style={{background:"#e5e7eb",borderRadius:"99px",height:"8px"}}>
+            <div style={{background:"#1B2D5B",borderRadius:"99px",height:"8px",
+              width:`${((queueIdx+1)/queue.length)*100}%`,transition:"width 0.4s ease"}} />
+          </div>
+        </div>
+        <div style={{border:fbBorder,background:fbBg,borderRadius:"20px",padding:"20px 20px 16px",
+                     textAlign:"center",marginBottom:"16px",transition:"all 0.2s",
+                     boxShadow:"0 2px 12px rgba(0,0,0,0.06)"}}>
+          {current.image ? (
+            <img src={current.image} alt={current.label} style={{
+              width:"120px",height:"120px",objectFit:"contain",
+              borderRadius:"12px",border:"2px solid #f3f4f6",
+              display:"block",margin:"0 auto 12px"
+            }} />
+          ) : (
+            <div style={{width:"120px",height:"120px",background:"#f3f4f6",borderRadius:"12px",
+                         display:"flex",alignItems:"center",justifyContent:"center",
+                         margin:"0 auto 12px",fontSize:"40px"}}>🖼️</div>
+          )}
+          <div style={{fontSize:"26px",fontWeight:"800",color:"#1B2D5B",marginBottom:"6px",lineHeight:1.2}}>
+            {current.label}
+          </div>
+          {feedback && (
+            <div style={{fontSize:"44px",marginTop:"6px",animation:"popIn 0.3s ease"}}>
+              {feedback==="correct" ? "✅" : "❌"}
+            </div>
+          )}
+          {feedback==="wrong" && (
+            <div style={{fontSize:"13px",color:"#ef4444",marginTop:"6px",fontWeight:"700",
+                         background:"#fee2e2",borderRadius:"8px",padding:"6px 12px",display:"inline-block"}}>
+              Pertencia a: {ALL_CAT_META[current.cat]?.label}
+            </div>
+          )}
+          {feedback==="correct" && (
+            <div style={{fontSize:"13px",color:"#059669",marginTop:"6px",fontWeight:"700",
+                         background:"#d1fae5",borderRadius:"8px",padding:"6px 12px",display:"inline-block"}}>
+              Parabéns! 🎉
+            </div>
+          )}
+        </div>
+        <p style={{textAlign:"center",color:"#6b7280",marginBottom:"12px",fontSize:"14px",fontWeight:"600"}}>
+          👆 A qual categoria este card pertence?
+        </p>
+        <div style={{display:"grid",gridTemplateColumns:catCols,gap:"10px"}}>
+          {roundCats.map(cat => {
+            const m = ALL_CAT_META[cat];
+            const isCorrectAnswer = feedback && cat===current.cat;
+            return (
+              <button key={cat} onClick={() => pick(cat)} disabled={!!feedback} style={{
+                background: isCorrectAnswer ? m.color : m.bg,
+                border:`2px solid ${isCorrectAnswer ? m.color : m.color+"60"}`,
+                borderRadius:"14px",padding:"14px 8px",
+                cursor:feedback ? "default" : "pointer",
+                fontWeight:"800",fontSize:"14px",
+                color: isCorrectAnswer ? "white" : m.color,
+                lineHeight:"1.3",transition:"all 0.15s ease",
+                opacity: feedback && !isCorrectAnswer ? 0.5 : 1,
+                transform: isCorrectAnswer ? "scale(1.04)" : "scale(1)",
+                boxShadow: isCorrectAnswer ? `0 4px 12px ${m.color}40` : "none",
+                minHeight:"56px"
+              }}>{m.label}</button>
+            );
+          })}
+        </div>
+      </div>
+      <style>{`
+        @keyframes popIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+        @media(max-width:400px){button{font-size:13px!important;padding:12px 6px!important}}
+      `}</style>
     </div>
   );
 }
