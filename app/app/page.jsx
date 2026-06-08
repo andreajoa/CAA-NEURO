@@ -172,32 +172,32 @@ export default function Home() {
             {id:"escola",   label:"Escola",   cat:"lugares",     image:"/cards/level-1/escola.webp?v=20260521-optimized"},
           ],
           "infantil_inicial": [
-            {id:"agua",label:"Água",cat:"necessidades"},
-            {id:"banheiro",label:"Banheiro",cat:"necessidades"},
-            {id:"dormir",label:"Dormir",cat:"necessidades"},
-            {id:"tomar-banho",label:"Banho",cat:"necessidades"},
-            {id:"lanche",label:"Lanche",cat:"necessidades"}
+            {id:"agua",       label:"Água",    cat:"necessidades", image:"/cards/level-1/agua.webp?v=20260521-optimized"},
+            {id:"banheiro",   label:"Banheiro",cat:"necessidades", image:"/cards/level-1/banheiro.webp?v=20260521-optimized"},
+            {id:"dormir",     label:"Dormir",  cat:"necessidades", image:"/cards/level-1/dormir.webp?v=20260521-optimized"},
+            {id:"tomar-banho",label:"Banho",   cat:"necessidades", image:"/cards/level-1/tomar-banho.webp?v=20260521-optimized"},
+            {id:"lanche",     label:"Lanche",  cat:"necessidades", image:"/cards/level-1/comer.webp?v=20260521-optimized"}
           ],
           "infantil_frases": [
-            {id:"feliz",label:"Feliz",cat:"emocoes"},
-            {id:"triste",label:"Triste",cat:"emocoes"},
-            {id:"bravo",label:"Bravo",cat:"emocoes"},
-            {id:"medo",label:"Medo",cat:"emocoes"},
-            {id:"cansado",label:"Cansado",cat:"emocoes"}
+            {id:"feliz",   label:"Feliz",   cat:"emocoes", image:"/cards/level-1/feliz.webp?v=20260521-optimized"},
+            {id:"triste",  label:"Triste",  cat:"emocoes", image:"/cards/level-1/triste.webp?v=20260521-optimized"},
+            {id:"bravo",   label:"Bravo",   cat:"emocoes", image:"/cards/level-1/bravo.webp?v=20260521-optimized"},
+            {id:"medo",    label:"Medo",    cat:"emocoes", image:"/cards/level-1/medo.webp?v=20260521-optimized"},
+            {id:"cansado", label:"Cansado", cat:"emocoes", image:"/cards/level-1/cansado.webp?v=20260521-optimized"}
           ],
           "infantil_conversacao": [
-            {id:"escola",label:"Escola",cat:"rotina"},
-            {id:"passear",label:"Passear",cat:"rotina"},
-            {id:"brincar",label:"Brincar",cat:"rotina"},
-            {id:"sair",label:"Sair",cat:"rotina"},
-            {id:"casa",label:"Casa",cat:"rotina"}
+            {id:"escola",  label:"Escola",  cat:"rotina", image:"/cards/level-1/escola.webp?v=20260521-optimized"},
+            {id:"passear", label:"Passear", cat:"rotina", image:"/cards/level-1/passear.webp?v=20260521-optimized"},
+            {id:"brincar", label:"Brincar", cat:"rotina", image:"/cards/level-1/brincar.webp?v=20260521-optimized"},
+            {id:"sair",    label:"Sair",    cat:"rotina", image:"/cards/level-1/sair.webp?v=20260521-optimized"},
+            {id:"casa",    label:"Casa",    cat:"rotina", image:"/cards/level-1/dormir.webp?v=20260521-optimized"}
           ],
           "infantil_acoes": [
-            {id:"parar",label:"Parar",cat:"acoes"},
-            {id:"acabou",label:"Acabou",cat:"acoes"},
-            {id:"mais",label:"Mais",cat:"acoes"},
-            {id:"remedio",label:"Remédio",cat:"acoes"},
-            {id:"dor",label:"Dor",cat:"acoes"}
+            {id:"parar",   label:"Parar",   cat:"acoes", image:"/cards/level-1/parar.webp?v=20260521-optimized"},
+            {id:"acabou",  label:"Acabou",  cat:"acoes", image:"/cards/level-1/acabou.webp?v=20260521-optimized"},
+            {id:"mais",    label:"Mais",    cat:"acoes", image:"/cards/level-1/mais.webp?v=20260521-optimized"},
+            {id:"remedio", label:"Remédio", cat:"acoes", image:"/cards/level-1/remedio.webp?v=20260521-optimized"},
+            {id:"dor",     label:"Dor",     cat:"acoes", image:"/cards/level-1/dor.webp?v=20260521-optimized"}
           ],
           "escolar_emergente": [
             {id:"professora",label:"Professora",cat:"escola"},
