@@ -24,10 +24,21 @@ const isPublicRoute = createRouteMatcher([
   "/prancha/(.*)",
 ]);
 
+// Arquivos estáticos nunca exigem autenticação
+const isStatic = createRouteMatcher([
+  "/manifest.json",
+  "/sw.js",
+  "/favicon(.*)",
+  "/icon-(.*)",
+  "/cards/(.*)",
+  "/hero-(.*)",
+]);
+
 export default clerkMiddleware(async (auth, req) => {
+  if (isStatic(req)) return;
   if (!isPublicRoute(req)) await auth.protect();
 });
 
 export const config = {
-  matcher: ["/((?!_next|.*\\..*).*)"],
+  matcher: ["/((?!_next/static|_next/image).*)" ],
 };
