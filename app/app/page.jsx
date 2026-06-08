@@ -151,6 +151,26 @@ export default function Home() {
         const data = await res.json();
         let base;
         const forcedDefaults = {
+          "infantil_emergente": [
+            {id:"sim",      label:"Sim",      cat:"core",        image:"/cards/level-1/sim.webp?v=20260521-optimized"},
+            {id:"nao",      label:"Não",      cat:"core",        image:"/cards/level-1/nao.webp?v=20260521-optimized"},
+            {id:"ajuda",    label:"Ajuda",    cat:"core",        image:"/cards/level-1/ajuda.webp?v=20260521-optimized"},
+            {id:"mais",     label:"Mais",     cat:"core",        image:"/cards/level-1/mais.webp?v=20260521-optimized"},
+            {id:"agua",     label:"Água",     cat:"necessidades",image:"/cards/level-1/agua.webp?v=20260521-optimized"},
+            {id:"comer",    label:"Comer",    cat:"necessidades",image:"/cards/level-1/comer.webp?v=20260521-optimized"},
+            {id:"banheiro", label:"Banheiro", cat:"necessidades",image:"/cards/level-1/banheiro.webp?v=20260521-optimized"},
+            {id:"dormir",   label:"Dormir",   cat:"necessidades",image:"/cards/level-1/dormir.webp?v=20260521-optimized"},
+            {id:"feliz",    label:"Feliz",    cat:"emocoes",     image:"/cards/level-1/feliz.webp?v=20260521-optimized"},
+            {id:"triste",   label:"Triste",   cat:"emocoes",     image:"/cards/level-1/triste.webp?v=20260521-optimized"},
+            {id:"medo",     label:"Medo",     cat:"emocoes",     image:"/cards/level-1/medo.webp?v=20260521-optimized"},
+            {id:"bravo",    label:"Bravo",    cat:"emocoes",     image:"/cards/level-1/bravo.webp?v=20260521-optimized"},
+            {id:"brincar",  label:"Brincar",  cat:"acoes",       image:"/cards/level-1/brincar.webp?v=20260521-optimized"},
+            {id:"parar",    label:"Parar",    cat:"acoes",       image:"/cards/level-1/parar.webp?v=20260521-optimized"},
+            {id:"esperar",  label:"Esperar",  cat:"acoes",       image:"/cards/level-1/esperar.webp?v=20260521-optimized"},
+            {id:"dor",      label:"Dor",      cat:"saude",       image:"/cards/level-1/dor.webp?v=20260521-optimized"},
+            {id:"remedio",  label:"Remédio",  cat:"saude",       image:"/cards/level-1/remedio.webp?v=20260521-optimized"},
+            {id:"escola",   label:"Escola",   cat:"lugares",     image:"/cards/level-1/escola.webp?v=20260521-optimized"},
+          ],
           "infantil_inicial": [
             {id:"agua",label:"Água",cat:"necessidades"},
             {id:"banheiro",label:"Banheiro",cat:"necessidades"},
