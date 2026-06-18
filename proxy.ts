@@ -32,6 +32,10 @@ const isStatic = createRouteMatcher([
   "/icon-(.*)",
   "/cards/(.*)",
   "/hero-(.*)",
+  "/logo(.*)",       // <--- ADICIONADO AQUI
+  "/(.*).png",       // <--- LIBERA OUTROS PNGs SOLTOS
+  "/(.*).jpg",       // <--- LIBERA JPGs
+  "/(.*).svg",       // <--- LIBERA SVGs
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
