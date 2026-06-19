@@ -34,6 +34,16 @@ export async function POST(request) {
       );
 
       console.log(`✅ Usuário sincronizado: ${clerkId} ${email}`);
+
+      // Adiciona na Audience do Resend para disparar automacao
+      if (email) {
+        await fetch("https://api.resend.com/audiences/086dc134-c602-45ff-b3f3-43fb06042eeb/contacts", {
+          method: "POST",
+          headers: { "Authorization": "Bearer " + process.env.RESEND_API_KEY, "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email, first_name: data.first_name || "", unsubscribed: false }),
+        }).catch(e => console.error("Resend error:", e.message));
+        console.log("✅ Adicionado no Resend: " + email);
+      }
     }
 
     return Response.json({ received: true });
