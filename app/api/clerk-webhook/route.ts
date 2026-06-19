@@ -10,12 +10,12 @@ export async function POST(req: NextRequest) {
       const email = email_addresses[0]?.email_address;
       const nome = first_name || 'amigo(a)';
 
-      console.log(`Novo usuário: ${email}. Disparando automação no Resend...`);
+      console.log('Novo usuario: ' + email + '. Disparando automacao no Resend...');
 
       const response = await fetch('https://api.resend.com/automations/events', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Authorization': 'Bearer ' + process.env.RESEND_API_KEY,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -29,9 +29,9 @@ export async function POST(req: NextRequest) {
 
       if (!response.ok) {
         const errorData = await response.text();
-        console.error('Erro ao disparar automação do Resend:', errorData);
+        console.error('Erro ao disparar automacao do Resend:', errorData);
       } else {
-        console.log(`Automação do Resend disparada com sucesso para ${email}!`);
+        console.log('Automacao do Resend disparada com sucesso para ' + email + '!');
       }
     }
 
