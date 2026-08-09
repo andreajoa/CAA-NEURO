@@ -35,7 +35,15 @@ export async function POST(req) {
     const label = String(formData.get("label") || "Imagem").trim() || "Imagem";
     const safeLabel = encodeURIComponent(label).slice(0, 700);
 
-    if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    if (!file || typeof file.arrayBuffer !== "function") {
+      return NextResponse.json({ error: "Arquivo ausente" }, { status: 400 });
+    }
+    if (!file.type?.startsWith("image/")) {
+      return NextResponse.json({ error: "Envie um arquivo de imagem" }, { status: 415 });
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "A imagem deve ter no máximo 10 MB" }, { status: 413 });
+    }
 
     const originalBuffer = Buffer.from(await file.arrayBuffer());
     const id = crypto.randomUUID();

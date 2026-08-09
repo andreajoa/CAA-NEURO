@@ -1,5 +1,8 @@
 export const runtime = "nodejs";
 
+import { auth } from "@clerk/nextjs/server";
+import { checkRateLimit } from "../../../lib/rateLimit";
+
 const VOICES = {
   "pt-BR": {
     FEMALE:  { languageCode: "pt-BR", name: "pt-BR-Neural2-C", ssmlGender: "FEMALE" },
@@ -73,8 +76,19 @@ function profileToGender(profile, age) {
 
 export async function POST(request) {
   try {
-    const { text, lang = "pt-BR", gender = "NEUTRAL", profile, age } = await request.json();
+    const { userId } = await auth();
+    const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+    const requester = userId || `public:${forwardedFor || "unknown"}`;
+    const rateLimit = await checkRateLimit(requester, "tts");
+    if (!rateLimit.allowed) {
+      return Response.json({ error: rateLimit.message }, { status: 429 });
+    }
+
+    const { text, lang = "pt-BR", gender = "NEUTRAL", profile, age, rate = 0.9 } = await request.json();
     if (!text?.trim()) return Response.json({ error: "Texto obrigatório" }, { status: 400 });
+
+    const textToSpeak = text.trim().slice(0, 500);
+    const speakingRate = Math.min(1.3, Math.max(0.6, Number(rate) || 0.9));
 
     const apiKey = process.env.GOOGLE_TTS_API_KEY;
     if (!apiKey) {
@@ -83,7 +97,7 @@ export async function POST(request) {
 
     // ── TRADUÇÃO: se o idioma não for PT, traduz antes de falar ──
     const translateTarget = LANG_TO_TRANSLATE[lang] || "pt";
-    const textToSpeak = await translateText(text.slice(0, 500), translateTarget, apiKey);
+    const translatedText = await translateText(textToSpeak, translateTarget, apiKey);
 
     const resolvedGender = gender !== "NEUTRAL" ? gender : profileToGender(profile, age);
     const langVoices = VOICES[lang] || VOICES["pt-BR"];
@@ -95,11 +109,11 @@ export async function POST(request) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          input: { text: textToSpeak },
+          input: { text: translatedText },
           voice,
           audioConfig: {
             audioEncoding: "MP3",
-            speakingRate: profile === "infantil" || profile === "escolar" ? 0.8 : 0.9,
+            speakingRate,
             pitch: resolvedGender === "CHILD" ? 2 : 0,
             effectsProfileId: ["handset-class-device"],
           },
@@ -121,15 +135,15 @@ export async function POST(request) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            input: { text: textToSpeak },
+            input: { text: translatedText },
             voice: fallbackVoice,
-            audioConfig: { audioEncoding: "MP3", speakingRate: 0.9, pitch: 0 },
+            audioConfig: { audioEncoding: "MP3", speakingRate, pitch: 0 },
           }),
         }
       );
       const data2 = await res2.json();
       if (!res2.ok || data2.error) {
-        return Response.json({ fallback: true, lang, text, translatedText: textToSpeak });
+        return Response.json({ fallback: true, lang, text, translatedText });
       }
       return Response.json({ audio: data2.audioContent, voice: fallbackVoice.name, quality: "standard" });
     }

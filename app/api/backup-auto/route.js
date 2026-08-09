@@ -1,67 +1,45 @@
-import { auth,currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { d1Query } from "../../../lib/d1";
+import { isAdmin } from "../../../lib/admin";
 
-export async function POST(){
+async function isAuthorized(request) {
+  const cronSecret = process.env.CRON_SECRET;
+  const authorization = request.headers.get("authorization");
+  if (cronSecret && authorization === `Bearer ${cronSecret}`) return true;
 
-const {userId}=await auth();
-const user=await currentUser();
-
-const email=user?.emailAddresses?.[0]?.emailAddress||"";
-
-if(!userId || email!=="tdahma2@gmail.com"){
-return NextResponse.json(
-{error:"Forbidden"},
-{status:403}
-)
+  const { userId } = await auth().catch(() => ({ userId: null }));
+  return Boolean(userId && isAdmin(userId));
 }
 
-try{
+async function createBackup(request) {
+  if (!(await isAuthorized(request))) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
-const snapshot={
+  try {
+    const [patients, sessions, cards, logs] = await Promise.all([
+      d1Query("SELECT * FROM patients"),
+      d1Query("SELECT * FROM sessions"),
+      d1Query("SELECT * FROM cards"),
+      d1Query("SELECT * FROM app_logs"),
+    ]);
 
-patients:await d1Query(
-"SELECT * FROM patients",[]
-),
+    const id = crypto.randomUUID();
+    const snapshot = { createdAt: new Date().toISOString(), patients, sessions, cards, logs };
 
-sessions:await d1Query(
-"SELECT * FROM sessions",[]
-),
+    await d1Query(
+      "INSERT INTO backups (id,snapshot,created_at) VALUES (?,?,datetime('now'))",
+      [id, JSON.stringify(snapshot)]
+    );
 
-cards:await d1Query(
-"SELECT * FROM cards",[]
-),
-
-logs:await d1Query(
-"SELECT * FROM app_logs",[]
-)
-
-};
-
-await d1Query(
-"INSERT INTO backups (id,snapshot) VALUES (?,?)",
-[
-crypto.randomUUID(),
-JSON.stringify(snapshot)
-]
-);
-
-return NextResponse.json({
-success:true
-});
-
-}catch(e){
-
-return NextResponse.json(
-{
-success:false,
-error:e.message
-},
-{
-status:500
-}
-)
-
+    return NextResponse.json({ success: true, id, createdAt: snapshot.createdAt });
+  } catch (error) {
+    console.error("Automatic backup failed:", error);
+    return NextResponse.json({ success: false, error: "Não foi possível criar o backup." }, { status: 500 });
+  }
 }
 
-}
+// Vercel Cron executa requisições GET. POST permanece disponível para execução manual.
+export const GET = createBackup;
+export const POST = createBackup;

@@ -1,4 +1,4 @@
-const CACHE = "caa-neuro-v6";
+const CACHE = "caa-neuro-v8";
 
 // Imagens pré-cacheadas na instalação — usuário nunca vê loading
 const CARDS_IMAGES = [
@@ -30,7 +30,6 @@ const CARDS_IMAGES = [
 ];
 
 const STATIC = [
-  "/app",
   "/manifest.json",
   "/icon-192-v2.png",
   "/icon-512-v2.png",
@@ -73,11 +72,12 @@ self.addEventListener("fetch", e => {
   if (url.protocol === "chrome-extension:" || url.protocol === "moz-extension:") return;
   if (e.request.method !== "GET") return;
 
-  // APIs: sempre rede
+  // APIs e páginas autenticadas: nunca são armazenadas no dispositivo.
   if (url.pathname.startsWith("/api/")) {
     e.respondWith(
       fetch(e.request).catch(() =>
         new Response(JSON.stringify({ error: "offline" }), {
+          status: 503,
           headers: { "Content-Type": "application/json" }
         })
       )
@@ -101,15 +101,18 @@ self.addEventListener("fetch", e => {
     return;
   }
 
-  // Páginas e assets: network-first, fallback cache
-  e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        if (res.ok && res.type === "basic") {
-          caches.open(CACHE).then(c => c.put(e.request, res.clone()));
-        }
+  // Assets imutáveis do Next e arquivos do PWA podem usar cache-first.
+  if (url.pathname.startsWith("/_next/static/") || STATIC.includes(url.pathname)) {
+    e.respondWith(
+      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
+        if (res.ok) caches.open(CACHE).then(cache => cache.put(e.request, res.clone()));
         return res;
-      })
-      .catch(() => caches.match(e.request))
-  );
+      }))
+    );
+    return;
+  }
+
+  // Documentos e demais respostas seguem somente pela rede para não manter
+  // informações clínicas de outra conta no cache compartilhado do navegador.
+  e.respondWith(fetch(e.request));
 });

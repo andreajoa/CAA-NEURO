@@ -1,8 +1,15 @@
 import { auth } from "@clerk/nextjs/server";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
+import { getDatabase } from "../../../lib/d1";
+import { decrypt, decryptPatient, decryptSession } from "../../lib/crypto";
+import { getAccessiblePatient } from "../../../lib/patientAccess";
 
 export const runtime = "nodejs";
-const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
+
+function csvSafe(value) {
+  const stringValue = String(value ?? "");
+  return /^[=+\-@]/.test(stringValue) ? `'${stringValue}` : stringValue;
+}
 
 export async function GET(request) {
   const { userId } = await auth();
@@ -13,14 +20,20 @@ export async function GET(request) {
   const format = params.get("format") || "xlsx";
 
   try {
-    const db = getDB(request);
-    const patient = patientId
-      ? await db.prepare("SELECT * FROM patients WHERE id=? AND user_id=?").bind(patientId, userId).first()
+    const db = getDatabase(request);
+    const rawPatient = patientId
+      ? await getAccessiblePatient(patientId, userId)
       : null;
+    if (patientId && !rawPatient) return Response.json({ error: "Paciente não encontrado" }, { status: 404 });
+    const patient = rawPatient ? decryptPatient(rawPatient) : null;
 
-    const { results: sessions } = patientId
-      ? await db.prepare("SELECT * FROM sessions WHERE patient_id=? AND user_id=? ORDER BY created_at DESC").bind(patientId, userId).all()
+    const { results: rawSessions } = patientId
+      ? await db.prepare("SELECT * FROM sessions WHERE patient_id=? ORDER BY created_at DESC").bind(patientId).all()
       : await db.prepare("SELECT s.*, p.nome as paciente_nome FROM sessions s LEFT JOIN patients p ON s.patient_id=p.id WHERE s.user_id=? ORDER BY s.created_at DESC").bind(userId).all();
+    const sessions = rawSessions.map(session => ({
+      ...decryptSession(session),
+      paciente_nome: decrypt(session.paciente_nome),
+    }));
 
     const rows = sessions.map(s => ({
       "Paciente": s.paciente_nome || patient?.nome || "—",
@@ -35,7 +48,7 @@ export async function GET(request) {
       const headers = Object.keys(rows[0] || {});
       const csv = [
         headers.join(","),
-        ...rows.map(r => headers.map(h => `"${String(r[h]).replace(/"/g,'""')}"`).join(","))
+        ...rows.map(r => headers.map(h => `"${csvSafe(r[h]).replace(/"/g,'""')}"`).join(","))
       ].join("\n");
       return new Response("\uFEFF" + csv, {
         headers: {
@@ -45,10 +58,16 @@ export async function GET(request) {
       });
     }
 
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(rows);
-    ws["!cols"] = [{ wch: 25 }, { wch: 12 }, { wch: 14 }, { wch: 50 }, { wch: 40 }, { wch: 30 }];
-    XLSX.utils.book_append_sheet(wb, ws, "Sessões");
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = "CAA Neuro";
+    workbook.created = new Date();
+    const sessionsSheet = workbook.addWorksheet("Sessões");
+    sessionsSheet.columns = Object.keys(rows[0] || {
+      "Paciente": "", "Data": "", "Duração (min)": "", "Evolução observada": "", "Objetivos da sessão": "", "Notas": "",
+    }).map((header, index) => ({ header, key: header, width: [25, 12, 14, 50, 40, 30][index] || 20 }));
+    sessionsSheet.addRows(rows);
+    sessionsSheet.getRow(1).font = { bold: true };
+    sessionsSheet.views = [{ state: "frozen", ySplit: 1 }];
 
     if (patient) {
       const infoRows = [
@@ -59,11 +78,16 @@ export async function GET(request) {
         { Campo: "Medicamentos", Valor: patient.medicamentos || "" },
         { Campo: "Objetivos terapêuticos", Valor: patient.objetivos_terapeuticos || "" },
       ];
-      const ws2 = XLSX.utils.json_to_sheet(infoRows);
-      XLSX.utils.book_append_sheet(wb, ws2, "Paciente");
+      const patientSheet = workbook.addWorksheet("Paciente");
+      patientSheet.columns = [
+        { header: "Campo", key: "Campo", width: 28 },
+        { header: "Valor", key: "Valor", width: 60 },
+      ];
+      patientSheet.addRows(infoRows);
+      patientSheet.getRow(1).font = { bold: true };
     }
 
-    const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+    const buf = await workbook.xlsx.writeBuffer();
     return new Response(buf, {
       headers: {
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

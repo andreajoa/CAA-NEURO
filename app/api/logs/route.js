@@ -4,6 +4,7 @@ import { d1Query } from "../../../lib/d1";
 
 export async function POST(req) {
   const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const body = await req.json();
@@ -12,7 +13,7 @@ export async function POST(req) {
       "INSERT INTO app_logs (id, user_id, level, source, message, details) VALUES (?, ?, ?, ?, ?, ?)",
       [
         crypto.randomUUID(),
-        userId || "",
+        userId,
         body.level || "error",
         body.source || "client",
         String(body.message || "").slice(0, 500),

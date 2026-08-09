@@ -1,6 +1,11 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 const PLANOS = [
   {
@@ -34,34 +39,18 @@ export default function Planos() {
   const [loading, setLoading] = useState<string|null>(null);
   const [checkoutPlano, setCheckoutPlano] = useState<string|null>(null);
   const [clientSecret, setClientSecret] = useState<string|null>(null);
-  const [stripeLoaded, setStripeLoaded] = useState(false);
-  const checkoutRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://js.stripe.com/v3/";
-    script.onload = () => setStripeLoaded(true);
-    document.head.appendChild(script);
-  }, []);
-
-  useEffect(() => {
-    if (!clientSecret || !stripeLoaded || !containerRef.current) return;
-    const stripeKey = (window as any).__STRIPE_KEY__ || process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-    const stripe = (window as any).Stripe(stripeKey);
-    if (checkoutRef.current) { checkoutRef.current.destroy(); checkoutRef.current = null; }
-    let active = true;
-    (async () => {
-      const checkout = await stripe.initEmbeddedCheckout({ clientSecret });
-      if (!active || !containerRef.current) { checkout.destroy(); return; }
-      checkoutRef.current = checkout;
-      checkout.mount(containerRef.current);
-    })();
-    return () => { active = false; if (checkoutRef.current) { checkoutRef.current.destroy(); checkoutRef.current = null; } };
-  }, [clientSecret, stripeLoaded]);
+  const checkoutOptions = useMemo(
+    () => clientSecret ? { clientSecret } : undefined,
+    [clientSecret]
+  );
 
   async function assinar(planoId: string) {
+    if (!stripePromise) {
+      alert("Pagamento temporariamente indisponível.");
+      return;
+    }
+
     setLoading(planoId);
     try {
       const res = await fetch("/api/stripe/checkout", {
@@ -84,7 +73,6 @@ export default function Planos() {
   }
 
   function fecharCheckout() {
-    if (checkoutRef.current) { checkoutRef.current.destroy(); checkoutRef.current = null; }
     setClientSecret(null);
     setCheckoutPlano(null);
   }
@@ -128,7 +116,7 @@ export default function Planos() {
           ))}
         </div>
 
-        {clientSecret && (
+        {clientSecret && checkoutOptions && stripePromise && (
           <div id="checkout-wrapper" style={{marginTop:"48px",background:"white",borderRadius:"20px",border:"2px solid #e5e7eb",padding:"32px",boxShadow:"0 8px 32px rgba(0,0,0,0.08)"}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"24px"}}>
               <h2 style={{fontSize:"20px",fontWeight:"800",color:"#1B2D5B",margin:0}}>
@@ -136,7 +124,13 @@ export default function Planos() {
               </h2>
               <button onClick={fecharCheckout} style={{background:"#f3f4f6",border:"none",borderRadius:"8px",padding:"8px 16px",cursor:"pointer",fontSize:"13px",color:"#374151"}}>✕ Cancelar</button>
             </div>
-            <div ref={containerRef} id="stripe-checkout-container" style={{minHeight:"400px"}} />
+            <EmbeddedCheckoutProvider
+              key={clientSecret}
+              stripe={stripePromise}
+              options={checkoutOptions}
+            >
+              <EmbeddedCheckout />
+            </EmbeddedCheckoutProvider>
           </div>
         )}
 

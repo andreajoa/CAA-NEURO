@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { encryptPatient, decryptPatient } from "../../lib/crypto";
 import { d1Query } from "../../../lib/d1";
+import { getAccessiblePatient } from "../../../lib/patientAccess";
 
 export const runtime = "nodejs";
 const LIMITE_GRATUITO = 3;
@@ -28,9 +29,12 @@ export async function GET(request) {
     if (orgId) {
       // Org: busca pacientes de todos os membros da org
       const members = await d1Query("SELECT user_id FROM org_members WHERE org_id=? AND ativo!=0", [orgId]);
-      const ids = (members || []).map(m => `'${m.user_id}'`).join(",");
-      if (!ids) return Response.json({ patients: [] });
-      rows = await d1Query(`SELECT * FROM patients WHERE user_id IN (${ids}) ORDER BY created_at DESC`);
+      const ids = (members || []).map(m => m.user_id);
+      if (!ids.length) return Response.json({ patients: [] });
+      rows = await d1Query(
+        `SELECT * FROM patients WHERE user_id IN (${ids.map(() => "?").join(",")}) ORDER BY created_at DESC`,
+        ids
+      );
     } else {
       rows = await d1Query("SELECT * FROM patients WHERE user_id=? ORDER BY created_at DESC", [userId]);
     }
@@ -57,9 +61,11 @@ export async function POST(request) {
       }
     } else if (orgId && maxPac) {
       const members = await d1Query("SELECT user_id FROM org_members WHERE org_id=?", [orgId]);
-      const ids = (members || []).map(m => `'${m.user_id}'`).join(",");
-      if (ids) {
-        const count = await d1Query(`SELECT COUNT(*) as total FROM patients WHERE user_id IN (${ids})`);
+      const ids = (members || []).map(m => m.user_id);
+      if (ids.length) {
+        const count = await d1Query(
+          `SELECT COUNT(*) as total FROM patients WHERE user_id IN (${ids.map(() => "?").join(",")})`, ids
+        );
         if ((count?.[0]?.total || 0) >= maxPac) {
           return Response.json({ error: "limite_atingido", message: `Limite de ${maxPac} pacientes atingido.` }, { status: 403 });
         }
@@ -72,11 +78,11 @@ export async function POST(request) {
 
     const result = await d1Query(
       `INSERT INTO patients (user_id,nome,name,data_nascimento,diagnostico,responsavel,escola,medicamentos,objetivos_terapeuticos,observacoes,anexos,created_at)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,datetime('now'))`,
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,datetime('now')) RETURNING id`,
       [userId, e.nome, e.nome, e.data_nascimento||null, e.diagnostico||null, e.responsavel||null,
        e.escola||null, e.medicamentos||null, e.objetivos_terapeuticos||null, e.observacoes||null, '[]']
     );
-    return Response.json({ success: true });
+    return Response.json({ success: true, id: result?.[0]?.id });
   } catch (e) { return Response.json({ error: e.message }, { status: 500 }); }
 }
 
@@ -87,26 +93,15 @@ export async function PUT(request) {
     const raw = await request.json();
     if (!raw.id) return Response.json({ error: "ID obrigatório" }, { status: 400 });
     const e = encryptPatient(raw);
-    const { orgId } = await getPlanoEOrg(userId);
-
-    // Org: qualquer membro pode editar pacientes da org
-    if (orgId) {
-      const members = await d1Query("SELECT user_id FROM org_members WHERE org_id=?", [orgId]);
-      const ids = (members || []).map(m => `'${m.user_id}'`).join(",");
-      await d1Query(
-        `UPDATE patients SET nome=?,name=?,data_nascimento=?,diagnostico=?,responsavel=?,escola=?,medicamentos=?,objetivos_terapeuticos=?,observacoes=?,updated_at=datetime('now')
-         WHERE id=? AND user_id IN (${ids})`,
-        [e.nome, e.nome, e.data_nascimento||null, e.diagnostico||null, e.responsavel||null,
-         e.escola||null, e.medicamentos||null, e.objetivos_terapeuticos||null, e.observacoes||null, raw.id]
-      );
-    } else {
-      await d1Query(
-        `UPDATE patients SET nome=?,name=?,data_nascimento=?,diagnostico=?,responsavel=?,escola=?,medicamentos=?,objetivos_terapeuticos=?,observacoes=?,updated_at=datetime('now')
-         WHERE id=? AND user_id=?`,
-        [e.nome, e.nome, e.data_nascimento||null, e.diagnostico||null, e.responsavel||null,
-         e.escola||null, e.medicamentos||null, e.objetivos_terapeuticos||null, e.observacoes||null, raw.id, userId]
-      );
+    if (!(await getAccessiblePatient(raw.id, userId))) {
+      return Response.json({ error: "Paciente não encontrado" }, { status: 404 });
     }
+    await d1Query(
+      `UPDATE patients SET nome=?,name=?,data_nascimento=?,diagnostico=?,responsavel=?,escola=?,medicamentos=?,objetivos_terapeuticos=?,observacoes=?,updated_at=datetime('now')
+       WHERE id=?`,
+      [e.nome, e.nome, e.data_nascimento||null, e.diagnostico||null, e.responsavel||null,
+       e.escola||null, e.medicamentos||null, e.objetivos_terapeuticos||null, e.observacoes||null, raw.id]
+    );
     return Response.json({ success: true });
   } catch (e) { return Response.json({ error: e.message }, { status: 500 }); }
 }

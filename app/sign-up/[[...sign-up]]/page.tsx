@@ -35,7 +35,12 @@ export default function SignUpPage() {
       </div>
 
       <div style={{ width:"100%", maxWidth:"480px", opacity: accepted ? 1 : 0.4, pointerEvents: accepted ? "auto" : "none", transition:"opacity 0.2s" }}>
-        <SignUp />
+        <SignUp
+          routing="path"
+          path="/sign-up"
+          signInUrl="/sign-in"
+          fallbackRedirectUrl="/app"
+        />
       </div>
 
       {!accepted && (

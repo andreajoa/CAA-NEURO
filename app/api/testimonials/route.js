@@ -1,16 +1,17 @@
 import { auth } from "@clerk/nextjs/server";
+import { getDatabase } from "../../../lib/d1";
+import { isAdmin } from "../../../lib/admin";
 
 export const runtime = "nodejs";
-const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
 
 export async function GET(request) {
   const url = new URL(request.url);
   const admin = url.searchParams.get("admin");
   const { userId } = await auth().catch(() => ({ userId: null }));
   try {
-    const db = getDB(request);
+    const db = getDatabase(request);
     let results;
-    if (admin === "1" && userId) {
+    if (admin === "1" && userId && isAdmin(userId)) {
       const r = await db.prepare("SELECT * FROM testimonials ORDER BY created_at DESC LIMIT 100").all();
       results = r.results;
     } else {
@@ -27,7 +28,8 @@ export async function POST(request) {
   try {
     const { nome, profissao, cidade, texto, foto_url } = await request.json();
     if (!nome?.trim() || !texto?.trim()) return Response.json({ error: "Nome e texto obrigatórios." }, { status: 400 });
-    const db = getDB(request);
+    if (nome.length > 120 || texto.length > 2000) return Response.json({ error: "Depoimento excede o limite permitido." }, { status: 400 });
+    const db = getDatabase(request);
     const result = await db.prepare(
       "INSERT INTO testimonials (nome,profissao,cidade,texto,foto_url,aprovado,created_at) VALUES (?,?,?,?,?,0,datetime('now'))"
     ).bind(nome.trim(), profissao?.trim()||null, cidade?.trim()||null, texto.trim(), foto_url?.trim()||null).run();
@@ -40,9 +42,10 @@ export async function POST(request) {
 export async function PATCH(request) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isAdmin(userId)) return Response.json({ error: "Acesso negado" }, { status: 403 });
   try {
     const { id, aprovado, destaque } = await request.json();
-    const db = getDB(request);
+    const db = getDatabase(request);
     if (aprovado !== undefined) await db.prepare("UPDATE testimonials SET aprovado=? WHERE id=?").bind(aprovado?1:0, id).run();
     if (destaque !== undefined) await db.prepare("UPDATE testimonials SET destaque=? WHERE id=?").bind(destaque?1:0, id).run();
     return Response.json({ success: true });
@@ -54,9 +57,10 @@ export async function PATCH(request) {
 export async function DELETE(request) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isAdmin(userId)) return Response.json({ error: "Acesso negado" }, { status: 403 });
   try {
     const { id } = await request.json();
-    const db = getDB(request);
+    const db = getDatabase(request);
     await db.prepare("DELETE FROM testimonials WHERE id=?").bind(id).run();
     return Response.json({ success: true });
   } catch (e) {

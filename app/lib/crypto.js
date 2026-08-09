@@ -1,10 +1,12 @@
 import crypto from "crypto";
 
 const ALGO = "aes-256-gcm";
-const KEY = Buffer.from(process.env.ENCRYPTION_KEY || "", "hex");
+const rawKey = process.env.ENCRYPTION_KEY || "";
+const KEY = /^[a-f0-9]{64}$/i.test(rawKey) ? Buffer.from(rawKey, "hex") : null;
 
 export function encrypt(text) {
-  if (!text || !KEY.length) return text;
+  if (!text) return text;
+  if (!KEY) throw new Error("ENCRYPTION_KEY deve conter 64 caracteres hexadecimais");
   const iv = crypto.randomBytes(12);
   const cipher = crypto.createCipheriv(ALGO, KEY, iv);
   const encrypted = Buffer.concat([cipher.update(String(text), "utf8"), cipher.final()]);
@@ -13,7 +15,7 @@ export function encrypt(text) {
 }
 
 export function decrypt(data) {
-  if (!data || !KEY.length) return data;
+  if (!data || !KEY) return data;
   try {
     const buf = Buffer.from(data, "base64");
     const iv = buf.subarray(0, 12);

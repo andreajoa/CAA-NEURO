@@ -1,6 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-
-const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
+import { getDatabase } from "../../../lib/d1";
 
 // Regras de co-ocorrência: se o último card foi X, sugere Y
 const COOCURRENCE = {
@@ -32,7 +31,7 @@ export async function GET(request) {
   const lastCards = url.searchParams.get("last")?.split(",").filter(Boolean) || [];
 
   try {
-    const db = getDB(request);
+    const db = getDatabase(request);
 
     // 1. Predição em tempo real baseada no último card selecionado
     const realtimeSuggestions = [];

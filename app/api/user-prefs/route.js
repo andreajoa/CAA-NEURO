@@ -1,13 +1,13 @@
 import { auth } from "@clerk/nextjs/server";
+import { getDatabase } from "../../../lib/d1";
 
 export const runtime = "nodejs";
-const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
 
 export async function GET(request) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
-    const db = getDB(request);
+    const db = getDatabase(request);
     const row = await db.prepare("SELECT * FROM user_prefs WHERE user_id=?").bind(userId).first();
     return Response.json({ prefs: row || { onboarding_done: 0 } });
   } catch (e) {
@@ -20,12 +20,15 @@ export async function POST(request) {
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const body = await request.json();
-    const db = getDB(request);
+    const onboardingDone = body.onboarding_done === undefined
+      ? null
+      : (body.onboarding_done ? 1 : 0);
+    const db = getDatabase(request);
     await db.prepare(
       `INSERT INTO user_prefs (user_id, onboarding_done, nome_profissional, registro_crfa, profissao, conselho_regional, telefone, assinatura_base64, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
        ON CONFLICT(user_id) DO UPDATE SET
-         onboarding_done = COALESCE(excluded.onboarding_done, onboarding_done),
+         onboarding_done = CASE WHEN ? IS NULL THEN onboarding_done ELSE excluded.onboarding_done END,
          nome_profissional = COALESCE(excluded.nome_profissional, nome_profissional),
          registro_crfa = COALESCE(excluded.registro_crfa, registro_crfa),
          profissao = COALESCE(excluded.profissao, profissao),
@@ -35,13 +38,14 @@ export async function POST(request) {
          updated_at = datetime('now')`
     ).bind(
       userId,
-      body.onboarding_done ? 1 : 0,
+      onboardingDone ?? 0,
       body.nome_profissional || null,
       body.registro_crfa || null,
       body.profissao || null,
       body.conselho_regional || null,
       body.telefone || null,
       body.assinatura_base64 || null,
+      onboardingDone,
     ).run();
     return Response.json({ success: true });
   } catch (e) {

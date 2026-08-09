@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { d1Query } from "../../../../lib/d1";
 
 export const runtime = "nodejs";
@@ -18,6 +18,17 @@ export async function POST(request) {
     if (!invite?.length) return Response.json({ error: "Convite inválido ou expirado." }, { status: 400 });
 
     const inv = invite[0];
+    const user = await currentUser();
+    const currentEmail = user?.emailAddresses?.[0]?.emailAddress?.trim().toLowerCase();
+    if (!currentEmail || currentEmail !== String(inv.email || "").trim().toLowerCase()) {
+      return Response.json({ error: "Entre com o mesmo email que recebeu o convite" }, { status: 403 });
+    }
+    const existingMembership = await d1Query(
+      "SELECT org_id FROM org_members WHERE user_id=? AND ativo!=0 LIMIT 1", [userId]
+    );
+    if (existingMembership?.length && String(existingMembership[0].org_id) !== String(inv.org_id)) {
+      return Response.json({ error: "Sua conta já pertence a outra organização" }, { status: 409 });
+    }
     const org = await d1Query("SELECT nome FROM organizations WHERE id=?", [inv.org_id]);
 
     await d1Query(

@@ -65,20 +65,8 @@ const categories = [
 ];
 
 export default function Home() {
-  const [profile, setProfile] = useState(() => {
-    if (typeof window !== "undefined") {
-      const p = new URLSearchParams(window.location.search).get("profile");
-      if (p) return p;
-    }
-    return "infantil";
-  });
-  const [level, setLevel] = useState(() => {
-    if (typeof window !== "undefined") {
-      const l = new URLSearchParams(window.location.search).get("level");
-      if (l) return l;
-    }
-    return "emergente";
-  });
+  const [profile, setProfile] = useState("infantil");
+  const [level, setLevel] = useState("emergente");
   const [category, setCategory] = useState("all");
   const [patientName, setPatientName] = useState("");
   const [patients, setPatients] = useState([]);
@@ -90,10 +78,17 @@ export default function Home() {
   const [fromPranchoteca, setFromPranchoteca] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const from = new URLSearchParams(window.location.search).get("from");
-      if (from === "pranchoteca") setFromPranchoteca(true);
-    }
+    const params = new URLSearchParams(window.location.search);
+    const requestedProfile = params.get("profile");
+    const validProfile = profiles.some(item => item.id === requestedProfile)
+      ? requestedProfile
+      : "infantil";
+    const requestedLevel = params.get("level");
+    if (requestedProfile) setProfile(validProfile);
+    if (getLevels(validProfile).some(item => item.id === requestedLevel)) setLevel(requestedLevel);
+    if (params.get("from") === "pranchoteca") setFromPranchoteca(true);
+    const requestedPatient = params.get("patient") || params.get("patient_id");
+    if (requestedPatient) setActivePatientId(requestedPatient);
   }, []);
   const [showQuickFires, setShowQuickFires] = useState(false);
   const [cards, setCards] = useState([]); // Carrega de admin_defaults via useEffect
@@ -575,29 +570,33 @@ setCards(enriched);
       
       if (isAdminUser) {
         // ADMIN: salva APENAS em admin_defaults (padrão global)
-        await fetch("/api/admin/default-board", { 
+        const response = await fetch("/api/admin/default-board", {
           method:"POST", 
           headers:{"Content-Type":"application/json"}, 
           body: JSON.stringify({ cards: next, profile, level }) 
         });
+        if (!response.ok) throw new Error("Falha ao salvar prancha padrão");
       } else {
         // USUÁRIO: salva APENAS em cards (tabela pessoal)
-        await fetch("/api/cards", { 
+        const response = await fetch("/api/cards", {
           method:"POST", 
           headers:{"Content-Type":"application/json"}, 
           body: JSON.stringify({ profile, level, cards: next }) 
         });
+        if (!response.ok) throw new Error("Falha ao salvar prancha");
       }
     } catch { alert("Não foi possível salvar os cards."); }
   }
 
   const [ttsLang, setTtsLang] = useState("pt-BR");
   const [ttsGender, setTtsGender] = useState("NEUTRAL"); // FEMALE | MALE | CHILD | NEUTRAL
+  const [ttsRate, setTtsRate] = useState(0.9);
   const [dwellMs, setDwellMs] = useState(0); // 0 = desativado
   const [diagnostico, setDiagnostico] = useState("padrao");
   const [showAccessibility, setShowAccessibility] = useState(false);
   const { config: a11yConfig, overrides: a11yOverrides, setOverrides: setA11yOverrides,
           applyIntelliTouch, contrastFilter, fontScale, positionLocked } = useAccessibility(diagnostico);
+  const effectiveDwellMs = dwellMs || a11yConfig.dwellMs || 0;
   const [darkMode, setDarkMode] = useState(false);
   const [mobileTab, setMobileTab] = useState("prancha");
   const [showMobileTools, setShowMobileTools] = useState(false);
@@ -618,6 +617,8 @@ setCards(enriched);
     if (savedDwell) setDwellMs(Number(savedDwell));
     const savedGender = localStorage.getItem("caa-gender");
     if (savedGender) setTtsGender(savedGender);
+    const savedRate = Number(localStorage.getItem("caa-tts-rate"));
+    if (savedRate >= 0.6 && savedRate <= 1.3) setTtsRate(savedRate);
   }, []);
 
   useEffect(() => { localStorage.setItem("caa-dwell", dwellMs); }, [dwellMs]);
@@ -627,6 +628,7 @@ setCards(enriched);
   }, []);
   useEffect(() => { localStorage.setItem("caa-diagnostico", diagnostico); }, [diagnostico]);
   useEffect(() => { localStorage.setItem("caa-gender", ttsGender); }, [ttsGender]);
+  useEffect(() => { localStorage.setItem("caa-tts-rate", String(ttsRate)); }, [ttsRate]);
   useEffect(() => {
     function updateIsMobile() { setIsMobile(window.innerWidth <= 700); }
     updateIsMobile();
@@ -651,7 +653,7 @@ setCards(enriched);
 
   async function speak(text) {
     try {
-      const res = await fetch("/api/tts", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ text, lang: ttsLang, gender: ttsGender, profile }) });
+      const res = await fetch("/api/tts", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ text, lang: ttsLang, gender: ttsGender, profile, rate: ttsRate }) });
       const data = await res.json();
       if (data.audio) { const a = new Audio(`data:audio/mp3;base64,${data.audio}`); a.play(); return; }
       // fallback: traduz no cliente antes de falar
@@ -660,10 +662,10 @@ setCards(enriched);
       const voices = speechSynthesis.getVoices();
       const v = voices.find(v => v.lang === ttsLang) || voices.find(v => v.lang.startsWith(ttsLang.split("-")[0]));
       if (v) u.voice = v;
-      u.lang = ttsLang; u.rate = ttsRate || 1; speechSynthesis.cancel(); speechSynthesis.speak(u);
+      u.lang = ttsLang; u.rate = ttsRate; speechSynthesis.cancel(); speechSynthesis.speak(u);
     } catch {
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = ttsLang; u.rate = ttsRate || 1; speechSynthesis.cancel(); speechSynthesis.speak(u);
+      u.lang = ttsLang; u.rate = ttsRate; speechSynthesis.cancel(); speechSynthesis.speak(u);
     }
   }
 
@@ -719,7 +721,7 @@ setCards(enriched);
     const activePatient = patients.find(p => p.id === activePatientId || p.id === Number(activePatientId));
     try {
       const res = await fetch("/api/sessions", { method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ patient_id: activePatientId || null, evolucao_observada: sessionNote, objetivos_sessao: `Perfil: ${profile} | Nível: ${level}`, notas: phrase.length ? `Frases: ${phrase.join(" ")}` : null })
+        body: JSON.stringify({ patient_id: activePatientId || null, cards_usados: phrase, evolucao_observada: sessionNote, objetivos_sessao: `Perfil: ${profile} | Nível: ${level}`, notas: phrase.length ? `Frases: ${phrase.join(" ")}` : null })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error);
@@ -746,7 +748,10 @@ setCards(enriched);
       const res = await fetch("/api/images/library");
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || `Erro ${res.status} ao carregar biblioteca`);
-      setImageLibrary({images:data.images||[]});
+      setImageLibrary({
+        platformImages: data.platformImages || [],
+        userImages: data.userImages || [],
+      });
     } catch (e) {
       console.error("Erro ao abrir banco de imagens:", e);
       setImagePickerError(e.message || "Não foi possível carregar o banco de imagens.");
@@ -876,7 +881,10 @@ setCards(enriched);
         return;
       }
       if (!res.ok) throw new Error(data.error);
-      setEditing({ ...editing, image: data.url, empty: false });
+      const updated = { ...editing, image: data.url, image_url: data.url, empty: false };
+      const nextCards = cards.map(card => card.id === updated.id ? updated : card);
+      setEditing(updated);
+      await persist(nextCards);
       setImagePickerOpen(false);
     } catch(e) { setGenerateError(e.message || "Erro ao gerar. Tente novamente."); }
     finally { setGenerating(false); }
@@ -961,6 +969,14 @@ setCards(enriched);
         <div>
           <section className="caa-phrase">
             <div className="caa-phrase-title">Frase atual</div>
+            <div style={{display:"flex",gap:"8px",flexWrap:"wrap",alignItems:"center",margin:"8px 0 10px"}}>
+              <select value={activePatientId} onChange={e=>setActivePatientId(e.target.value)} aria-label="Paciente da sessão" style={{padding:"7px 10px",borderRadius:"8px",border:"1px solid #d1d5db",fontSize:"13px",background:"white"}}>
+                <option value="">Selecione um paciente</option>
+                {patients.map(patient => <option key={patient.id} value={patient.id}>{patient.nome || patient.name}</option>)}
+              </select>
+              <input value={sessionNote} onChange={e=>setSessionNote(e.target.value)} placeholder="Observação breve da sessão" aria-label="Observação da sessão" style={{flex:"1 1 220px",padding:"7px 10px",borderRadius:"8px",border:"1px solid #d1d5db",fontSize:"13px"}} />
+              <button onClick={saveSession} disabled={!activePatientId} style={{padding:"7px 12px",borderRadius:"8px",border:"none",background:activePatientId?"#1B2D5B":"#d1d5db",color:"white",fontWeight:"700",fontSize:"12px",cursor:activePatientId?"pointer":"not-allowed"}}>💾 Salvar sessão</button>
+            </div>
             <div className="caa-words">
               {phrase.map((w,i)=><span key={i}>{w}</span>)}
               {!phrase.length && <em>Toque nos cards para montar uma frase.</em>}
@@ -1005,6 +1021,11 @@ setCards(enriched);
                 <option value="FEMALE">👩 Feminina</option>
                 <option value="MALE">👨 Masculina</option>
                 <option value="CHILD">🧒 Criança</option>
+              </select>
+              <select value={ttsRate} onChange={e=>setTtsRate(Number(e.target.value))} title="Velocidade da voz" aria-label="Velocidade da voz" style={{padding:"6px 8px",borderRadius:"8px",border:"1px solid #e5e7eb",fontSize:"13px",cursor:"pointer",background:"white"}}>
+                <option value={0.7}>🐢 Lenta</option>
+                <option value={0.9}>▶️ Normal</option>
+                <option value={1.1}>⏩ Rápida</option>
               </select>
               <button onClick={()=>setShowMobileTools(v=>!v)} style={{background:showMobileTools?"#1B2D5B":"#F5EDE8",color:showMobileTools?"white":"#C76B4A",border:"none",borderRadius:"8px",padding:"6px 12px",fontSize:"13px",fontWeight:"700",cursor:"pointer"}}>
                 {showMobileTools ? "Menos opções" : "Mais opções"}
@@ -1079,14 +1100,14 @@ setCards(enriched);
             {shownCards.map(card=>(
               <article key={card.id} className={`caa-card cat-${card.cat} ${editing?.id===card.id?"active":""}`}>
                 <div className="caa-card-inner">
-                  <button className="caa-card-button" onClick={()=>selectCard(card)}>
+                  <DwellButton className="caa-card-button" onActivate={()=>selectCard(card)} dwellMs={effectiveDwellMs} ariaLabel={card.label}>
                     <div className={`caa-image-frame${card.image ? "" : " caa-no-image"}`} style={{filter:card.image?contrastFilter:"none"}}>
                       {card.image
                         ? <img src={card.image} alt={card.label} onError={e=>{e.target.style.display="none";e.target.parentElement.classList.add("caa-no-image");}}/>
                         : <div className="caa-empty">🖼️</div>}
                     </div>
                     <div className="caa-label" style={{fontSize:`${20*fontScale}px`,textTransform:"uppercase"}}>{(card.label || "").toUpperCase()}</div>
-                  </button>
+                  </DwellButton>
                   {editMode && (
                     <div className="caa-tools">
                       <button onClick={(e)=>{e.stopPropagation(); setEditing(card);}}>Editar</button>
@@ -1222,11 +1243,11 @@ setCards(enriched);
                   </button>
                 </div>
                 {imageLibraryLoading && <p style={{textAlign:"center",color:"#6b7280",fontSize:"13px"}}>Carregando...</p>}
-                {!!imageLibrary.images?.length && (
+                {!!imageLibrary.userImages?.length && (
                   <>
                     <p style={{fontSize:"12px",fontWeight:"600",color:"#374151",marginBottom:"8px"}}>Suas imagens enviadas</p>
                     <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(90px,1fr))",gap:"8px",marginBottom:"16px"}}>
-                      {imageLibrary.images.map(image=>(
+                      {imageLibrary.userImages.map(image=>(
                         <button key={image.id} onClick={()=>chooseImage(image.url, image.label)}
                           style={{background:"white",border:"1px solid #e5e7eb",borderRadius:"10px",padding:"8px",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:"4px"}}
                         >
@@ -1354,7 +1375,7 @@ setCards(enriched);
       <nav className="caa-mobile-bottomnav">
         <button className={mobileTab==="prancha"?"active":""} onClick={()=>setMobileTab("prancha")}>🏠<span>Prancha</span></button>
         <button className={mobileTab==="pacientes"?"active":""} onClick={()=>window.location.href="/pacientes"}>👥<span>Pacientes</span></button>
-        <button className={mobileTab==="agenda"?"active":""} onClick={()=>window.location.href="/pacientes"}>📅<span>Agenda</span></button>
+        <button className={mobileTab==="agenda"?"active":""} onClick={()=>window.location.href="/agenda"}>📅<span>Agenda</span></button>
         <button className={mobileTab==="biblioteca"?"active":""} onClick={()=>window.location.href="/biblioteca"}>📚<span>Biblioteca</span></button>
         <button className={mobileTab==="ajuda"?"active":""} onClick={()=>window.location.href="/suporte"}>❓<span>Ajuda</span></button>
       </nav>

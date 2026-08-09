@@ -4,20 +4,27 @@ export const runtime = "nodejs";
 
 export async function POST(request) {
   try {
+    if (!process.env.CLERK_WEBHOOK_SECRET) {
+      console.error("CLERK_WEBHOOK_SECRET não configurado");
+      return Response.json({ error: "Webhook indisponível" }, { status: 503 });
+    }
+
     const svix_id = request.headers.get("svix-id");
     const svix_timestamp = request.headers.get("svix-timestamp");
     const svix_signature = request.headers.get("svix-signature");
 
+    if (!svix_id || !svix_timestamp || !svix_signature) {
+      return Response.json({ error: "Assinatura ausente" }, { status: 400 });
+    }
+
     const body = await request.text();
 
-    if (process.env.CLERK_WEBHOOK_SECRET && svix_signature) {
-      const { Webhook } = await import("svix");
-      const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
-      try {
-        wh.verify(body, { "svix-id": svix_id, "svix-timestamp": svix_timestamp, "svix-signature": svix_signature });
-      } catch {
-        return Response.json({ error: "Invalid signature" }, { status: 400 });
-      }
+    const { Webhook } = await import("svix");
+    const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
+    try {
+      wh.verify(body, { "svix-id": svix_id, "svix-timestamp": svix_timestamp, "svix-signature": svix_signature });
+    } catch {
+      return Response.json({ error: "Assinatura inválida" }, { status: 400 });
     }
 
     const { type, data } = JSON.parse(body);
@@ -37,7 +44,7 @@ export async function POST(request) {
       console.log(`✅ Usuário sincronizado: ${clerkId} ${email}`);
 
       // Adiciona na Audience do Resend
-      if (email) {
+      if (email && process.env.RESEND_API_KEY) {
         await fetch("https://api.resend.com/audiences/086dc134-c602-45ff-b3f3-43fb06042eeb/contacts", {
           method: "POST",
           headers: { "Authorization": "Bearer " + process.env.RESEND_API_KEY, "Content-Type": "application/json" },

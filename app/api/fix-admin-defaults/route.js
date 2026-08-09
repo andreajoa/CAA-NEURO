@@ -1,7 +1,11 @@
 export const runtime = "nodejs";
+import { auth } from "@clerk/nextjs/server";
 import { d1Query } from "../../../lib/d1";
+import { isAdmin } from "../../../lib/admin";
 
 export async function GET() {
+  const { userId } = await auth();
+  if (!userId || !isAdmin(userId)) return Response.json({ error: "Acesso negado" }, { status: 403 });
   try {
     const boards = [
       ["infantil_inicial",[

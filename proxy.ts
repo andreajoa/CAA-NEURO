@@ -17,7 +17,12 @@ const isPublicRoute = createRouteMatcher([
   "/termos(.*)",
   "/api/testimonials",
   "/api/images/search",
+  "/api/images/file",
   "/api/health",
+  "/api/share",
+  "/api/tts",
+  "/api/stripe/webhook",
+  "/api/backup-auto",
   "/api/clerk/webhook",
   "/api/clerk-webhook",
   "/api/templates(.*)",
@@ -34,10 +39,10 @@ const isStatic = createRouteMatcher([
   "/icon-(.*)",
   "/cards/(.*)",
   "/hero-(.*)",
-  "/logo(.*)",       // <--- ADICIONADO AQUI
-  "/(.*).png",       // <--- LIBERA OUTROS PNGs SOLTOS
-  "/(.*).jpg",       // <--- LIBERA JPGs
-  "/(.*).svg",       // <--- LIBERA SVGs
+  "/logo(.*)",
+  "/(.*).png",
+  "/(.*).jpg",
+  "/(.*).svg",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

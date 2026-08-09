@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 
 /**
  * DwellButton — botão com suporte a:
@@ -22,15 +22,20 @@ export default function DwellButton({
   children,
   disabled = false,
   className = "",
+  ariaLabel,
 }) {
   const [progress, setProgress] = useState(0); // 0–100
   const [dwelling, setDwelling] = useState(false);
-  const timerRef = useRef(null);
   const startRef = useRef(null);
   const rafRef = useRef(null);
+  const activeRef = useRef(false);
+  const activatedByDwellRef = useRef(false);
+  const suppressClickTimerRef = useRef(null);
 
   const startDwell = useCallback(() => {
-    if (!dwellMs || disabled) return;
+    if (!dwellMs || disabled || activeRef.current) return;
+    activeRef.current = true;
+    activatedByDwellRef.current = false;
     setDwelling(true);
     startRef.current = Date.now();
 
@@ -41,6 +46,11 @@ export default function DwellButton({
       if (pct < 100) {
         rafRef.current = requestAnimationFrame(tick);
       } else {
+        activeRef.current = false;
+        activatedByDwellRef.current = true;
+        suppressClickTimerRef.current = setTimeout(() => {
+          activatedByDwellRef.current = false;
+        }, 750);
         setDwelling(false);
         setProgress(0);
         onActivate?.();
@@ -50,11 +60,16 @@ export default function DwellButton({
   }, [dwellMs, disabled, onActivate]);
 
   const cancelDwell = useCallback(() => {
-    cancelAnimationFrame(rafRef.current);
-    clearTimeout(timerRef.current);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    activeRef.current = false;
     setDwelling(false);
     setProgress(0);
   }, []);
+
+  useEffect(() => () => {
+    cancelDwell();
+    if (suppressClickTimerRef.current) clearTimeout(suppressClickTimerRef.current);
+  }, [cancelDwell]);
 
   const baseStyle = {
     position: "relative",
@@ -69,17 +84,22 @@ export default function DwellButton({
   return (
     <button
       className={className}
+      aria-label={ariaLabel}
       style={baseStyle}
       disabled={disabled}
-      onClick={() => { if (!dwelling) onActivate?.(); }}
-      onMouseEnter={startDwell}
-      onMouseLeave={cancelDwell}
+      onClick={() => {
+        if (activatedByDwellRef.current) {
+          activatedByDwellRef.current = false;
+          if (suppressClickTimerRef.current) clearTimeout(suppressClickTimerRef.current);
+          return;
+        }
+        onActivate?.();
+      }}
       onPointerEnter={startDwell}
+      onPointerDown={startDwell}
       onPointerLeave={cancelDwell}
+      onPointerUp={cancelDwell}
       onPointerCancel={cancelDwell}
-      onTouchStart={(e) => { e.preventDefault(); startDwell(); }}
-      onTouchEnd={cancelDwell}
-      onTouchCancel={cancelDwell}
     >
       {/* Barra de progresso dwell */}
       {dwellMs > 0 && dwelling && (

@@ -1,6 +1,10 @@
+import { auth } from "@clerk/nextjs/server";
 import { d1Query } from "../../../lib/d1";
+import { isAdmin } from "../../../lib/admin";
 
 export async function GET() {
+  const { userId } = await auth();
+  if (!userId || !isAdmin(userId)) return Response.json({ error: "Acesso negado" }, { status: 403 });
   const cards = [
     { id:"ansioso", label:"Estou ansioso", cat:"sentimentos", image:"/cards/level-1/cansado.webp?v=20260521-optimized" },
     { id:"cansado-a", label:"Estou cansado", cat:"sentimentos", image:"/cards/level-1/cansado.webp?v=20260521-optimized" },

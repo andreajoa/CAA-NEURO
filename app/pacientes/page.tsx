@@ -163,6 +163,7 @@ export default function PacientesPage() {
           <button onClick={()=>setView("list")} style={{...S.btn,background:"#f3f4f6",color:"#374151"}}>← Pacientes</button>
           <h1 style={{...S.title,fontSize:"22px"}}>{selected.nome}</h1>
           <div style={{marginLeft:"auto",display:"flex",gap:"8px",flexWrap:"wrap"}}>
+            <a href={`/app?patient=${selected.id}`} style={{...S.btn,background:"#C76B4A",color:"white",textDecoration:"none",display:"inline-block"}}>🗣️ Abrir prancha</a>
             <a href={`/api/report?patient_id=${selected.id}`} target="_blank" style={{...S.btn,background:"#2563eb",color:"white",textDecoration:"none",display:"inline-block"}}>📄 PDF</a>
             <a href={`/api/export?patient_id=${selected.id}&format=xlsx`} style={{...S.btn,background:"#16a34a",color:"white",textDecoration:"none",display:"inline-block"}}>📊 Excel</a>
             <a href={`/api/export?patient_id=${selected.id}&format=csv`} style={{...S.btn,background:"#f3f4f6",color:"#374151",textDecoration:"none",display:"inline-block"}}>CSV</a>

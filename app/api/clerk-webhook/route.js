@@ -4,8 +4,6 @@ import { NextResponse } from "next/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req) {
   try {
     const evt = await verifyWebhook(req);
@@ -20,6 +18,12 @@ export async function POST(req) {
         return NextResponse.json({ success: true });
       }
 
+      if (!process.env.RESEND_API_KEY) {
+        console.warn("RESEND_API_KEY ausente; email de boas-vindas ignorado");
+        return NextResponse.json({ success: true });
+      }
+
+      const resend = new Resend(process.env.RESEND_API_KEY);
       console.log("Adicionando contato e enviando email para: " + email);
 
       await fetch("https://api.resend.com/audiences/086dc134-c602-45ff-b3f3-43fb06042eeb/contacts", {

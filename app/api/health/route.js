@@ -27,27 +27,13 @@ export async function GET(request) {
     allOk = false;
   }
 
-  checks.encryption = { ok: !!process.env.ENCRYPTION_KEY };
+  checks.encryption = { ok: /^[a-f0-9]{64}$/i.test(process.env.ENCRYPTION_KEY || "") };
   checks.clerk = { ok: !!process.env.CLERK_SECRET_KEY };
   checks.timestamp = new Date().toISOString();
-
-  if (!allOk) {
-    const resend = process.env.RESEND_API_KEY;
-    if (resend) {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${resend}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          from: "alertas@adhdautism.online",
-          to: "tdahma2@gmail.com",
-          subject: "⚠️ CAA Neuro — Falha detectada",
-          html: `<h2>Alerta CAA Neuro</h2><pre>${JSON.stringify(checks, null, 2)}</pre>`,
-        }),
-      }).catch(() => {});
-    }
-  }
+  if (!checks.encryption.ok || !checks.clerk.ok) allOk = false;
 
   return Response.json({ status: allOk ? "ok" : "degraded", checks }, {
     status: allOk ? 200 : 503,
+    headers: { "Cache-Control": "no-store" },
   });
 }

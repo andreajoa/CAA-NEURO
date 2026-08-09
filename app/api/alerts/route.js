@@ -1,16 +1,20 @@
 import { auth } from "@clerk/nextjs/server";
+import { getDatabase } from "../../../lib/d1";
 export const runtime = "nodejs";
-const getDB = (req) => req.env?.DB || globalThis.__D1_DB;
 
 export async function POST(request) {
-  const { userId } = await auth().catch(() => ({ userId: null }));
+  const { userId } = await auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
     const { tipo, mensagem, severidade } = await request.json();
-    const db = getDB(request);
+    if (!tipo?.trim() || !mensagem?.trim()) {
+      return Response.json({ error: "Tipo e mensagem são obrigatórios" }, { status: 400 });
+    }
+    const db = getDatabase(request);
     await db.prepare(
       `INSERT INTO audit_logs (user_id, acao, recurso, detalhes, created_at)
        VALUES (?, 'ALERTA', ?, ?, datetime('now'))`
-    ).bind(userId || "system", severidade || "warning", JSON.stringify({ tipo, mensagem })).run();
+    ).bind(userId, severidade || "warning", JSON.stringify({ tipo: tipo.slice(0, 120), mensagem: mensagem.slice(0, 2000) })).run();
 
     const resend = process.env.RESEND_API_KEY;
     if (resend && severidade === "critical") {
@@ -21,7 +25,7 @@ export async function POST(request) {
           from: "alertas@caa-neuro.com.br",
           to: "tdahma2@gmail.com",
           subject: `🚨 CAA Neuro CRÍTICO — ${tipo}`,
-          html: `<h2>Alerta Crítico</h2><p><strong>Tipo:</strong> ${tipo}</p><p><strong>Mensagem:</strong> ${mensagem}</p><p><strong>Usuário:</strong> ${userId || "sistema"}</p><p><strong>Hora:</strong> ${new Date().toLocaleString("pt-BR")}</p>`
+          text: `Tipo: ${tipo.slice(0, 120)}\nMensagem: ${mensagem.slice(0, 2000)}\nUsuário: ${userId}\nHora: ${new Date().toISOString()}`
         })
       }).catch(() => {});
     }

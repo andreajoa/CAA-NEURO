@@ -2,7 +2,6 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import Stripe from "stripe";
 
 export const runtime = "nodejs";
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const PLANOS = {
   individual:  { price: process.env.STRIPE_PRICE_ID,            max_prof: 1,  max_pac: 50,  label: "Individual" },
@@ -14,13 +13,22 @@ export async function POST(request) {
   const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return Response.json({ error: "Pagamento temporariamente indisponível" }, { status: 503 });
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const user = await currentUser();
     const email = user?.emailAddresses?.[0]?.emailAddress || "";
-    const origin = request.headers.get("origin") || "https://www.adhdautism.online";
+    const origin = (process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin).replace(/\/$/, "");
     const body = await request.json().catch(() => ({}));
     const plano = PLANOS[body.plano] ? body.plano : "individual";
     const priceId = PLANOS[plano].price;
     const embedded = body.embedded === true;
+
+    if (!priceId) {
+      return Response.json({ error: `Preço do plano ${plano} não configurado` }, { status: 503 });
+    }
 
     const meta = { userId, plano, max_prof: String(PLANOS[plano].max_prof), max_pac: String(PLANOS[plano].max_pac) };
 
@@ -32,7 +40,9 @@ export async function POST(request) {
         line_items: [{ price: priceId, quantity: 1 }],
         return_url: `${origin}/upgrade/sucesso?session_id={CHECKOUT_SESSION_ID}`,
         customer_email: email || undefined,
+        client_reference_id: userId,
         metadata: meta,
+        subscription_data: { metadata: meta },
         locale: "pt-BR",
         allow_promotion_codes: true,
       });
@@ -46,12 +56,15 @@ export async function POST(request) {
       success_url: `${origin}/upgrade/sucesso?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/planos`,
       customer_email: email || undefined,
+      client_reference_id: userId,
       metadata: meta,
+      subscription_data: { metadata: meta },
       locale: "pt-BR",
       allow_promotion_codes: true,
     });
     return Response.json({ url: session.url });
   } catch (e) {
-    console.error("STRIPE CHECKOUT ERROR:", e.message, e.stack); return Response.json({ error: e.message, detail: e.type || e.code || "" }, { status: 500 });
+    console.error("STRIPE CHECKOUT ERROR:", e.message);
+    return Response.json({ error: "Não foi possível iniciar o pagamento" }, { status: 500 });
   }
 }

@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 
@@ -29,6 +28,11 @@ export async function GET(req) {
       return NextResponse.json({error:"Missing key"},{status:400});
     }
 
+    const allowedImageKey = /^(platform\/images\/|users\/[^/]+\/images\/)[a-zA-Z0-9/_-]+\.(webp|png|jpe?g|gif)$/i;
+    if (!allowedImageKey.test(key)) {
+      return NextResponse.json({ error: "Invalid image key" }, { status: 400 });
+    }
+
     const result = await getR2Client().send(
       new GetObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME,
@@ -37,11 +41,16 @@ export async function GET(req) {
     );
 
     const buffer = await streamToBuffer(result.Body);
+    const contentType = result.ContentType || "image/webp";
+    if (!contentType.startsWith("image/")) {
+      return NextResponse.json({ error: "Invalid file type" }, { status: 415 });
+    }
 
     return new NextResponse(buffer, {
       headers: {
-        "Content-Type": result.ContentType || "image/png",
+        "Content-Type": contentType,
         "Cache-Control":"public, max-age=31536000, immutable",
+        "X-Content-Type-Options": "nosniff",
       },
     });
   } catch (error) {

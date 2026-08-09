@@ -5,6 +5,7 @@ import { getPlanoUsuario, podeUsarIA } from "../../../lib/checkPlano";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { createElement } from "react";
+import { getAccessiblePatient } from "../../../lib/patientAccess";
 
 export const runtime = "nodejs";
 
@@ -111,15 +112,13 @@ export async function GET(request) {
   if (!patientId) return new Response("patient_id obrigatório", { status: 400 });
 
   try {
-    const [rawPatient] = await d1Query(
-      "SELECT * FROM patients WHERE id=? AND user_id=?", [patientId, userId]
-    ) || [];
+    const rawPatient = await getAccessiblePatient(patientId, userId);
     if (!rawPatient) return new Response("Paciente não encontrado", { status: 404 });
     const patient = decryptPatient(rawPatient);
 
     const rawSessions = await d1Query(
-      "SELECT * FROM sessions WHERE patient_id=? AND user_id=? ORDER BY created_at DESC",
-      [patientId, userId]
+      "SELECT * FROM sessions WHERE patient_id=? ORDER BY created_at DESC",
+      [patientId]
     ) || [];
     const sessions = rawSessions.map(decryptSession);
 

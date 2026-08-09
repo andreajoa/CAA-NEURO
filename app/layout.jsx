@@ -3,6 +3,7 @@ import { ptBR } from "@clerk/localizations";
 import "./globals.css";
 import ErrorTracker from "./providers/ErrorTracker";
 import PwaUpdateBanner from "./components/PwaUpdateBanner";
+import Script from "next/script";
 
 export const metadata = {
   title: "CAA Neuro",
@@ -54,9 +55,8 @@ export default function RootLayout({ children }) {
 
 function ServiceWorkerRegister() {
   return (
-    <script
-      dangerouslySetInnerHTML={{
-        __html: `
+    <Script id="caa-register-service-worker" strategy="afterInteractive">
+      {`
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
               navigator.serviceWorker.register('/sw.js')
@@ -64,9 +64,7 @@ function ServiceWorkerRegister() {
                 .catch(function(err) { console.log('SW erro:', err); });
             });
           }
-        `,
-      }}
-    />
+        `}
+    </Script>
   );
 }
-

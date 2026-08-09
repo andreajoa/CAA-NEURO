@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { decryptPatient, decryptSession } from "../../lib/crypto";
 import { d1Query } from "../../../lib/d1";
 import { getPlanoUsuario, podeUsarIA } from "../../../lib/checkPlano";
+import { getAccessiblePatient } from "../../../lib/patientAccess";
 
 export const runtime = "nodejs";
 
@@ -23,15 +24,13 @@ export async function GET(request) {
   if (!patientId) return Response.json({ error: "patient_id obrigatório" }, { status: 400 });
 
   try {
-    const [rawPatient] = await d1Query(
-      "SELECT * FROM patients WHERE id=? AND user_id=?", [patientId, userId]
-    ) || [];
+    const rawPatient = await getAccessiblePatient(patientId, userId);
     if (!rawPatient) return Response.json({ error: "Paciente não encontrado" }, { status: 404 });
     const patient = decryptPatient(rawPatient);
 
     const rawSessions = await d1Query(
-      "SELECT * FROM sessions WHERE patient_id=? AND user_id=? ORDER BY created_at DESC LIMIT 20",
-      [patientId, userId]
+      "SELECT * FROM sessions WHERE patient_id=? ORDER BY created_at DESC LIMIT 20",
+      [patientId]
     ) || [];
     const sessions = rawSessions.map(decryptSession);
 
