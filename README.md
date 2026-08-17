@@ -46,7 +46,7 @@ Cadastre na Vercel todas as variáveis descritas em `.env.local.example`. Os pon
 - `CRON_SECRET` para o backup diário definido em `vercel.json`.
 - As três credenciais D1 e as quatro credenciais R2.
 
-Configure `NEXT_PUBLIC_APP_URL` com a origem canônica, por exemplo `https://www.adhdautism.online`, sem barra final.
+Configure `NEXT_PUBLIC_APP_URL` com a origem canônica, por exemplo `https://caa-neuro.vercel.app`, sem barra final.
 
 ## Estrutura principal
 

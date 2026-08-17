@@ -1,7 +1,7 @@
 const urls = [
-  "https://www.adhdautism.online/",
-  "https://www.adhdautism.online/app",
-  "https://www.adhdautism.online/api/images/library",
+  "https://caa-neuro.vercel.app/",
+  "https://caa-neuro.vercel.app/app",
+  "https://caa-neuro.vercel.app/api/images/library",
 ];
 
 const users = 100;

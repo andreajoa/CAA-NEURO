@@ -34,7 +34,7 @@ export default function PwaUpdateBanner() {
 
   const STEPS_IOS = [
     { emoji: "🗑️", text: 'Pressione o ícone do CAA Neuro na tela inicial e toque em "Remover App"' },
-    { emoji: "🌐", text: 'Abra o Safari e acesse adhdautism.online' },
+    { emoji: "🌐", text: 'Abra o Safari e acesse caa-neuro.vercel.app' },
     { emoji: "⬆️", text: 'Toque no botão de compartilhar (□↑) na barra inferior' },
     { emoji: "➕", text: 'Toque em "Adicionar à Tela de Início" e confirme' },
     { emoji: "✅", text: "Pronto! O novo ícone já aparece na tela inicial" },
@@ -42,7 +42,7 @@ export default function PwaUpdateBanner() {
 
   const STEPS_ANDROID = [
     { emoji: "🗑️", text: 'Pressione o ícone do CAA Neuro e toque em "Desinstalar"' },
-    { emoji: "🌐", text: 'Abra o Chrome e acesse adhdautism.online' },
+    { emoji: "🌐", text: 'Abra o Chrome e acesse caa-neuro.vercel.app' },
     { emoji: "📲", text: 'O Chrome vai mostrar um banner "Instalar app" — toque nele' },
     { emoji: "➕", text: 'Se o banner não aparecer: toque nos 3 pontos ⋮ → "Adicionar à tela inicial"' },
     { emoji: "✅", text: "Pronto! O novo ícone já aparece na tela inicial" },

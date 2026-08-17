@@ -125,7 +125,7 @@ export default function PranchaPublica() {
       </div>
 
       <div style={{ textAlign:"center", padding:"24px", color:"#9ca3af", fontSize:"12px" }}>
-        Prancha criada com CAA Neuro · <a href="https://www.adhdautism.online" style={{ color:"#C76B4A" }}>adhdautism.online</a>
+        Prancha criada com CAA Neuro · <a href="https://caa-neuro.vercel.app" style={{ color:"#C76B4A" }}>caa-neuro.vercel.app</a>
       </div>
     </div>
   );

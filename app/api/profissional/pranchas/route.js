@@ -41,5 +41,5 @@ export async function POST(request) {
     );
   }
 
-  return Response.json({ token, url:`https://www.adhdautism.online/prancha/${token}` });
+  return Response.json({ token, url:`https://caa-neuro.vercel.app/prancha/${token}` });
 }

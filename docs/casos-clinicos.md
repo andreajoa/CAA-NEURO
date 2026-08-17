@@ -19,4 +19,4 @@
 - Satisfação do profissional (NPS)
 
 ## Como documentar seu caso
-Entre em contato: contato@adhdautism.online
+Entre em contato: contato@caa-neuro.vercel.app

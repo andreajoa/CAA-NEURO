@@ -131,7 +131,7 @@ export default function PranchasTerapeuticas(){
     setTitle(b.title||"Prancha terapêutica");
     setCards(b.cards?.length?b.cards:emptyCards());
     setToken(b.token);
-    setShareUrl(`https://www.adhdautism.online/prancha/${b.token}`);
+    setShareUrl(`https://caa-neuro.vercel.app/prancha/${b.token}`);
   }
 
   async function printPdf(){

@@ -44,7 +44,7 @@ function downloadICS(ev) {
     ev.paciente_nome ? `Paciente: ${ev.paciente_nome}` : "",
     ev.tipo ? `Tipo: ${ev.tipo}` : "",
     ev.notas ? `Notas: ${ev.notas}` : "",
-    ev.share_token ? `Prancha: https://www.adhdautism.online/prancha/${ev.share_token}` : "",
+    ev.share_token ? `Prancha: https://caa-neuro.vercel.app/prancha/${ev.share_token}` : "",
   ].filter(Boolean).join("\n");
 
   const ics = [
@@ -351,7 +351,7 @@ export default function AgendaPage() {
                         <div style={{ display:"flex", gap:"8px", flexWrap:"wrap", marginTop:"10px" }}>
                           {meta.share_token && (
                             <a
-                              href={`https://www.adhdautism.online/prancha/${meta.share_token}`}
+                              href={`https://caa-neuro.vercel.app/prancha/${meta.share_token}`}
                               style={{ background:"white", color:"#C76B4A", border:"1px solid #bbf7d0", padding:"7px 12px", borderRadius:"999px", fontSize:"12px", fontWeight:"700", textDecoration:"none" }}
                             >
                               Abrir prancha

@@ -1,7 +1,7 @@
 const urls=[
-"https://www.adhdautism.online/api/patients",
-"https://www.adhdautism.online/api/sessions",
-"https://www.adhdautism.online/api/cards"
+"https://caa-neuro.vercel.app/api/patients",
+"https://caa-neuro.vercel.app/api/sessions",
+"https://caa-neuro.vercel.app/api/cards"
 ];
 
 const users=250;

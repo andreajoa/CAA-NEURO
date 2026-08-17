@@ -23,7 +23,7 @@ Mensagem:
 ${form.mensagem}`
     );
 
-    window.location.href = `mailto:info@adhdautism.online?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:info@caa-neuro.vercel.app?subject=${subject}&body=${body}`;
   }
 
   return (
@@ -51,7 +51,7 @@ ${form.mensagem}`
           <button type="submit">Enviar mensagem</button>
 
           <p className="supportNote">
-            A mensagem será enviada para <strong>info@adhdautism.online</strong>.
+            A mensagem será enviada para <strong>info@caa-neuro.vercel.app</strong>.
           </p>
         </form>
       </main>
