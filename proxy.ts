@@ -53,5 +53,5 @@ export default clerkMiddleware(async (auth, req) => {
 });
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image).*)" ],
+  matcher: ["/((?!_next/static|_next/image|_vercel|api/.*).*)"],
 };
