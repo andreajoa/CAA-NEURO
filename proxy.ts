@@ -29,6 +29,8 @@ const isPublicRoute = createRouteMatcher([
   "/api/export-board(.*)",
   "/profissionais(.*)",
   "/prancha/(.*)",
+  "/aceitar-convite(.*)",
+  "/__clerk(.*)",
 ]);
 
 // Arquivos estáticos nunca exigem autenticação
