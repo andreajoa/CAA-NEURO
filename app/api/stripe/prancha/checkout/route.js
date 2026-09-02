@@ -1,6 +1,6 @@
+import Stripe from "stripe";
 import { NextResponse } from "next/server";
 import {
-  getPranchaStripe,
   PRANCHA_CURRENCY,
   PRANCHA_PRICE_CENTS,
   PRANCHA_PRODUCT_NAME,
@@ -9,21 +9,23 @@ import {
 
 export const runtime = "nodejs";
 
-function getBaseUrl(request) {
-  const configured = process.env.NEXT_PUBLIC_APP_URL || process.env.SITE_URL;
-  return (configured || new URL(request.url).origin).replace(/\/$/, "");
-}
-
 export async function POST(request) {
+  const secretKey = process.env.PRANCHA_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+
+  if (!secretKey) {
+    return NextResponse.json(
+      { error: "Stripe não configurado.", debug: { hasKey: false } },
+      { status: 503 }
+    );
+  }
+
   try {
-    const stripe = getPranchaStripe();
-    const baseUrl = getBaseUrl(request);
+    const stripe = new Stripe(secretKey);
+    const origin = (process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin).replace(/\/$/, "");
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       ui_mode: "embedded_page",
-      locale: "pt-BR",
-      customer_creation: "always",
       line_items: [
         {
           quantity: 1,
@@ -32,21 +34,14 @@ export async function POST(request) {
             unit_amount: PRANCHA_PRICE_CENTS,
             product_data: {
               name: PRANCHA_PRODUCT_NAME,
-              description: "Dois PDFs em A4: 50 fichas reutilizáveis, gabarito, acompanhamento e sílabas móveis.",
-              metadata: {
-                productSlug: PRANCHA_PRODUCT_SLUG,
-              },
             },
           },
         },
       ],
       metadata: {
         productSlug: PRANCHA_PRODUCT_SLUG,
-        productVersion: "2026-09",
-        fulfillment: "digital-download",
       },
-      return_url: `${baseUrl}/prancha/obrigado?session_id={CHECKOUT_SESSION_ID}`,
-      integration_identifier: "prancha_lyvmbqaz",
+      return_url: `${origin}/prancha/obrigado?session_id={CHECKOUT_SESSION_ID}`,
     });
 
     return NextResponse.json(
@@ -54,11 +49,7 @@ export async function POST(request) {
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch (error) {
-    console.error("PRANCHA CHECKOUT ERROR", {
-      type: error?.type,
-      code: error?.code,
-      message: error?.message,
-    });
+    console.error("PRANCHA CHECKOUT ERROR", error?.type, error?.code, error?.message);
 
     return NextResponse.json(
       {
@@ -67,7 +58,7 @@ export async function POST(request) {
           type: error?.type,
           code: error?.code,
           message: error?.message,
-          hasKey: Boolean(process.env.PRANCHA_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY),
+          keyPrefix: secretKey.substring(0, 12),
         },
       },
       { status: 500, headers: { "Cache-Control": "no-store" } }
