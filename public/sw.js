@@ -1,4 +1,4 @@
-const CACHE = "caa-neuro-v8";
+const CACHE = "caa-neuro-v9";
 
 // Imagens pré-cacheadas na instalação — usuário nunca vê loading
 const CARDS_IMAGES = [
@@ -104,10 +104,16 @@ self.addEventListener("fetch", e => {
   // Assets imutáveis do Next e arquivos do PWA podem usar cache-first.
   if (url.pathname.startsWith("/_next/static/") || STATIC.includes(url.pathname)) {
     e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
-        if (res.ok) caches.open(CACHE).then(cache => cache.put(e.request, res.clone()));
-        return res;
-      }))
+      caches.match(e.request).then(cached => {
+        if (cached) return cached;
+        return fetch(e.request).then(res => {
+          if (res.ok && res.body) {
+            const copy = res.clone();
+            caches.open(CACHE).then(cache => cache.put(e.request, copy)).catch(() => {});
+          }
+          return res;
+        });
+      })
     );
     return;
   }
