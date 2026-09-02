@@ -1,0 +1,234 @@
+.page {
+  --paper: #f2e8e1;
+  --surface: #fffaf6;
+  --navy: #1b2d5b;
+  --navy-soft: #405074;
+  --terracotta: #c76b4a;
+  --terracotta-dark: #a94f32;
+  --blush: #e8b4a8;
+  --line: rgba(27, 45, 91, 0.16);
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  background: var(--paper);
+  color: var(--navy);
+}
+
+.card {
+  width: min(560px, 100%);
+  padding: clamp(36px, 6vw, 64px);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 28px 80px rgba(83, 47, 35, 0.12);
+  text-align: center;
+}
+
+.iconWrap {
+  display: inline-grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin-bottom: 28px;
+}
+
+.iconWrap[data-state="success"] {
+  background: #e0f4e8;
+  color: #217a3e;
+}
+
+.iconWrap[data-state="pending"] {
+  background: #fef3e2;
+  color: #b5750a;
+}
+
+.iconWrap svg {
+  width: 34px;
+  height: 34px;
+}
+
+.card h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.card > p {
+  max-width: 44ch;
+  margin: 16px auto 0;
+  color: var(--navy-soft);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.card > p strong {
+  color: var(--navy);
+}
+
+.downloadBox {
+  margin: 36px 0;
+  padding: 32px 28px;
+  border: 1px solid rgba(199, 107, 74, 0.28);
+  border-radius: 18px;
+  background: #fdf5f1;
+}
+
+.heart {
+  width: 28px;
+  height: 28px;
+  color: var(--terracotta);
+  fill: var(--terracotta);
+  margin-bottom: 14px;
+}
+
+.downloadBox h2 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: -0.025em;
+}
+
+.downloadBox > p {
+  margin: 8px 0 0;
+  color: var(--navy-soft);
+  font-size: 14px;
+}
+
+.downloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 14px 32px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--terracotta);
+  color: #fffaf6;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 740;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(199, 107, 74, 0.24);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), background-color 220ms ease;
+}
+
+.downloadBtn:hover {
+  background: var(--terracotta-dark);
+  transform: translateY(-2px);
+}
+
+.downloadBtn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.downloadBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.hint {
+  display: block;
+  margin-top: 14px;
+  color: var(--navy-soft);
+  font-size: 13px;
+}
+
+.legal {
+  display: flex;
+  gap: 12px;
+  text-align: left;
+  padding: 20px;
+  border-radius: 14px;
+  background: rgba(27, 45, 91, 0.05);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--navy-soft);
+}
+
+.legal svg {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  color: var(--navy);
+  stroke-width: 1.7;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 200ms ease, background-color 200ms ease;
+}
+
+.primaryBtn {
+  background: var(--terracotta);
+  color: #fffaf6;
+  border: 0;
+  box-shadow: 0 10px 24px rgba(199, 107, 74, 0.2);
+}
+
+.primaryBtn:hover {
+  background: var(--terracotta-dark);
+  transform: translateY(-2px);
+}
+
+.secondaryBtn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--navy);
+}
+
+.secondaryBtn:hover {
+  background: var(--paper);
+  transform: translateY(-2px);
+}
+
+.backLink {
+  display: inline-block;
+  margin-top: 28px;
+  color: var(--terracotta);
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 28px 20px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .downloadBox {
+    padding: 24px 20px;
+  }
+
+  .downloadBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
