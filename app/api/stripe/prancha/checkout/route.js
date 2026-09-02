@@ -9,7 +9,7 @@ import {
 export const runtime = "nodejs";
 
 export async function POST(request) {
-  const secretKey = process.env.PRANCHA_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+  const secretKey = (process.env.PRANCHA_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY || "").replace(/\s+/g, "");
 
   if (!secretKey) {
     return NextResponse.json({ error: "Stripe não configurado." }, { status: 503 });
