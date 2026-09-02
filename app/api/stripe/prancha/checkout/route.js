@@ -61,7 +61,15 @@ export async function POST(request) {
     });
 
     return NextResponse.json(
-      { error: "Não foi possível abrir o pagamento. Tente novamente em instantes." },
+      {
+        error: "Não foi possível abrir o pagamento. Tente novamente em instantes.",
+        debug: {
+          type: error?.type,
+          code: error?.code,
+          message: error?.message,
+          hasKey: Boolean(process.env.PRANCHA_STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY),
+        },
+      },
       { status: 500, headers: { "Cache-Control": "no-store" } }
     );
   }
