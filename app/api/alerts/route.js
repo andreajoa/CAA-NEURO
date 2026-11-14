@@ -22,7 +22,7 @@ export async function POST(request) {
         method: "POST",
         headers: { "Authorization": `Bearer ${resend}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: "alertas@caa-neuro.com.br",
+          from: process.env.RESEND_FROM_EMAIL || "CAA Neuro <noreply@caaneuro.online>",
           to: "tdahma2@gmail.com",
           subject: `🚨 CAA Neuro CRÍTICO — ${tipo}`,
           text: `Tipo: ${tipo.slice(0, 120)}\nMensagem: ${mensagem.slice(0, 2000)}\nUsuário: ${userId}\nHora: ${new Date().toISOString()}`
