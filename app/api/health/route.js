@@ -5,9 +5,9 @@ export async function GET(request) {
   let allOk = true;
 
   try {
-    const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-    const dbId = process.env.CLOUDFLARE_D1_DATABASE_ID;
-    const token = process.env.CLOUDFLARE_D1_API_TOKEN;
+    const accountId = process.env.CAA_D1_ACCOUNT_ID || process.env.CLOUDFLARE_ACCOUNT_ID;
+    const dbId = process.env.CAA_D1_DATABASE_ID || process.env.CLOUDFLARE_D1_DATABASE_ID;
+    const token = process.env.CAA_D1_API_TOKEN || process.env.CLOUDFLARE_D1_API_TOKEN;
 
     const start = Date.now();
     const res = await fetch(
